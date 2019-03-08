@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using YGOProAnalyticsServer.Database.ManyToManySupport;
 
 namespace YGOProAnalyticsServer.DbModels
 {
@@ -14,15 +15,14 @@ namespace YGOProAnalyticsServer.DbModels
     public class Banlist
     {
         public Banlist(
-            string name, 
-            ICollection<Card> forbiddenCards, 
-            ICollection<Card> limitedCards, 
-            ICollection<Card> semiLimitedCards)
+            int id,
+            string name)
         {
+            Id = id;
             Name = name;
-            ForbiddenCards = forbiddenCards;
-            LimitedCards = limitedCards;
-            SemiLimitedCards = semiLimitedCards;
+            ForbiddenCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, ForbiddenCardsJoin);
+            LimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, LimitedCardsJoin); ;
+            SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, SemiLimitedCardsJoin); ;
         }
 
 
@@ -35,6 +35,21 @@ namespace YGOProAnalyticsServer.DbModels
         /// Name of the banlist
         /// </summary>
         public string Name { get; protected set; }
+
+        /// <summary>
+        /// Join property for <see cref="ForbiddenCards"/>
+        /// </summary>
+        public ICollection<BanlistCardJoin> ForbiddenCardsJoin = new List<BanlistCardJoin>();
+
+        /// <summary>
+        /// Join property for <see cref="LimitedCards"/>
+        /// </summary>
+        public ICollection<BanlistCardJoin> LimitedCardsJoin = new List<BanlistCardJoin>();
+
+        /// <summary>
+        /// Join property for <see cref="SemiLimitedCards"/>
+        /// </summary>
+        public ICollection<BanlistCardJoin> SemiLimitedCardsJoin = new List<BanlistCardJoin>();
 
         /// <summary>
         /// List of forbidden cards
@@ -60,27 +75,6 @@ namespace YGOProAnalyticsServer.DbModels
             get
             {
                 return Name.Substring(Name.IndexOf(' ') + 1);
-            }
-            protected set { }
-        }
-
-        /// <summary>
-        /// All cards on the banlist
-        /// </summary>
-        [NotMapped]
-        public IEnumerable<Card> AllCards
-        {
-            get
-            {
-                var allCards = new List<Card>();
-                var forbiddenCards = (IEnumerable<Card>)ForbiddenCards;
-                var limitedCards = (IEnumerable<Card>)LimitedCards;
-                var semiLimitedCards = (IEnumerable<Card>)SemiLimitedCards;
-                allCards.AddRange(forbiddenCards);
-                allCards.AddRange(limitedCards);
-                allCards.AddRange(semiLimitedCards);
-
-                return allCards;
             }
             protected set { }
         }

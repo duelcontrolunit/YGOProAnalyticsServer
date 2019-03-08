@@ -12,12 +12,7 @@ namespace YGOProAnalyticsServerTests.DbModels
         [Test]
         public void ReleaseDate_NameValid_DatesAreEqual()
         {
-            var banlist = new Banlist(
-                "2020.01 BobPatrzy",
-                new List<Card>(),
-                new List<Card>(),
-                new List<Card>()
-                );
+            var banlist = new Banlist(1, "2020.01 BobPatrzy");
 
             Assert.AreEqual(new DateTime(2020, 1, 1), banlist.ReleaseDate);
         }
@@ -25,12 +20,7 @@ namespace YGOProAnalyticsServerTests.DbModels
         [Test]
         public void ReleaseDate_NameInvalid_ThrowsFormatException()
         {
-            var banlist = new Banlist(
-                "2020.01u BobPatrzy",
-                new List<Card>(),
-                new List<Card>(),
-                new List<Card>()
-                );
+            var banlist = new Banlist(1,"2020.01u BobPatrzy");
 
             Assert.Throws<FormatException>(() => { var x = banlist.ReleaseDate; });
         }
@@ -38,12 +28,7 @@ namespace YGOProAnalyticsServerTests.DbModels
         [Test]
         public void Format_NameValid_WeGetExpectedFormat()
         {
-            var banlist = new Banlist(
-                "2020.01 BobPatrzy",
-                new List<Card>(),
-                new List<Card>(),
-                new List<Card>()
-                );
+            var banlist = new Banlist(1,"2020.01 BobPatrzy");
 
             Assert.AreEqual("BobPatrzy", banlist.Format);
         }
@@ -51,12 +36,7 @@ namespace YGOProAnalyticsServerTests.DbModels
         [Test]
         public void Format_NameInvalid_WeGetInvalidFormat()
         {
-            var banlist = new Banlist(
-                "2020.01BobPatrzy]",
-                new List<Card>(),
-                new List<Card>(),
-                new List<Card>()
-                );
+            var banlist = new Banlist(1,"2020.01BobPatrzy]");
 
             Assert.AreNotEqual("BobPatrzy", banlist.Format);
         }

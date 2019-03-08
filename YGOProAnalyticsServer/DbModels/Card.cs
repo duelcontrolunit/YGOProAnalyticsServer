@@ -7,5 +7,6 @@ namespace YGOProAnalyticsServer.DbModels
 {
     public class Card
     {
+        public int Id { get; protected set; }
     }
 }

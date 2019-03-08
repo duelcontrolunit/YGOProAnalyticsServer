@@ -3,11 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YGOProAnalyticsServer.DbModels;
 
 namespace YGOProAnalyticsServer.Database
 {
     public class YgoProAnalyticsDatabase : DbContext
     {
+        public DbSet<Banlist> Banlists { get; set; }
+        public DbSet<Card> Cards { get; set; }
+
         public const string connectionString =
                @"Server=(localdb)\mssqllocaldb;
                  Database= YgoProAnalytics;
