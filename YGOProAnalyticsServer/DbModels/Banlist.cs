@@ -13,6 +13,19 @@ namespace YGOProAnalyticsServer.DbModels
     /// </summary>
     public class Banlist
     {
+        public Banlist(
+            string name, 
+            ICollection<Card> forbiddenCards, 
+            ICollection<Card> limitedCards, 
+            ICollection<Card> semiLimitedCards)
+        {
+            Name = name;
+            ForbiddenCards = forbiddenCards;
+            LimitedCards = limitedCards;
+            SemiLimitedCards = semiLimitedCards;
+        }
+
+
         /// <summary>
         /// Id of the banlist
         /// </summary>
@@ -80,7 +93,8 @@ namespace YGOProAnalyticsServer.DbModels
         {
             get
             {
-                return DateTime.ParseExact(Name.Substring(0, Name.IndexOf(' ')), "YYYY.MM", CultureInfo.InvariantCulture);
+                string dateString = Name.Substring(0, Name.IndexOf(' '));
+                return DateTime.Parse(dateString,  CultureInfo.InvariantCulture);
             }
             protected set { }
         }
