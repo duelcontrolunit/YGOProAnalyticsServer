@@ -14,9 +14,7 @@ namespace YGOProAnalyticsServer.DbModels
     /// </summary>
     public class Banlist
     {
-        public Banlist(
-            int id,
-            string name)
+        public Banlist(int id, string name)
         {
             Id = id;
             Name = name;
@@ -25,6 +23,13 @@ namespace YGOProAnalyticsServer.DbModels
             SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, SemiLimitedCardsJoin); ;
         }
 
+        public Banlist(string name)
+        {
+            Name = name;
+            ForbiddenCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, ForbiddenCardsJoin);
+            LimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, LimitedCardsJoin); ;
+            SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, SemiLimitedCardsJoin); ;
+        }
 
         /// <summary>
         /// Id of the banlist
