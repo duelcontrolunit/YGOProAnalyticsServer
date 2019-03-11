@@ -14,61 +14,87 @@ namespace YGOProAnalyticsServer.DbModels
     /// </summary>
     public class Banlist
     {
-        public Banlist(int id, string name)
+        /// <summary>
+        /// Include string required to include forbidden cards.
+        /// </summary>
+        public static string IncludeWithForbiddenCards = $"{nameof(ForbiddenCardsJoin)}.{nameof(ForbiddenCardBanlistJoin.Card)}";
+
+        /// <summary>
+        /// Include string required to include limited cards.
+        /// </summary>
+        public static string IncludeWithLimitedCards = $"{nameof(LimitedCardsJoin)}.{nameof(LimitedCardBanlistJoin.Card)}";
+
+        /// <summary>
+        /// Include string required to include forbidden cards.
+        /// </summary>
+        public static string IncludeWithSemiLimitedCards = $"{nameof(SemiLimitedCards)}.{nameof(SemiLimitedCardBanlistJoin.Card)}";
+
+        /// <summary>
+        /// Initialize banlist.
+        /// </summary>
+        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG" </param>
+        protected Banlist(int id, string name)
         {
             Id = id;
             Name = name;
-            ForbiddenCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, ForbiddenCardsJoin);
-            LimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, LimitedCardsJoin); ;
-            SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, SemiLimitedCardsJoin); ;
-        }
-
-        public Banlist(string name)
-        {
-            Name = name;
-            ForbiddenCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, ForbiddenCardsJoin);
-            LimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, LimitedCardsJoin); ;
-            SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, BanlistCardJoin>(this, SemiLimitedCardsJoin); ;
+            ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
+            LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
+            SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
         }
 
         /// <summary>
-        /// Id of the banlist
+        /// Initialize banlist.
+        /// </summary>
+        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG" </param>
+        public Banlist(string name)
+        {
+            Name = name;
+            ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
+            LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
+            SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
+        }
+
+        /// <summary>
+        /// Id of the banlist.
         /// </summary>
         public int Id { get; protected set; }
 
         /// <summary>
-        /// Name of the banlist
+        /// Valid name should look like: "YYYY.MM Format" for example "2010 TCG" 
         /// </summary>
         public string Name { get; protected set; }
 
         /// <summary>
         /// Join property for <see cref="ForbiddenCards"/>
         /// </summary>
-        public ICollection<BanlistCardJoin> ForbiddenCardsJoin = new List<BanlistCardJoin>();
+        public ICollection<ForbiddenCardBanlistJoin> ForbiddenCardsJoin { get; set; } = new List<ForbiddenCardBanlistJoin>();
 
         /// <summary>
         /// Join property for <see cref="LimitedCards"/>
         /// </summary>
-        public ICollection<BanlistCardJoin> LimitedCardsJoin = new List<BanlistCardJoin>();
+        public ICollection<LimitedCardBanlistJoin> LimitedCardsJoin { get; set; } = new List<LimitedCardBanlistJoin>();
 
         /// <summary>
         /// Join property for <see cref="SemiLimitedCards"/>
         /// </summary>
-        public ICollection<BanlistCardJoin> SemiLimitedCardsJoin = new List<BanlistCardJoin>();
+        public ICollection<SemiLimitedCardBanlistJoin> SemiLimitedCardsJoin { get; set; } = new List<SemiLimitedCardBanlistJoin>();
 
         /// <summary>
         /// List of forbidden cards
         /// </summary>
+        [NotMapped]
         public ICollection<Card> ForbiddenCards { get; protected set; }
 
         /// <summary>
         /// List of limited cards
         /// </summary>
+        [NotMapped]
         public ICollection<Card> LimitedCards { get; protected set; }
 
         /// <summary>
         /// List of semi-limited cards
         /// </summary>
+        [NotMapped]
         public ICollection<Card> SemiLimitedCards { get; protected set; }
 
         /// <summary>
@@ -81,7 +107,6 @@ namespace YGOProAnalyticsServer.DbModels
             {
                 return Name.Substring(Name.IndexOf(' ') + 1);
             }
-            protected set { }
         }
 
         /// <summary>
@@ -95,7 +120,6 @@ namespace YGOProAnalyticsServer.DbModels
                 string dateString = Name.Substring(0, Name.IndexOf(' '));
                 return DateTime.Parse(dateString,  CultureInfo.InvariantCulture);
             }
-            protected set { }
         }
     }
 }

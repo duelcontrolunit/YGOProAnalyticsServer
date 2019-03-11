@@ -6,7 +6,7 @@ using YGOProAnalyticsServer.Database.ManyToManySupport;
 
 namespace YGOProAnalyticsServer.DbModels
 {
-    public class BanlistCardJoin : IJoinEntity<Card>, IJoinEntity<Banlist>
+    public class ForbiddenCardBanlistJoin : IJoinEntity<Card>, IJoinEntity<Banlist>
     {
         public int CardId { get; set; }
         public Card Card { get; set; }
