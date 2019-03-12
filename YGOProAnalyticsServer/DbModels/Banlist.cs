@@ -17,17 +17,17 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Include string required to include forbidden cards.
         /// </summary>
-        public static string IncludeWithForbiddenCards = $"{nameof(ForbiddenCardsJoin)}.{nameof(ForbiddenCardBanlistJoin.Card)}";
+        public static readonly string IncludeWithForbiddenCards = $"{nameof(ForbiddenCardsJoin)}.{nameof(ForbiddenCardBanlistJoin.Card)}";
 
         /// <summary>
         /// Include string required to include limited cards.
         /// </summary>
-        public static string IncludeWithLimitedCards = $"{nameof(LimitedCardsJoin)}.{nameof(LimitedCardBanlistJoin.Card)}";
+        public static readonly string IncludeWithLimitedCards = $"{nameof(LimitedCardsJoin)}.{nameof(LimitedCardBanlistJoin.Card)}";
 
         /// <summary>
         /// Include string required to include forbidden cards.
         /// </summary>
-        public static string IncludeWithSemiLimitedCards = $"{nameof(SemiLimitedCards)}.{nameof(SemiLimitedCardBanlistJoin.Card)}";
+        public static readonly string IncludeWithSemiLimitedCards = $"{nameof(SemiLimitedCardsJoin)}.{nameof(SemiLimitedCardBanlistJoin.Card)}";
 
         /// <summary>
         /// Initialize banlist.
