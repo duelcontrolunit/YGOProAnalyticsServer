@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServer.Exceptions
 {
-    public class NotProperlyInitialized : Exception
+    public class NotProperlyInitializedException : Exception
     {
-        public NotProperlyInitialized() : base()
+        public NotProperlyInitializedException() : base()
         {
         }
 
-        public NotProperlyInitialized(string message)
+        public NotProperlyInitializedException(string message)
             : base(message)
         {
         }
 
-        public NotProperlyInitialized(string message, Exception inner)
+        public NotProperlyInitializedException(string message, Exception inner)
             : base(message, inner)
         {
         }

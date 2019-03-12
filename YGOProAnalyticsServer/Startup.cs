@@ -12,6 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YGOProAnalyticsServer.Database;
+using YGOProAnalyticsServer.Services.Builders;
+using YGOProAnalyticsServer.Services.Builders.Interfaces;
+using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
+using YGOProAnalyticsServer.Services.Downloaders;
 
 namespace YGOProAnalyticsServer
 {
@@ -30,6 +34,10 @@ namespace YGOProAnalyticsServer
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
            
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
+
+            services.AddScoped<IMonsterCardBuilder, MonsterCardBuilder>();
+            services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
+            services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

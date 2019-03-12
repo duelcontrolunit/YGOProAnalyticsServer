@@ -28,6 +28,25 @@ namespace YGOProAnalyticsServer.DbModels
         /// </summary>
         public static readonly string IncludeWithSemiLimitedCardsBanlist = $"{nameof(SemiLimitedCardsJoin)}.{nameof(SemiLimitedCardBanlistJoin.Banlist)}";
 
+        /// <summary>
+        /// Adds Basic Card Elements.
+        /// </summary>
+        /// <param name="passCode">YuGiOh Card Passcode.</param>
+        /// <param name="name">Card name.</param>
+        /// <param name="description">Card description/effect/flavor text.</param>
+        /// <param name="type">
+        ///     For example: normal monster, trap card, magic card.
+        ///     https://db.ygoprodeck.com/api-guide/
+        /// </param>
+        /// <param name="race">
+        ///     For example:
+        ///     <para>1) For monster: aqua, machine warrior</para>
+        ///     <para>2) For spell: normal, field, quick-spell</para>
+        ///     <para>3) For trap: normal, continuous, counter</para>
+        ///     https://db.ygoprodeck.com/api-guide/
+        /// </param>
+        /// <param name="imageUrl">Link to the image of the card.</param>
+        /// <param name="smallImageUrl">Link to the small image of the card.</param>
         public Card(
             int passCode, 
             string name, 
@@ -55,7 +74,7 @@ namespace YGOProAnalyticsServer.DbModels
         public int Id { get; protected set; }
 
         /// <summary>
-        /// Id from api. Is not stable. 
+        /// Id of the card provided from API.
         /// </summary>
         public int PassCode { get; protected set; }
 
