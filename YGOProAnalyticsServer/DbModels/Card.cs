@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,10 +58,10 @@ namespace YGOProAnalyticsServer.DbModels
             string smallImageUrl)
         {
             PassCode = passCode;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Description = description ?? throw new ArgumentNullException(nameof(description));
-            Type = type ?? throw new ArgumentNullException(nameof(type));
-            Race = race ?? throw new ArgumentNullException(nameof(race));
+            Name = name;
+            Description = description;
+            Type = type;
+            Race = race;
             ImageUrl = imageUrl;
             SmallImageUrl = smallImageUrl;
             BanlistsWhereThisCardIsForbidden = new JoinCollectionFacade<Banlist, Card, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
@@ -81,11 +82,13 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Card name.
         /// </summary>
+        [Required]
         public string Name { get; protected set; }
 
         /// <summary>
         /// Card description/effect/flavor text.
         /// </summary>
+        [Required]
         public string Description { get; protected set; }
 
         /// <summary>
@@ -102,6 +105,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// For example: normal monster, trap card, magic card.
         /// https://db.ygoprodeck.com/api-guide/
         /// </summary>
+        [Required]
         public string Type { get; protected set; }
 
         /// <summary>
@@ -111,6 +115,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <para>3) For trap: normal, continuous, counter</para>
         /// https://db.ygoprodeck.com/api-guide/
         /// </summary>
+        [Required]
         public string Race { get; protected set; }
 
         /// <summary>
@@ -137,13 +142,22 @@ namespace YGOProAnalyticsServer.DbModels
         /// Join property for <see cref="SemiLimitedCards"/>
         /// </summary>
         public ICollection<SemiLimitedCardBanlistJoin> SemiLimitedCardsJoin { get; protected set; } = new List<SemiLimitedCardBanlistJoin>();
-
+        
+        /// <summary>
+        /// Banlists where this card is forbidden
+        /// </summary>
         [NotMapped]
         public ICollection<Banlist> BanlistsWhereThisCardIsForbidden { get; protected set; }
 
+        /// <summary>
+        /// Banlists where this card is limited
+        /// </summary>
         [NotMapped]
         public ICollection<Banlist> BanlistsWhereThisCardIsLimited { get; protected set; }
 
+        /// <summary>
+        /// Banlists where this cards is semi limited
+        /// </summary>
         [NotMapped]
         public ICollection<Banlist> BanlistsWhereThisCardIsSemiLimited { get; protected set; }
     }

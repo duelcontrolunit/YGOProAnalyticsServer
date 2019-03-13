@@ -32,6 +32,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Attack of the monster
         /// </summary>
+        [Required]
         public string Attack { get; protected set; }
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Monster attribute
         /// </summary>
+        [Required]
         public string Attribute { get; protected set; }
 
         /// <summary>

@@ -48,6 +48,7 @@ namespace YGOProAnalyticsServer.Services.Builders
             string attack,
             string defence,
             int levelOrRank,
+            string attribute,
             Archetype archetype)
         {
             _initMonsterCardIfRequired();
@@ -63,6 +64,7 @@ namespace YGOProAnalyticsServer.Services.Builders
                     attack,
                     defence,
                     levelOrRank,
+                    attribute,
                     archetype
                 );
             _isMonsterProperlyInitialized = true;
