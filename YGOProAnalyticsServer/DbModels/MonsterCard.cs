@@ -46,6 +46,11 @@ namespace YGOProAnalyticsServer.DbModels
         public int LevelOrRank { get; protected set; }
 
         /// <summary>
+        /// Monster attribute
+        /// </summary>
+        public string Attribute { get; protected set; }
+
+        /// <summary>
         /// Scale value. Only pendulum monsters should have it.
         /// </summary>
         public int Scale { get; protected set; }
@@ -144,7 +149,8 @@ namespace YGOProAnalyticsServer.DbModels
             string smallImageUrl, 
             string attack, 
             string defence, 
-            int levelOrRank, 
+            int levelOrRank,
+            string attribute,
             Archetype archetype)
         {
             PassCode = passCode;
@@ -157,6 +163,7 @@ namespace YGOProAnalyticsServer.DbModels
             Attack = attack;
             Defence = defence;
             LevelOrRank = levelOrRank;
+            Attribute = attribute;
             Archetype = archetype;
         }
 

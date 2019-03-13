@@ -29,7 +29,7 @@ namespace YGOProAnalyticsServer.DbModels
         public static readonly string IncludeWithSemiLimitedCardsBanlist = $"{nameof(SemiLimitedCardsJoin)}.{nameof(SemiLimitedCardBanlistJoin.Banlist)}";
 
         /// <summary>
-        /// Adds Basic Card Elements.
+        /// Adds Basic Card Elements. Remember to add archetype after creation.
         /// </summary>
         /// <param name="passCode">YuGiOh Card Passcode.</param>
         /// <param name="name">Card name.</param>

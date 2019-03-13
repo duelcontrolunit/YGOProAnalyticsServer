@@ -18,6 +18,7 @@ namespace YGOProAnalyticsServer.DbModels.MonsterCardInterfaces
             string attack,
             string defence,
             int levelOrRank,
+            string attribute,
             Archetype archetype);
     }
 }
