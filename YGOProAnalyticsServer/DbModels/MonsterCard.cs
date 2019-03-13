@@ -117,6 +117,18 @@ namespace YGOProAnalyticsServer.DbModels
             );
         }
 
+        /// <summary>
+        /// Set up properties for link monster cards.
+        /// </summary>
+        /// <param name="linkValue">Link value.</param>
+        /// <param name="topLeftLinkMarker">Top-Left link marker.</param>
+        /// <param name="topLinkMarker">Top link marker.</param>
+        /// <param name="topRightLinkMarker">Top-Right link marker.</param>
+        /// <param name="middleLeftLinkMarker">Middle-Left link marker.</param>
+        /// <param name="middleRightLinkMarker">Middle-Right link marker.</param>
+        /// <param name="bottomLeftLinkMarker">Bottom-Left link marker.</param>
+        /// <param name="bottomLinkMarker">Bottom link marker.</param>
+        /// <param name="bottomRightLinkMarker">Bottom-Right link marker.</param>
         void ILinkMonster.SetOrUpdateLinkElements(
             int linkValue, 
             bool topLeftLinkMarker, 
@@ -139,6 +151,21 @@ namespace YGOProAnalyticsServer.DbModels
             BottomRightLinkMarker = bottomRightLinkMarker;
         }
 
+        /// <summary>
+        /// Set up all basic properties for monster cards.
+        /// </summary>
+        /// <param name="passCode">Card identifier provided by api.</param>
+        /// <param name="name">Name of the card.</param>
+        /// <param name="description">Card description.</param>
+        /// <param name="type">For example: normal monster, spell card.</param>
+        /// <param name="race">For example: Spellcaster, Warrior.</param>
+        /// <param name="imageUrl">Image URL.</param>
+        /// <param name="smallImageUrl">Small image URL.</param>
+        /// <param name="attack">Attack of the monster.</param>
+        /// <param name="defence">Defence of the monster.</param>
+        /// <param name="levelOrRank">Level or Ran of the monster (rank only for type which contain "XYZ").</param>
+        /// <param name="attribute">Dark, Wind, Light, Water, Fire or Earth.</param>
+        /// <param name="archetype">Archetype of the monster.</param>
         void IBasicMonsterCard.SetOrUpdateMonsterCardBasicProperties(
             int passCode, 
             string name, 
@@ -167,6 +194,10 @@ namespace YGOProAnalyticsServer.DbModels
             Archetype = archetype;
         }
 
+        /// <summary>
+        /// Set up properties for pendulum cards.
+        /// </summary>
+        /// <param name="scale">Scale value.</param>
         void IPendulumMonster.SetOrUpdateScale(int scale)
         {
             Scale = scale;
