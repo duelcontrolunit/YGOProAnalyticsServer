@@ -29,6 +29,31 @@ namespace YGOProAnalyticsServer.DbModels
         /// </summary>
         public static readonly string IncludeWithSemiLimitedCardsBanlist = $"{nameof(SemiLimitedCardsJoin)}.{nameof(SemiLimitedCardBanlistJoin.Banlist)}";
 
+        public static Card Create(
+            int passCode,
+            string name,
+            string description,
+            string type,
+            string race,
+            string imageUrl,
+            string smallImageUrl,
+            Archetype archetype)
+        {
+            return new Card(
+                passCode,
+                name,
+                description,
+                type,
+                race,
+                imageUrl,
+                smallImageUrl
+                )
+            {
+                Archetype = archetype
+            };
+        }
+   
+
         /// <summary>
         /// Adds Basic Card Elements. Remember to add archetype after creation.
         /// </summary>
@@ -48,13 +73,13 @@ namespace YGOProAnalyticsServer.DbModels
         /// </param>
         /// <param name="imageUrl">Link to the image of the card.</param>
         /// <param name="smallImageUrl">Link to the small image of the card.</param>
-        public Card(
-            int passCode, 
-            string name, 
-            string description, 
-            string type, 
-            string race, 
-            string imageUrl, 
+        protected Card(
+            int passCode,
+            string name,
+            string description,
+            string type,
+            string race,
+            string imageUrl,
             string smallImageUrl)
         {
             PassCode = passCode;
@@ -127,6 +152,10 @@ namespace YGOProAnalyticsServer.DbModels
         /// Link to the small image of the card.
         /// </summary>
         public string SmallImageUrl { get; set; }
+
+        public int? MonsterCardId { get;set; }
+
+        public MonsterCard MonsterCard { get; set; }
 
         /// <summary>
         /// Join property for <see cref="ForbiddenCards"/>
