@@ -46,6 +46,8 @@ namespace YGOProAnalyticsServer.Services.Updaters
         /// Updates the cards and archetypes.
         /// </summary>
         /// <param name="URL">The URL.</param>
+        /// <exception cref="DbUpdateException"></exception>
+        /// <exception cref="DbUpdateConcurrencyException"></exception>
         public async Task UpdateCardsAndArchetypes(string URL)
         {
             string cardsData = await _cardsDataDownloader.DownloadCardsFromWebsite(URL);
