@@ -18,6 +18,7 @@ namespace YGOProAnalyticsServer.Database
         public DbSet<MonsterCard> MonsterCards { get; set; }
         public DbSet<PendulumMonsterCard> PendulumMonsterCards { get; set; }
         public DbSet<LinkMonsterCard> LinkMonsterCards { get; set; }
+
         public const string connectionString =
                @"Server=(localdb)\mssqllocaldb;
                  Database= YgoProAnalytics;
@@ -56,9 +57,10 @@ namespace YGOProAnalyticsServer.Database
                .HasForeignKey<MonsterCard>(c => c.CardId);
 
             modelBuilder.Entity<MonsterCard>()
-            .HasOne(a => a.Card)
-            .WithOne(b => b.MonsterCard)
-            .HasForeignKey<Card>(c => c.MonsterCardId);
+                .HasOne(a => a.Card)
+                .WithOne(b => b.MonsterCard)
+                .HasForeignKey<Card>(c => c.MonsterCardId);
+
             base.OnModelCreating(modelBuilder);
         }
     }
