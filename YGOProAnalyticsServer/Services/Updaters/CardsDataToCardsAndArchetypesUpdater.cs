@@ -9,6 +9,7 @@ using YGOProAnalyticsServer.Services.Builders.Inferfaces;
 using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace YGOProAnalyticsServer.Services.Updaters
 {
@@ -22,6 +23,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private readonly ICardBuilder _CardBuilder;
         private readonly YgoProAnalyticsDatabase _db;
         private readonly List<Archetype> _archetypes;
+        private readonly List<Card> _cards;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CardsDataToCardsAndArchetypesUpdater"/> class.
@@ -38,6 +40,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             _CardBuilder = cardBuilder;
             _db = db;
             _archetypes = _db.Archetypes.ToList();
+            _cards = _db.Cards.ToList();
         }
 
         /// <summary>
@@ -47,9 +50,11 @@ namespace YGOProAnalyticsServer.Services.Updaters
         public async Task UpdateCardsAndArchetypes(string URL)
         {
             string cardsData = await _cardsDataDownloader.DownloadCardsFromWebsite(URL);
-            JToken cardsDictionary = (JsonConvert.DeserializeObject<JArray>(cardsData)).First;
-            foreach (JObject item in cardsDictionary.Children<JObject>())
+            JToken cardsDataList = (JsonConvert.DeserializeObject<JArray>(cardsData)).First;
+            foreach (JObject item in cardsDataList.Children<JObject>())
             {
+                if (_cardAlreadyExist(item)) continue;
+
                 string type = item.Value<string>("type").ToUpper();
                 Archetype archetype;
                 if (item.GetValue("archetype").ToString() == string.Empty)
@@ -88,6 +93,11 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 //TODO: Add logger here
             }
             
+        }
+
+        private bool _cardAlreadyExist(JObject item)
+        {
+            return _cards.Find(x => x.PassCode == item.Value<int>("id")) != null;
         }
 
         private void _addMonsterProperties(string type, Archetype archetype, JObject item)
