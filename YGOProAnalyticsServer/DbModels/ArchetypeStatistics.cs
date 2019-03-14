@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace YGOProAnalyticsServer.DbModels
 {
@@ -32,11 +30,13 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Analyzed archetype.
         /// </summary>
+        [Required]
         public Archetype Archetype { get; set; }
 
          /// <summary>
         /// Date when archetype was used.
         /// </summary>
+        [Required]
         public DateTime DateWhenArchetypeWasUsed { get; protected set; }
 
         /// <summary>

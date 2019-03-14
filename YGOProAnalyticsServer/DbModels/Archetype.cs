@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using YGOProAnalyticsServer.DbModels.Validators;
 
 namespace YGOProAnalyticsServer.DbModels
 {
@@ -52,7 +51,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Archetype name.
         /// </summary>
-        [Required, ArchetypeNameFormat]
+        [Required]
         public string Name { get; protected set; }
 
         /// <summary>

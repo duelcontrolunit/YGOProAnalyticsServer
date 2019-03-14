@@ -1,21 +1,21 @@
 ﻿using YGOProAnalyticsServer.DbModels;
-using YGOProAnalyticsServer.DbModels.MonsterCardInterfaces;
 using YGOProAnalyticsServer.Exceptions;
 using YGOProAnalyticsServer.Services.Builders.Inferfaces;
 
 namespace YGOProAnalyticsServer.Services.Builders
 {
     /// <summary>
-    /// Builder made for creating <see cref="MonsterCard"/>
+    /// It provide methods to properly build different types of cards.
     /// </summary>
+    /// <seealso cref="YGOProAnalyticsServer.Services.Builders.Inferfaces.ICardBuilder" />
     public class CardBuilder : ICardBuilder
     {
         Card _card;
         MonsterCard _monsterCard;
         LinkMonsterCard _linkMonsterCard;
-        PendulumMonsterCard _pendulumMonsterCard;
-        bool _wasBuilt = false;
+        PendulumMonsterCard _pendulumMonsterCard; 
 
+        /// <<inheritdoc />
         public CardBuilder AddBasicCardElements(
                 int passCode,
                 string name,
@@ -39,6 +39,8 @@ namespace YGOProAnalyticsServer.Services.Builders
                 );
             return this;
         }
+
+        /// <<inheritdoc />
         public CardBuilder AddMonsterCardElements(
             string attack,
             string defence,
@@ -55,6 +57,8 @@ namespace YGOProAnalyticsServer.Services.Builders
                 );
             return this;
         }
+
+        /// <<inheritdoc />
         public CardBuilder AddLinkMonsterCardElements(
             int linkValue,
             bool topLeftLinkMarker,
@@ -81,12 +85,15 @@ namespace YGOProAnalyticsServer.Services.Builders
                 );
             return this;
         }
+
+        /// <<inheritdoc />
         public CardBuilder AddPendulumMonsterCardElements(int scale)
         {
             _pendulumMonsterCard = PendulumMonsterCard.Create(scale, _monsterCard);
             return this;
         }
 
+        /// <<inheritdoc />
         public Card Build()
         {
             if (_card == null)
@@ -115,7 +122,7 @@ namespace YGOProAnalyticsServer.Services.Builders
             _monsterCard = null;
             _linkMonsterCard = null;
             _pendulumMonsterCard = null;
-            _wasBuilt = true;
+
             return _card;
         }
 

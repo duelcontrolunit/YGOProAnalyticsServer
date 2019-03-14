@@ -8,9 +8,14 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Builders.Inferfaces;
 using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace YGOProAnalyticsServer.Services.Updaters
 {
+    /// <summary>
+    /// Use it to update cards and archetypes.
+    /// </summary>
+    /// <seealso cref="YGOProAnalyticsServer.Services.Updaters.Interfaces.ICardsDataToCardsAndArchetypesUpdater" />
     public class CardsDataToCardsAndArchetypesUpdater : ICardsDataToCardsAndArchetypesUpdater
     {
         private readonly ICardsDataDownloader _cardsDataDownloader;
@@ -18,6 +23,12 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private readonly YgoProAnalyticsDatabase _db;
         private readonly List<Archetype> _archetypes;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardsDataToCardsAndArchetypesUpdater"/> class.
+        /// </summary>
+        /// <param name="cardsDataDownloader">The cards data downloader.</param>
+        /// <param name="cardBuilder">The card builder.</param>
+        /// <param name="db">The database.</param>
         public CardsDataToCardsAndArchetypesUpdater(
             ICardsDataDownloader cardsDataDownloader, 
             ICardBuilder cardBuilder,
@@ -29,7 +40,11 @@ namespace YGOProAnalyticsServer.Services.Updaters
             _archetypes = _db.Archetypes.ToList();
         }
 
-        public async Task ConvertCards(string URL)
+        /// <summary>
+        /// Updates the cards and archetypes.
+        /// </summary>
+        /// <param name="URL">The URL.</param>
+        public async Task UpdateCardsAndArchetypes(string URL)
         {
             string cardsData = await _cardsDataDownloader.DownloadCardsFromWebsite(URL);
             JToken cardsDictionary = (JsonConvert.DeserializeObject<JArray>(cardsData)).First;
@@ -37,7 +52,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             {
                 string type = item.Value<string>("type").ToUpper();
                 Archetype archetype;
-                if (item.GetValue("archetype").ToString()==string.Empty)
+                if (item.GetValue("archetype").ToString() == string.Empty)
                 {
                     archetype = _getArchetype("Neutral");
                 }
@@ -50,6 +65,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 {
                     _addMonsterProperties(type, archetype, item);
                 }
+
                 _CardBuilder.AddBasicCardElements(
                     item.Value<int>("id"),
                     item.Value<string>("name"),
@@ -63,7 +79,15 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 _db.Cards.Add(_CardBuilder.Build());
             }
 
-            await _db.SaveChangesAsync();
+            try
+            {
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                //TODO: Add logger here
+            }
+            
         }
 
         private void _addMonsterProperties(string type, Archetype archetype, JObject item)
@@ -73,6 +97,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             {
                 _CardBuilder.AddPendulumMonsterCardElements(item.Value<int>("scale"));
             }
+
             if (type.Contains("LINK"))
             {
                 _addLinkElementsToTheCard(item);
@@ -94,6 +119,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             {
                 level = 0.ToString();
             }
+
             _CardBuilder.AddMonsterCardElements(
                     item.GetValue("atk").ToString(),
                     item.GetValue("def").ToString(),
@@ -107,12 +133,13 @@ namespace YGOProAnalyticsServer.Services.Updaters
             int linkvalCount = 0;
             if (linkval == "")
             {
-                linkvalCount=item.GetValue("linkmarkers").ToString().Split(',').Count() + 1;
+                linkvalCount = item.GetValue("linkmarkers").ToString().Split(',').Count() + 1;
             }
             else
             {
-                linkvalCount=int.Parse(linkval);
+                linkvalCount = int.Parse(linkval);
             }
+
             _CardBuilder.AddLinkMonsterCardElements(
                     linkvalCount,
                     _isLinkMarker("Top-Left", item),

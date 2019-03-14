@@ -26,7 +26,7 @@ namespace YGOProAnalyticsServerTests.Database
             using (YgoProAnalyticsDatabase db = new YgoProAnalyticsDatabase(optionsBuilder.Options))
             {
                 var x = new CardsDataToCardsAndArchetypesUpdater(new CardsDataDownloader(), new CardBuilder(),db);
-                await x.ConvertCards("https://db.ygoprodeck.com/api/v3/cardinfo.php");
+                await x.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v3/cardinfo.php");
                 Assert.IsTrue((db.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists());
             }
         }
