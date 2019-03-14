@@ -9,7 +9,6 @@ using YGOProAnalyticsServer.Services.Builders.Inferfaces;
 using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace YGOProAnalyticsServer.Services.Updaters
 {
@@ -53,7 +52,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             JToken cardsDataList = (JsonConvert.DeserializeObject<JArray>(cardsData)).First;
             foreach (JObject item in cardsDataList.Children<JObject>())
             {
-                if (_cardAlreadyExist(item)) continue;
+                if (_cardAlreadyExistInOurDatabase(item)) continue;
 
                 string type = item.Value<string>("type").ToUpper();
                 Archetype archetype;
@@ -65,37 +64,34 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 {
                     archetype = _getArchetype(item.Value<string>("archetype"));
                 }
-                
+
                 if (type.Contains("MONSTER"))
                 {
                     _addMonsterProperties(type, archetype, item);
                 }
 
-                _CardBuilder.AddBasicCardElements(
-                    item.Value<int>("id"),
-                    item.Value<string>("name"),
-                    item.Value<string>("desc"),
-                    item.Value<string>("type"),
-                    item.Value<string>("race"),
-                    item.Value<string>("image_url"),
-                    item.Value<string>("image_url_small"),
-                    archetype
-                );
+                _addBasicCardProperties(item, archetype);
                 _db.Cards.Add(_CardBuilder.Build());
             }
 
-            try
-            {
-                await _db.SaveChangesAsync();
-            }
-            catch (DbUpdateException e)
-            {
-                //TODO: Add logger here
-            }
-            
+            await _db.SaveChangesAsync();          
         }
 
-        private bool _cardAlreadyExist(JObject item)
+        private void _addBasicCardProperties(JObject item, Archetype archetype)
+        {
+            _CardBuilder.AddBasicCardElements(
+                                item.Value<int>("id"),
+                                item.Value<string>("name"),
+                                item.Value<string>("desc"),
+                                item.Value<string>("type"),
+                                item.Value<string>("race"),
+                                item.Value<string>("image_url"),
+                                item.Value<string>("image_url_small"),
+                                archetype
+                            );
+        }
+
+        private bool _cardAlreadyExistInOurDatabase(JObject item)
         {
             return _cards.Find(x => x.PassCode == item.Value<int>("id")) != null;
         }
