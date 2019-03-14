@@ -29,7 +29,8 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Initialize banlist.
         /// </summary>
-        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG" </param>
+        /// <param name="id">Banlist identifier.</param>
+        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG". </param>
         protected Banlist(int id, string name)
         {
             Id = id;
@@ -42,7 +43,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Initialize banlist.
         /// </summary>
-        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG" </param>
+        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG". </param>
         public Banlist(string name)
         {
             Name = name;
@@ -57,7 +58,7 @@ namespace YGOProAnalyticsServer.DbModels
         public int Id { get; protected set; }
 
         /// <summary>
-        /// Valid name should look like: "YYYY.MM Format" for example "2010 TCG" 
+        /// Valid name should look like: "YYYY.MM Format" for example "2010 TCG".
         /// </summary>
         public string Name { get; protected set; }
 
@@ -77,25 +78,25 @@ namespace YGOProAnalyticsServer.DbModels
         public ICollection<SemiLimitedCardBanlistJoin> SemiLimitedCardsJoin { get; set; } = new List<SemiLimitedCardBanlistJoin>();
 
         /// <summary>
-        /// List of forbidden cards
+        /// List of forbidden cards.
         /// </summary>
         [NotMapped]
         public ICollection<Card> ForbiddenCards { get; protected set; }
 
         /// <summary>
-        /// List of limited cards
+        /// List of limited cards.
         /// </summary>
         [NotMapped]
         public ICollection<Card> LimitedCards { get; protected set; }
 
         /// <summary>
-        /// List of semi-limited cards
+        /// List of semi-limited cards.
         /// </summary>
         [NotMapped]
         public ICollection<Card> SemiLimitedCards { get; protected set; }
 
         /// <summary>
-        /// For example TCG, OCG
+        /// For example TCG, OCG.
         /// </summary>
         [NotMapped]
         public string Format
@@ -107,7 +108,7 @@ namespace YGOProAnalyticsServer.DbModels
         }
 
         /// <summary>
-        /// Release date of the banlist
+        /// Release date of the banlist.
         /// </summary>
         [NotMapped]
         public DateTime ReleaseDate
