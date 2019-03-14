@@ -62,7 +62,7 @@ namespace YGOProAnalyticsServer.Services.Builders.Inferfaces
         CardBuilder AddPendulumMonsterCardElements(int scale);
 
         /// <summary>
-        /// Build card.
+        /// Build card. After build is immediately ready to build next card.
         /// </summary>
         /// <returns>Preconfigured card.</returns>
         /// <exception cref="NotProperlyInitializedException">Is thrown when build failed. Should contain information why build failed in message.</exception>
