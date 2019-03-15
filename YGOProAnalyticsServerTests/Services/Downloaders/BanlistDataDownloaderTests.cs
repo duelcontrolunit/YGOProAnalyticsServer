@@ -22,5 +22,13 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
 
             Assert.NotZero(result.Count());
         }
+
+        [Test]
+        public void DownloadCardsFromWebsite_WrongUrlIsGiven_WeGetWebException()
+        {
+            _downloader = new BanlistDataDownloader();
+
+            Assert.ThrowsAsync<System.Net.WebException>(async () => await _downloader.DownloadBanlistFromWebsite("Wronghttps://db.ygoprodeck.com/api/v3/cardinfo.php"));
+        }
     }
 }

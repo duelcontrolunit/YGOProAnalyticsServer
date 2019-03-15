@@ -15,12 +15,20 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         ICardsDataDownloader _downloader;
 
         [Test]
-        public async Task DownloadBanlistFromWebsite_SourceShouldBeAvailable_WeGetDataAsStringLongerThen0()
+        public async Task DownloadCardsFromWebsite_SourceShouldBeAvailable_WeGetDataAsStringLongerThen0()
         {
             _downloader = new CardsDataDownloader();
             string result = await _downloader.DownloadCardsFromWebsite("https://db.ygoprodeck.com/api/v3/cardinfo.php");
 
             Assert.NotZero(result.Count());
+        }
+
+        [Test]
+        public void DownloadCardsFromWebsite_WrongUrlIsGiven_WeGetWebException()
+        {
+            _downloader = new CardsDataDownloader();
+
+            Assert.ThrowsAsync<System.Net.WebException>(async() => await _downloader.DownloadCardsFromWebsite("Wronghttps://db.ygoprodeck.com/api/v3/cardinfo.php"));
         }
     }
 }
