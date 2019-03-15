@@ -24,7 +24,7 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         }
 
         [Test]
-        public void DownloadCardsFromWebsite_WrongUrlIsGiven_WeGetWebException()
+        public void DownloadBanlistFromWebsite_WrongUrlIsGiven_WeGetWebException()
         {
             _downloader = new BanlistDataDownloader();
 
