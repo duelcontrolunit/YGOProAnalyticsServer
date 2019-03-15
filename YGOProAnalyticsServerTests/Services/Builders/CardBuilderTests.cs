@@ -1,19 +1,17 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Exceptions;
 using YGOProAnalyticsServer.Services.Builders;
 using YGOProAnalyticsServer.Services.Builders.Inferfaces;
 
-namespace YGOProAnalyticsServerTests.Services
+namespace YGOProAnalyticsServerTests.Services.Builders
 {
     [TestFixture]
     class CardBuilderTests
     {
         ICardBuilder _cardBuilder;
         Archetype _archetype = new Archetype("Test", true);
+
         [SetUp]
         public void Setup()
         {
