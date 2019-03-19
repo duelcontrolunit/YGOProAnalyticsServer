@@ -48,7 +48,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG". </param>
         public Banlist(string name)
         {
-            ValidateName(name);
+            _validateName(name);
             Name = name;
             ReleaseDate = GetReleaseDateFromName();
             ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
@@ -131,7 +131,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// </summary>
         /// <param name="name">The name of the banlist</param>
         /// <exception cref="System.FormatException"></exception>
-        public void ValidateName(string name)
+        private void _validateName(string name)
         {
             if(!Regex.IsMatch(name, @"^\d{4}\.\d{2} \w{1,}"))
             {
