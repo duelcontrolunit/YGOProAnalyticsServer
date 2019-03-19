@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Exceptions;
+using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Analyzers
 {
     /// <summary>
     /// Is responsible for getting data from duel log name.
     /// </summary>
-    public class DuelLogNameAnalyzer
+    public class DuelLogNameAnalyzer : IDuelLogNameAnalyzer
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IAdminConfig _config;

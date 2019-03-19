@@ -9,6 +9,8 @@ using YGOProAnalyticsServer.Services.Builders;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 using YGOProAnalyticsServer.Services.Downloaders;
 using YGOProAnalyticsServer.Services.Builders.Inferfaces;
+using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
+using YGOProAnalyticsServer.Services.Analyzers;
 
 namespace YGOProAnalyticsServer
 {
@@ -31,6 +33,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<ICardBuilder, CardBuilder>();
             services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
             services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
+            services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
             services.AddSingleton<IAdminConfig, AdminConfig>();
         }
 
