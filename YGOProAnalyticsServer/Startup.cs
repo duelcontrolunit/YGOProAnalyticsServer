@@ -31,6 +31,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<ICardBuilder, CardBuilder>();
             services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
             services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
+            services.AddSingleton<IAdminConfig, AdminConfig>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
