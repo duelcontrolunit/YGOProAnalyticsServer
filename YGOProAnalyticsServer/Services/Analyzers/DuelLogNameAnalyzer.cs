@@ -20,28 +20,25 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         readonly YgoProAnalyticsDatabase _db;
         readonly IAdminConfig _config;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DuelLogNameAnalyzer"/> class.
+        /// </summary>
+        /// <param name="db">The database.</param>
+        /// <param name="config">The configuration.</param>
         public DuelLogNameAnalyzer(YgoProAnalyticsDatabase db, IAdminConfig config)
         {
             _db = db;
             _config = config;
         }
 
-        /// <summary>
-        /// It return information if duel was versus AI or not.
-        /// </summary>
-        /// <param name="roomName">Name of the room from duel log.</param>
-        /// <returns>Information if it was duel versus AI or not.</returns>
+        /// </inheritdoc>
         public bool IsDuelVersusAI(string roomName)
         {
             return Regex.IsMatch(roomName, @"^AI#\S{0,},\d{1,}")
                    || Regex.IsMatch(roomName, @"^AI\S{0,}#\d{1,}");
         }
 
-        /// <summary>
-        /// It return information if during the duel was any banlist.
-        /// </summary>
-        /// <param name="roomName">Name of the room from duel log.</param>
-        /// <returns>Information if it is any banlist.</returns>
+        /// </inheritdoc>
         public bool IsAnyBanlist(string roomName)
         {
             return
@@ -52,23 +49,13 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 );
         }
 
-        /// <summary>
-        /// It returns information if during the duel was deck check enabled.
-        /// </summary>
-        /// <param name="roomName">Name of the room from duel log.</param>
-        /// <returns>Information if during the duel was deck check enabled</returns>
+        /// </inheritdoc>
         public bool IsNoDeckCheckEnabled(string roomName)
         {
             return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}NC[,#])?(?(1)|(^NC[#,]))");
         }
 
-        /// <summary>
-        /// Get banlist based on room name and end of the duel date.
-        /// </summary>
-        /// <param name="roomName">Room name</param>
-        /// <param name="endOfTheDuelDate">Date of the end of the duel.</param>
-        /// <returns>Banlist.</returns>
-        /// <exception cref="UnknownBanlistException"></exception>
+        /// </inheritdoc>
         public Banlist GetBanlist(string roomName, DateTime endOfTheDuelDate)
         {
             if (IsDefaultBanlist(roomName))
@@ -105,11 +92,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF[#,]))");
         }
 
-        /// <summary>
-        /// Check if default banlist was used during the duel.
-        /// </summary>
-        /// <param name="roomName">Name of the room from duel log.</param>
-        /// <returns>Information if default banlist was used during the duel.</returns>
+        /// </inheritdoc>
         public bool IsDefaultBanlist(string roomName)
         {
             if (IsAnyBanlist(roomName) && !_isBanlistOtherThanDefaultBanlist(roomName))
