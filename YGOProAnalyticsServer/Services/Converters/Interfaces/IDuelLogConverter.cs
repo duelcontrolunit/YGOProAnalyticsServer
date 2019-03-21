@@ -11,6 +11,8 @@ namespace YGOProAnalyticsServer.Services.Converters.Interfaces
     {
         /// <summary>
         /// Converts the specified duel log json to list of <see cref="DuelLog"/>s.
+        /// <para>Valid deck file name format is:</para>
+        /// <para>yyyy-MM-dd HH-mm-ss YgoRoomIdFromDuelLog 0or1(If player won 1) nickOfTheplayer.ydk</para>
         /// </summary>
         /// <param name="duelLogJson">The duel log json.</param>
         /// <returns>List of <see cref="DuelLog"/>s</returns>

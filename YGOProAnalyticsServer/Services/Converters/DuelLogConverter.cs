@@ -22,6 +22,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             var duelLogs = JsonConvert
                 .DeserializeObject<JObject>(duelLogJson)
                 .GetValue("duel_log");
+            duelLogs = duelLogs ?? throw new Exception("Is something wrong with provided JSON. Debug it if you want get more information.");
 
             var convertedDuelLogs = new List<DuelLog>();
             foreach (var log in duelLogs.Children<JObject>())
@@ -74,7 +75,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             foreach (var player in log.GetValue("players").Children())
             {
                 var playerNameField = player.Value<string>("name");
-                var playerName = playerNameField.Substring(0, playerNameField.IndexOf(' '));
+                var playerName = playerNameField.Substring(0, playerNameField.IndexOf('(') - 1);
                 if (player.Value<bool>("winner"))
                 {
                     duelLog.DecksWhichWonFileNames.Add($"{endOfTheDuelDateAndTime} {roomId} 1 {playerName}.ydk");
