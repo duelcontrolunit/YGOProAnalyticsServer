@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using YGOProAnalyticsServer.Exceptions;
 using YGOProAnalyticsServer.Services.Converters;
+using YGOProAnalyticsServer.Services.Converters.Interfaces;
 
 namespace YGOProAnalyticsServerTests.Services.Converters
 {
     [TestFixture]
     class DuelLogConverterTests
     {
-        DuelLogConverter _converter;
+        IDuelLogConverter _converter;
 
         [SetUp]
         public void SetUp()
@@ -48,6 +49,38 @@ namespace YGOProAnalyticsServerTests.Services.Converters
 
             Assert.AreEqual("2019-03-19 16-22-26 15374 0 abdulaziz.ydk", duelLogs[0].DecksWhichLostFileNames[0]);
             Assert.AreEqual("2019-03-19 16-22-00 16028 0 GutsuVenom.ydk", duelLogs[1].DecksWhichLostFileNames[0]);
+        }
+
+        [TestCase("2019-03-19 16-22-26", 2019, 3, 19, 16, 22, 26)]
+        [TestCase("2019-03-19 16-22-00", 2019, 3, 19, 16, 22, 00)]
+        public void ConvertDuelLogTimeToDateTime_WePassValidDuelLogTime_WeGetValidDateTime(
+            string duelLogDateTime,
+            int validYear,
+            int validMonth,
+            int validDay,
+            int validHour,
+            int validMinute,
+            int validSecond)
+        {
+            DateTime convertedDateTime = _converter.ConvertDuelLogTimeToDateTime(duelLogDateTime);
+
+            Assert.AreEqual(validYear, convertedDateTime.Year);
+            Assert.AreEqual(validMonth, convertedDateTime.Month);
+            Assert.AreEqual(validDay, convertedDateTime.Day);
+
+            Assert.AreEqual(validHour, convertedDateTime.Hour);
+            Assert.AreEqual(validMinute, convertedDateTime.Minute);
+            Assert.AreEqual(validSecond, convertedDateTime.Second);
+        }
+
+        [TestCase("")]
+        [TestCase("2019/03/19 16:22:26")]
+        [TestCase("2019-03-19")]
+        [TestCase("16:22:26")]
+        [TestCase("19/03/2019 16:22:00")]
+        public void ConvertDuelLogTimeToDateTime_WePassInvalidDuelLogTime_WeGetFormatException(string dateTimeInInvalidFormat)
+        {
+            Assert.Throws<FormatException>(() => _converter.ConvertDuelLogTimeToDateTime(dateTimeInInvalidFormat));
         }
 
         private string _getValidDuelLogJSON()

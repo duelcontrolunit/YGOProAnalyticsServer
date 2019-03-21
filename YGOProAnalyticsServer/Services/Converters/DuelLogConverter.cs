@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Models;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
@@ -47,6 +49,11 @@ namespace YGOProAnalyticsServer.Services.Converters
         /// </inheritdoc>
         public DateTime ConvertDuelLogTimeToDateTime(string duelLogTime)
         {
+            if(!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
+            {
+                throw new FormatException(_getDuelLogTimeFormatExceptionMessage(duelLogTime));
+            }
+
             string dateOfTheEndOfTheDuel = duelLogTime.Substring(0, duelLogTime.IndexOf(' '));
             var date = dateOfTheEndOfTheDuel.Split('-');
 
@@ -85,6 +92,21 @@ namespace YGOProAnalyticsServer.Services.Converters
                     duelLog.DecksWhichLostFileNames.Add($"{endOfTheDuelDateAndTime} {roomId} 0 {playerName}.ydk");
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the duel log time format exception message.
+        /// </summary>
+        /// <param name="duelLogTime">The duel log time.</param>
+        /// <returns>The exception message.</returns>
+        private string _getDuelLogTimeFormatExceptionMessage(string duelLogTime)
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("String provided as parameter is not valid duel log dateTime format.");
+            stringBuilder.AppendLine("Valid format is yyyy-MM-dd HH-mm-ss.");
+            stringBuilder.AppendLine($"Currently given value = {duelLogTime}.");
+
+            return stringBuilder.ToString();
         }
     }
 }

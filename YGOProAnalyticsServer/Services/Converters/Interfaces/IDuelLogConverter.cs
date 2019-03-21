@@ -23,6 +23,7 @@ namespace YGOProAnalyticsServer.Services.Converters.Interfaces
         /// </summary>
         /// <param name="duelLogTime">Duel log time.</param>
         /// <returns>Same time, but converted to <see cref="DateTime"/>.</returns>
+        /// <exception cref="FormatException">When duelLogTime contain invalid duellog format.</exception>
         DateTime ConvertDuelLogTimeToDateTime(string duelLogTime);
     }
 }
