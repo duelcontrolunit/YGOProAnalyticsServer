@@ -10,10 +10,21 @@ namespace YGOProAnalyticsServer.Models
     /// </summary>
     public class DuelLog
     {
-        /// <summary>
-        /// The identifier.
-        /// </summary>
-        public int Id { get; protected set; }
+        public DuelLog( 
+            DateTime dateOfTheEndOfTheDuel, 
+            int roomId, 
+            int roomMode, 
+            string name, 
+            string replayFilename)
+        {
+            DateOfTheEndOfTheDuel = dateOfTheEndOfTheDuel;
+            RoomId = roomId;
+            RoomMode = roomMode;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            ReplayFilename = replayFilename ?? throw new ArgumentNullException(nameof(replayFilename));
+            DecksWhichWonFileNames = new List<string>();
+            DecksWhichLostFileNames = new List<string>();
+        }
 
         /// <summary>
         /// The date of the end of the duel.
@@ -28,7 +39,7 @@ namespace YGOProAnalyticsServer.Models
         /// <summary>
         /// Room mode.
         /// </summary>
-        public int RoomMode { get; set; }
+        public int RoomMode { get; protected set; }
 
         /// <summary>
         /// The name.
