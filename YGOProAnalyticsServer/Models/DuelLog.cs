@@ -10,6 +10,19 @@ namespace YGOProAnalyticsServer.Models
     /// </summary>
     public class DuelLog
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DuelLog"/> class.
+        /// </summary>
+        /// <param name="dateOfTheEndOfTheDuel">The date of the end of the duel.</param>
+        /// <param name="roomId">The room identifier.</param>
+        /// <param name="roomMode">The room mode. For example: Single (0), Match(1), Tag duel(2)</param>
+        /// <param name="name">The name.</param>
+        /// <param name="replayFilename">The replay filename.</param>
+        /// <exception cref="ArgumentNullException">
+        /// name
+        /// or
+        /// replayFilename
+        /// </exception>
         public DuelLog( 
             DateTime dateOfTheEndOfTheDuel, 
             int roomId, 
