@@ -7,19 +7,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Models;
+using YGOProAnalyticsServer.Services.Converters.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Converters
 {
     /// <summary>
     /// It convert duel log JSON into collection of duel logs.
     /// </summary>
-    public class DuelLogConverter
+    public class DuelLogConverter : IDuelLogConverter
     {
-        /// <summary>
-        /// Converts the specified duel log json to list of <see cref="DuelLog"/>s.
-        /// </summary>
-        /// <param name="duelLogJson">The duel log json.</param>
-        /// <returns>List of <see cref="DuelLog"/>s</returns>
+        /// </inheritdoc>
         public List<DuelLog> Convert(string duelLogJson)
         {
             var duelLogs = JsonConvert
@@ -46,11 +43,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             return convertedDuelLogs;
         }
 
-        /// <summary>
-        /// Duel log date time format is yyyy-MM-dd hh-mm-ss.
-        /// </summary>
-        /// <param name="duelLogTime">Duel log time.</param>
-        /// <returns>Same time, but converted to <see cref="DateTime"/>.</returns>
+        /// </inheritdoc>
         public DateTime ConvertDuelLogTimeToDateTime(string duelLogTime)
         {
             string dateOfTheEndOfTheDuel = duelLogTime.Substring(0, duelLogTime.IndexOf(' '));

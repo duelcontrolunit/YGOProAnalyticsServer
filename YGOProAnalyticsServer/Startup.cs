@@ -11,6 +11,8 @@ using YGOProAnalyticsServer.Services.Downloaders;
 using YGOProAnalyticsServer.Services.Builders.Inferfaces;
 using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 using YGOProAnalyticsServer.Services.Analyzers;
+using YGOProAnalyticsServer.Services.Converters.Interfaces;
+using YGOProAnalyticsServer.Services.Converters;
 
 namespace YGOProAnalyticsServer
 {
@@ -34,6 +36,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
             services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
             services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
+            services.AddScoped<IDuelLogConverter, DuelLogConverter>();
             services.AddSingleton<IAdminConfig, AdminConfig>();
         }
 
