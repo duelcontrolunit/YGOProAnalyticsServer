@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServer
 {
+    /// <inheritdoc />
     public class AdminConfig : IAdminConfig
     {
+        ///<inheritdoc />
         public string DefaultBanlistName { get; } = "";
     }
 }
