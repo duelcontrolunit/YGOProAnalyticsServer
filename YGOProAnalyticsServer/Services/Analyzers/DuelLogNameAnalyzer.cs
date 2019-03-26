@@ -100,6 +100,12 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             return false;
         }
 
+        /// </inheritdoc>
+        public bool IsNoDeckShuffleEnabled(string roomName)
+        {
+            return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}NS[,#])?(?(1)|(^NS[#,]))");
+        }
+
         /// <summary>
         /// Check if is no banlist(no forbidden) enabled
         /// </summary>

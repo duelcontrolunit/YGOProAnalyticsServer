@@ -112,5 +112,24 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         {
             Assert.IsFalse(_analyzer.IsDefaultBanlist(duelLogName));
         }
+
+        [TestCase("LF2,NS#,1534 (Duel:1)")]
+        public void IsNoDeckShuffleEnabled_IsEnabled_ReturnsTrue(string duelLogName)
+        {
+            Assert.IsTrue(_analyzer.IsNoDeckShuffleEnabled(duelLogName));
+        }
+
+        [TestCase("LF2#2222 (Duel:1)")]
+        [TestCase("M,LF2,LP8000,TM999# (Duel:2)")]
+        [TestCase("NF,TM999#kirby (Duel:1)")]
+        [TestCase("NF#あ (Duel:1)")]
+        [TestCase("NF,M#CANELO (Duel:3)")]
+        [TestCase("NC# (Duel:1)")]
+        [TestCase("AI#62257")]
+        [TestCase("AI#Salaman,20088")]
+        public void IsNoDeckShuffleEnabled_IsDisabled_ReturnsFalse(string duelLogName)
+        {
+            Assert.IsFalse(_analyzer.IsNoDeckShuffleEnabled(duelLogName));
+        }
     }
 }

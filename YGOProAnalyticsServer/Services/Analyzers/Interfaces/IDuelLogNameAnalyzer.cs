@@ -45,5 +45,14 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
         /// <param name="roomName">Name of the room from duel log.</param>
         /// <returns>Information if during the duel was deck check enabled</returns>
         bool IsNoDeckCheckEnabled(string roomName);
+
+        /// <summary>
+        /// Information if is no deck shuffle enabled.
+        /// </summary>
+        /// <param name="roomName">Name of the room.</param>
+        /// <returns>
+        ///  Information if is no deck shuffle enabled.
+        /// </returns>
+        bool IsNoDeckShuffleEnabled(string roomName);
     }
 }
