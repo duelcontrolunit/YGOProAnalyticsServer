@@ -41,12 +41,9 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// </inheritdoc>
         public bool IsAnyBanlist(string roomName)
         {
-            return
-                !(
-                    Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}NF[,#])?(?(1)|(^NF[#,]))")
-                    || IsNoDeckCheckEnabled(roomName)
-                    || IsDuelVersusAI(roomName)
-                );
+            return !IsNoDeckCheckEnabled(roomName)
+                   && !IsDuelVersusAI(roomName)
+                   && !_isNoBanlist(roomName);
         }
 
         /// </inheritdoc>
@@ -89,7 +86,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <param name="roomName">Name of the room from duel log.</param>
         private bool _isBanlistOtherThanDefaultBanlist(string roomName)
         {
-            return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF[#,]))");
+            return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF\d[#,]))");
         }
 
         /// </inheritdoc>
@@ -101,6 +98,16 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Check if is no banlist(no forbidden) enabled
+        /// </summary>
+        /// <param name="roomName">Name of the room.</param>
+        /// <returns>Information if it is no forbidden (no banlist) enabled.</returns>
+        private bool _isNoBanlist(string roomName)
+        {
+            return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}NF[,#])?(?(1)|(^NF[#,]))");
         }
 
         /// <summary>
