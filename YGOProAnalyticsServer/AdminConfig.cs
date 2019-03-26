@@ -7,6 +7,6 @@ namespace YGOProAnalyticsServer
 {
     public class AdminConfig : IAdminConfig
     {
-        public string DefaultBanlsitName { get; } = "";
+        public string DefaultBanlistName { get; } = "";
     }
 }

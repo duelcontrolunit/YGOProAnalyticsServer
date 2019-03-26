@@ -16,7 +16,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
         /// <param name="endOfTheDuelDate">Date of the end of the duel.</param>
         /// <returns>Banlist.</returns>
         /// <exception cref="UnknownBanlistException"></exception>
-        Banlist GetBanlist(string roomName, DateTime endOfTheDuelDate);
+        Banlist GetBanlist(string roomName, string endOfTheDuelDate);
 
         /// <summary>
         /// It return information if during the duel was any banlist.

@@ -2,6 +2,6 @@
 {
     public interface IAdminConfig
     {
-        string DefaultBanlsitName { get; }
+        string DefaultBanlistName { get; }
     }
 }

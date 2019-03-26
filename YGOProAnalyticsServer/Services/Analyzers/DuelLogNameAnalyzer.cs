@@ -9,6 +9,7 @@ using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Exceptions;
 using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
+using YGOProAnalyticsServer.Services.Converters.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Analyzers
 {
@@ -19,16 +20,21 @@ namespace YGOProAnalyticsServer.Services.Analyzers
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IAdminConfig _config;
+        readonly IDuelLogConverter _converter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DuelLogNameAnalyzer"/> class.
         /// </summary>
         /// <param name="db">The database.</param>
         /// <param name="config">The configuration.</param>
-        public DuelLogNameAnalyzer(YgoProAnalyticsDatabase db, IAdminConfig config)
+        public DuelLogNameAnalyzer(
+            YgoProAnalyticsDatabase db, 
+            IAdminConfig config,
+            IDuelLogConverter converter)
         {
             _db = db;
             _config = config;
+            _converter = converter;
         }
 
         /// </inheritdoc>
@@ -53,12 +59,13 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         }
 
         /// </inheritdoc>
-        public Banlist GetBanlist(string roomName, DateTime endOfTheDuelDate)
+        public Banlist GetBanlist(string roomName, string endOfTheDuelFromDuelLog)
         {
+            var endOfTheDuelDate = _converter.ConvertDuelLogTimeToDateTime(endOfTheDuelFromDuelLog);
             if (IsDefaultBanlist(roomName))
             {
                 var defaultBanlist = _db.Banlists
-                    .Where(x => x.Name == _config.DefaultBanlsitName)
+                    .Where(x => x.Name == _config.DefaultBanlistName)
                     .FirstOrDefault();
                 defaultBanlist = defaultBanlist ?? throw new UnknownBanlistException("Default banlist not found. Check in AdminConfig if it is properly set up.");
 
