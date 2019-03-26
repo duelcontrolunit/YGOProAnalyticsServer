@@ -18,7 +18,7 @@ namespace YGOProAnalyticsServer.Services.Converters
     /// </summary>
     public class DuelLogConverter : IDuelLogConverter
     {
-        /// </inheritdoc>
+        /// <inheritdoc />
         public List<DuelLog> Convert(string duelLogJson)
         {
             var duelLogs = JsonConvert
@@ -46,7 +46,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             return convertedDuelLogs;
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public DateTime ConvertDuelLogTimeToDateTime(string duelLogTime)
         {
             if(!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
