@@ -37,14 +37,14 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             _converter = converter;
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public bool IsDuelVersusAI(string roomName)
         {
             return Regex.IsMatch(roomName, @"^AI#\S{0,},\d{1,}")
                    || Regex.IsMatch(roomName, @"^AI\S{0,}#\d{1,}");
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public bool IsAnyBanlist(string roomName)
         {
             return !IsNoDeckCheckEnabled(roomName)
@@ -52,13 +52,13 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                    && !_isNoBanlist(roomName);
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public bool IsNoDeckCheckEnabled(string roomName)
         {
             return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}NC[,#])?(?(1)|(^NC[#,]))");
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public Banlist GetBanlist(string roomName, string endOfTheDuelFromDuelLog)
         {
             var endOfTheDuelDate = _converter.ConvertDuelLogTimeToDateTime(endOfTheDuelFromDuelLog);
@@ -96,7 +96,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF\d[#,]))");
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public bool IsDefaultBanlist(string roomName)
         {
             if (IsAnyBanlist(roomName) && !_isBanlistOtherThanDefaultBanlist(roomName))
@@ -107,7 +107,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             return false;
         }
 
-        /// </inheritdoc>
+        /// <inheritdoc />
         public bool IsNoDeckShuffleEnabled(string roomName)
         {
             return Regex.IsMatch(roomName, @"(\w{1,}[,^]{1}NS[,#])?(?(1)|(^NS[#,]))");
