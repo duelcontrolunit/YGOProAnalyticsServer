@@ -58,24 +58,28 @@ namespace YGOProAnalyticsServer.Services.Updaters
                         .Where(x => x.PassCode == cardPassCode)
                         .FirstOrDefaultAsync();
                     if (card == null) continue;
-
-                    if(_areUpdatedForbiddenCardsNow && !banlist.ForbiddenCards.Contains(card))
-                    {
-                        banlist.ForbiddenCards.Add(card);
-                    }
-                    else if (_areUpdatedLimitedCardsNow && !banlist.LimitedCards.Contains(card))
-                    {
-                        banlist.LimitedCards.Add(card);    
-                    }
-                    else if (_areUpdatedSemiLimitedCardsNow && !banlist.SemiLimitedCards.Contains(card))
-                    {
-                        banlist.SemiLimitedCards.Add(card);   
-                    }
+                    _addCardToAppropriateBanlistSection(banlist, card);
                 }
             }
 
             _ifThereIsAnyBanlistAddItToDbContext(banlist);
             await _db.SaveChangesAsync();
+        }
+
+        private void _addCardToAppropriateBanlistSection(Banlist banlist, Card card)
+        {
+            if (_areUpdatedForbiddenCardsNow && !banlist.ForbiddenCards.Contains(card))
+            {
+                banlist.ForbiddenCards.Add(card);
+            }
+            else if (_areUpdatedLimitedCardsNow && !banlist.LimitedCards.Contains(card))
+            {
+                banlist.LimitedCards.Add(card);
+            }
+            else if (_areUpdatedSemiLimitedCardsNow && !banlist.SemiLimitedCards.Contains(card))
+            {
+                banlist.SemiLimitedCards.Add(card);
+            }
         }
 
         private bool _isBanlistAlreadyInDatabase(string banlistName)
