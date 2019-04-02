@@ -31,11 +31,13 @@ namespace YGOProAnalyticsServer.Services.Updaters
             string banlistDataAsString = await _banlistDataDownloader.DownloadBanlistFromWebsite(url);
             var banlistDatas = banlistDataAsString.Split("\n");
             Banlist banlist = null;
-
             for (int i = 1; i < banlistDatas.Length; i++)
             {
                 var line = banlistDatas[i];
-                if (line.Length == 0) continue;
+                if (line.Length == 0)
+                {
+                    continue;
+                }
 
                 if (_isInformationAboutBanlistName(line))
                 {
@@ -44,7 +46,8 @@ namespace YGOProAnalyticsServer.Services.Updaters
                     if (_isBanlistAlreadyInDatabase(banlistName))
                     {
                         continue;
-                    }
+                    } 
+
                     banlist = new Banlist(banlistName, _banlistNumberInLflist);
                     continue;
                 }
@@ -57,7 +60,10 @@ namespace YGOProAnalyticsServer.Services.Updaters
                         .Cards
                         .Where(x => x.PassCode == cardPassCode)
                         .FirstOrDefaultAsync();
-                    if (card == null) continue;
+                    if (card == null)
+                    {
+                        continue;
+                    }
                     _addCardToAppropriateBanlistSection(banlist, card);
                 }
             }
