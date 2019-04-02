@@ -120,6 +120,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             {
                 _archetypes.Add(archetype);
             }
+
             return archetype;
         }
 
