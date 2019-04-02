@@ -41,6 +41,11 @@ namespace YGOProAnalyticsServer.Database
             modelBuilder.Entity<SemiLimitedCardBanlistJoin>()
               .HasKey(t => new { t.CardId, t.BanlistId });
 
+            modelBuilder.Entity<Card>()
+                .HasOne(a => a.MonsterCard)
+                .WithOne(b => b.Card)
+                .HasForeignKey<MonsterCard>(c => c.CardId);
+
             modelBuilder.Entity<MonsterCard>()
                 .HasOne(a => a.LinkMonsterCard)
                 .WithOne(b => b.MonsterCard)
@@ -52,14 +57,8 @@ namespace YGOProAnalyticsServer.Database
                 .HasForeignKey<PendulumMonsterCard>(c => c.MonsterCardId);
 
             modelBuilder.Entity<Card>()
-               .HasOne(a => a.MonsterCard)
-               .WithOne(b => b.Card)
-               .HasForeignKey<MonsterCard>(c => c.CardId);
-
-            modelBuilder.Entity<MonsterCard>()
-                .HasOne(a => a.Card)
-                .WithOne(b => b.MonsterCard)
-                .HasForeignKey<Card>(c => c.MonsterCardId);
+                .HasOne(a => a.Archetype)
+                .WithMany(b => b.Cards);
 
             base.OnModelCreating(modelBuilder);
         }

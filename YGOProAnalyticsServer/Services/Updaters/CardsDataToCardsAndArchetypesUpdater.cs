@@ -116,7 +116,10 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             var archetype = _archetypes.Where(x => x.Name == archetypeNameFromApi).FirstOrDefault();
             archetype = archetype ?? new Archetype(archetypeNameFromApi, true);
-
+            if (!_archetypes.Contains(archetype))
+            {
+                _archetypes.Add(archetype);
+            }
             return archetype;
         }
 
