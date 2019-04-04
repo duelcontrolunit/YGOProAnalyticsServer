@@ -9,6 +9,10 @@ using YGOProAnalyticsServer.Services.Builders;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 using YGOProAnalyticsServer.Services.Downloaders;
 using YGOProAnalyticsServer.Services.Builders.Inferfaces;
+using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
+using YGOProAnalyticsServer.Services.Analyzers;
+using YGOProAnalyticsServer.Services.Converters.Interfaces;
+using YGOProAnalyticsServer.Services.Converters;
 
 namespace YGOProAnalyticsServer
 {
@@ -31,6 +35,9 @@ namespace YGOProAnalyticsServer
             services.AddScoped<ICardBuilder, CardBuilder>();
             services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
             services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
+            services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
+            services.AddScoped<IDuelLogConverter, DuelLogConverter>();
+            services.AddSingleton<IAdminConfig, AdminConfig>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

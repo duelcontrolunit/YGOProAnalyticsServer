@@ -10,15 +10,15 @@ namespace YGOProAnalyticsServerTests.DbModels
     class BanlistTests
     {
         [Test]
-        public void ReleaseDate_NameValid_DatesAreEqual()
+        public void GetReleaseDateFromName_NameValid_DatesAreEqual()
         {
             var banlist = new Banlist("2020.01 BobPatrzy", 1);
 
-            Assert.AreEqual(new DateTime(2020, 1, 1), banlist.ReleaseDate);
+            Assert.AreEqual(new DateTime(2020, 1, 1), banlist.GetReleaseDateFromName());
         }
 
         [Test]
-        public void ReleaseDate_NameInvalid_ThrowsFormatException()
+        public void Constructor_NameInvalid_ThrowsFormatException()
         {
             var banlist = new Banlist("2020.01u BobPatrzy", 1);
 
@@ -32,7 +32,7 @@ namespace YGOProAnalyticsServerTests.DbModels
 
             Assert.AreEqual("BobPatrzy", banlist.Format);
         }
-
+      
         [Test]
         public void Format_NameInvalid_WeGetInvalidFormat()
         {
