@@ -20,10 +20,7 @@ namespace YGOProAnalyticsServerTests.DbModels
         [Test]
         public void Constructor_NameInvalid_ThrowsFormatException()
         {
-            var banlist = new Banlist("2020.01u BobPatrzy", 1);
-
-            Assert.Throws<FormatException>(() => { var x = banlist.ReleaseDate; });
-            Assert.Throws<FormatException>(() => new Banlist("2020.01u BobPatrzy"));
+            Assert.Throws<FormatException>(() => new Banlist("2020.01u BobPatrzy", 1));
         }
 
         [Test]
@@ -32,14 +29,6 @@ namespace YGOProAnalyticsServerTests.DbModels
             var banlist = new Banlist("2020.01 BobPatrzy", 1);
 
             Assert.AreEqual("BobPatrzy", banlist.Format);
-        }
-
-        [Test]
-        public void Format_NameInvalid_WeGetInvalidFormat()
-        {
-            var banlist = new Banlist("2020.01BobPatrzy]", 1);
-
-            Assert.AreNotEqual("BobPatrzy", banlist.Format);
         }
     }
 }

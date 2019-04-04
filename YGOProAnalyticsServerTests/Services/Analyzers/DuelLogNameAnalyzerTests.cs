@@ -178,7 +178,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                     .Setup(x => x.DefaultBanlistName)
                     .Returns("2019.03 TCG");
                 var duelLogConverter = new Mock<IDuelLogConverter>();
-                db.Banlists.Add(new Banlist("2019.03 TCG"));
+                db.Banlists.Add(new Banlist("2019.03 TCG", 1));
                 db.SaveChanges();
                 _analyzer = new DuelLogNameAnalyzer(db, adminConfigMock.Object, duelLogConverter.Object);
 
@@ -219,8 +219,8 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 duelLogConverterMock
                     .Setup(x => x.ConvertDuelLogTimeToDateTime(duelLogDate))
                     .Returns(logDateTime);
-                db.Banlists.Add(new Banlist("2019.03 TCG"));
-                db.Banlists.Add(new Banlist("2019.03 OCG"));
+                db.Banlists.Add(new Banlist("2019.03 TCG", 1));
+                db.Banlists.Add(new Banlist("2019.03 OCG", 1));
                 db.SaveChanges();
                 _analyzer = new DuelLogNameAnalyzer(db, _adminConfigMock.Object, duelLogConverterMock.Object);
 
