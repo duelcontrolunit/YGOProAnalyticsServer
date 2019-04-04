@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 using YGOProAnalyticsServer.Database.ManyToManySupport;
 
 namespace YGOProAnalyticsServer.DbModels
@@ -49,8 +51,10 @@ namespace YGOProAnalyticsServer.DbModels
         /// /// <param name="banlistNumberInLfList">Order number in lflist.</param>
         public Banlist(string name, int banlistNumberInLfList)
         {
+            _validateName(name);
             Name = name;
             BanlistNumberInLfList = banlistNumberInLfList;
+            ReleaseDate = GetReleaseDateFromName();
             ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
             LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
             SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
@@ -122,13 +126,32 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Release date of the banlist.
         /// </summary>
-        [NotMapped]
-        public DateTime ReleaseDate
+        public DateTime ReleaseDate { get; protected set; }
+
+        /// <summary>
+        /// Gets the release date of the banlist.
+        /// </summary>
+        /// <returns>Release date of the banlist.</returns>
+        public DateTime GetReleaseDateFromName()
         {
-            get
+            string dateString = Name.Substring(0, Name.IndexOf(' '));
+            return DateTime.Parse(dateString, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Validates the name of the banlist.
+        /// </summary>
+        /// <param name="name">The name of the banlist</param>
+        /// <exception cref="System.FormatException"></exception>
+        private void _validateName(string name)
+        {
+            if(!Regex.IsMatch(name, @"^\d{4}\.\d{2} \w{1,}"))
             {
-                string dateString = Name.Substring(0, Name.IndexOf(' '));
-                return DateTime.Parse(dateString,  CultureInfo.InvariantCulture);
+                var stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine("Invalid name format. Valid name format is 'YYYY.MM YuGiOhFormat'.");
+                stringBuilder.AppendLine($"Given name: {name}");
+
+                throw new FormatException(stringBuilder.ToString());
             }
         }
     }
