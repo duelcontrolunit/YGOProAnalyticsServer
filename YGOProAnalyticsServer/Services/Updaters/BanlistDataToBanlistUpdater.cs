@@ -7,10 +7,14 @@ using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Updaters
 {
-    public class BanlistDataToBanlistUpdater
+    /// <summary>
+    /// Provide methods which enable banlists update.
+    /// </summary>
+    public class BanlistDataToBanlistUpdater : IBanlistDataToBanlistUpdater
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IBanlistDataDownloader _banlistDataDownloader;
@@ -20,12 +24,18 @@ namespace YGOProAnalyticsServer.Services.Updaters
         bool _areUpdatedSemiLimitedCardsNow = false;
         int _banlistNumberInLflist = 0;
 
+        /// <summary>
+        /// Create new banlist updater.
+        /// </summary>
+        /// <param name="db">Acces to database.</param>
+        /// <param name="banlistDataDownloader">Is responsible for download banlists as a text.</param>
         public BanlistDataToBanlistUpdater(YgoProAnalyticsDatabase db, IBanlistDataDownloader banlistDataDownloader)
         {
             _db = db;
             _banlistDataDownloader = banlistDataDownloader;
         }
 
+        /// <inheritdoc />
         public async Task UpdateBanlists(string url)
         {
             string banlistDataAsString = await _banlistDataDownloader.DownloadBanlistFromWebsite(url);
@@ -46,7 +56,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                     if (_isBanlistAlreadyInDatabase(banlistName))
                     {
                         continue;
-                    } 
+                    }
 
                     banlist = new Banlist(banlistName, _banlistNumberInLflist);
                     continue;
@@ -108,7 +118,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
         private bool _isInformationAboutBanlistName(string line)
         {
-            if(line[0] == '!')
+            if (line[0] == '!')
             {
                 _banlistNumberInLflist++;
                 return true;
@@ -119,7 +129,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
         private void _checkIfWeAnalyzeForbiddenOrLimitedOrSemiLimitedCards(string line)
         {
-            if(!_isInformationAboutCardCountLimitations(line))
+            if (!_isInformationAboutCardCountLimitations(line))
             {
                 return;
             }
