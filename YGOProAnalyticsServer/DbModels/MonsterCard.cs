@@ -73,17 +73,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// If card is not pendulum monster should be null.
         /// </summary>
-        public int? PendulumMonsterCardId { get; set; }
-
-        /// <summary>
-        /// If card is not pendulum monster should be null.
-        /// </summary>
         public PendulumMonsterCard PendulumMonsterCard { get; set; }
-
-        /// <summary>
-        /// If card is not link monster should be null.
-        /// </summary>
-        public int? LinkMonsterCardId { get; set; }
 
         /// <summary>
         /// If card is not link monster should be null.

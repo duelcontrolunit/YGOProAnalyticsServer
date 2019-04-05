@@ -138,11 +138,6 @@ namespace YGOProAnalyticsServer.DbModels
         public string Description { get; protected set; }
 
         /// <summary>
-        /// Archetype id.
-        /// </summary>
-        public int ArchetypeId { get; set; }
-
-        /// <summary>
         /// Card`s archetype.
         /// </summary>
         public Archetype Archetype { get; set; }
@@ -173,11 +168,6 @@ namespace YGOProAnalyticsServer.DbModels
         /// Link to the small image of the card.
         /// </summary>
         public string SmallImageUrl { get; set; }
-
-        /// <summary>
-        /// If card is monster card this should have value. Otherwise it should be null.
-        /// </summary>
-        public int? MonsterCardId { get;set; }
 
         /// <summary>
         /// If card is monster card this should have value. Otherwise it should be null.
