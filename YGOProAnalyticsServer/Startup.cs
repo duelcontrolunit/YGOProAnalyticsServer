@@ -15,6 +15,8 @@ using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using YGOProAnalyticsServer.Services.Converters;
 using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 using YGOProAnalyticsServer.Services.Updaters;
+using YGOProAnalyticsServer.Services.Others.Interfaces;
+using YGOProAnalyticsServer.Services.Others;
 
 namespace YGOProAnalyticsServer
 {
@@ -40,6 +42,8 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
             services.AddScoped<IDuelLogConverter, DuelLogConverter>();
             services.AddScoped<IBanlistDataToBanlistUpdater, BanlistDataToBanlistUpdater>();
+            services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
+            services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
             
