@@ -33,10 +33,12 @@ namespace YGOProAnalyticsServer.DbModels
         /// </summary>
         /// <param name="id">Banlist identifier.</param>
         /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG". </param>
-        protected Banlist(int id, string name)
+        /// <param name="banlistNumberInLfList">Order number in lflist.</param>
+        protected Banlist(int id, string name, int banlistNumberInLfList)
         {
             Id = id;
             Name = name;
+            BanlistNumberInLfList = banlistNumberInLfList;
             ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
             LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
             SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
@@ -46,10 +48,12 @@ namespace YGOProAnalyticsServer.DbModels
         /// Initialize banlist.
         /// </summary>
         /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG". </param>
-        public Banlist(string name)
+        /// /// <param name="banlistNumberInLfList">Order number in lflist.</param>
+        public Banlist(string name, int banlistNumberInLfList)
         {
             _validateName(name);
             Name = name;
+            BanlistNumberInLfList = banlistNumberInLfList;
             ReleaseDate = GetReleaseDateFromName();
             ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
             LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
@@ -65,6 +69,14 @@ namespace YGOProAnalyticsServer.DbModels
         /// Valid name should look like: "YYYY.MM Format" for example "2010 TCG".
         /// </summary>
         public string Name { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the banlist number in lf list.
+        /// </summary>
+        /// <value>
+        /// The banlist number in lf list.
+        /// </value>
+        public int BanlistNumberInLfList { get; protected set; }
 
         /// <summary>
         /// Join property for <see cref="ForbiddenCards"/>
