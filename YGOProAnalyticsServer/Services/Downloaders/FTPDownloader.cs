@@ -6,11 +6,11 @@ using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Downloaders
 {
-    public class DuelLogDownloader : IDuelLogDownloader
+    public class FTPDownloader : IFTPDownloader
     {
         private IAdminConfig _adminConfig;
 
-        public DuelLogDownloader(IAdminConfig adminConfig)
+        public FTPDownloader(IAdminConfig adminConfig)
         {
             _adminConfig = adminConfig;
         }
@@ -27,7 +27,49 @@ namespace YGOProAnalyticsServer.Services.Downloaders
         {
 
             Uri _ftpUri = new Uri(EndPointFTP);
-            string _folderPath = @"DuelLogDatas";
+            string _folderPath = @"Data/DuelLogZipFiles";
+            string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.LocalPath));
+            if (!Directory.Exists(_folderPath))
+            {
+                Directory.CreateDirectory(_folderPath);
+            }
+            if (_ftpUri.Scheme != Uri.UriSchemeFtp)
+            {
+                throw new UriFormatException("Format must be FTP");
+            }
+            using (var request = new WebClient())
+            {
+                request.Credentials = new NetworkCredential(_adminConfig.FTPUser, _adminConfig.FTPPassword);
+                await request.DownloadFileTaskAsync(_ftpUri, _filePath + ".tmp");
+            }
+            if (File.Exists(_filePath))
+            {
+                File.Delete(_filePath);
+            }
+            if (File.Exists(_filePath + ".tmp"))
+            {
+                File.Move(_filePath + ".tmp", _filePath);
+                return _filePath;
+            }
+            else
+            {
+                throw new FileNotFoundException("Downloaded file couldn't be found.");
+            }
+        }
+
+        /// <summary>
+        /// Downloads the decks file from FTP.
+        /// </summary>
+        /// <param name="EndPointFTP">The end point FTP link.</param>
+        /// <returns>
+        /// Path to the downloaded decks file
+        /// </returns>
+        /// <exception cref="UriFormatException">Thrown when Uri format is not FTP</exception>
+        public async Task<string> DownloadDecksFromFTP(string EndPointFTP)
+        {
+
+            Uri _ftpUri = new Uri(EndPointFTP);
+            string _folderPath = @"Data/DecksZipFiles";
             string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.LocalPath));
             if (!Directory.Exists(_folderPath))
             {

@@ -12,9 +12,9 @@ using Moq;
 namespace YGOProAnalyticsServerTests.Services.Downloaders
 {
     [TestFixture]
-    class DuelLogDownloaderTests
+    class FTPDownloaderTests
     {
-        IDuelLogDownloader _duelLogDownloader;
+        IFTPDownloader _FTPDownloader;
         Mock<IAdminConfig> _adminConfigMock;
         [SetUp]
         public void SetUp()
@@ -25,8 +25,14 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         [Test]
         public void DownloadDuelLogFromFTP_WrongUrlIsGiven_WeGetWebException()
         {
-            _duelLogDownloader = new DuelLogDownloader(new AdminConfig());
-            Assert.ThrowsAsync<System.Net.WebException>(async () => await _duelLogDownloader.DownloadDuelLogFromFTP("ftp://NotExsitingWebsite.co423m"));
+            _FTPDownloader = new FTPDownloader(new AdminConfig());
+            Assert.ThrowsAsync<System.Net.WebException>(async () => await _FTPDownloader.DownloadDuelLogFromFTP("ftp://NotExsitingWebsite.co423m"));
+        }
+        [Test]
+        public void DownloadDecksFromFTP_WrongUrlIsGiven_WeGetWebException()
+        {
+            _FTPDownloader = new FTPDownloader(new AdminConfig());
+            Assert.ThrowsAsync<System.Net.WebException>(async () => await _FTPDownloader.DownloadDecksFromFTP("ftp://NotExsitingWebsite.co423m"));
         }
     }
 }
