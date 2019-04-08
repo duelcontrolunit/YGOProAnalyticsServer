@@ -12,5 +12,7 @@
         /// The name of default banlist.
         /// </value>
         string DefaultBanlistName { get; }
+        string FTPUser { get; }
+        string FTPPassword { get; }
     }
 }

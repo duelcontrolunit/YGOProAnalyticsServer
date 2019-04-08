@@ -10,5 +10,9 @@ namespace YGOProAnalyticsServer
     {
         ///<inheritdoc />
         public string DefaultBanlistName { get; } = "";
+
+        public string FTPUser { get; } = "";
+
+        public string FTPPassword { get; } = "";
     }
 }
