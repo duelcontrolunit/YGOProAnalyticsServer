@@ -33,7 +33,7 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// </summary>
         /// <param name="url">List of the rooms endpoint.</param>
         /// <returns>Number of players.</returns>
-        Task<int> NumberOfPlayersInEntireGame(string url);
+        Task<int> NumberOfPlayersInAllRooms(string url);
 
         /// <summary>
         /// Numbers of the players in lobby.
@@ -54,6 +54,6 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// </summary>
         /// <param name="url">List of the rooms endpoint.</param>
         /// <returns>Numbers of rooms in entire game.</returns>
-        Task<int> NumberOfRooms(string url);
+        Task<int> NumberOfAllRooms(string url);
     }
 }

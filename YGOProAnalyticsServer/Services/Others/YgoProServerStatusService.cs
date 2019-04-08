@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
@@ -16,6 +17,7 @@ namespace YGOProAnalyticsServer.Services.Others
     public class YgoProServerStatusService : IYgoProServerStatusService
     {
         readonly IYGOProServerRoomsDownloader _roomsDownloader;
+        string _listOfRoomsJson = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YgoProServerStatusService"/> class.
@@ -59,7 +61,7 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
-        public async Task<int> NumberOfPlayersInEntireGame(string url)
+        public async Task<int> NumberOfPlayersInAllRooms(string url)
         {
             return await _numberOfPlayers(url, (room) => {
                 return true;
@@ -83,7 +85,7 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
-        public async Task<int> NumberOfRooms(string url)
+        public async Task<int> NumberOfAllRooms(string url)
         {
             return await _numberOfRooms(url, (room) => {
                 return true;
@@ -122,9 +124,9 @@ namespace YGOProAnalyticsServer.Services.Others
 
         private async Task<IEnumerable<JObject>> _getListOfRooms(string url)
         {
-            string listOfRoomsJson = await _roomsDownloader.DownloadListOfRooms(url);
+            _listOfRoomsJson = _listOfRoomsJson ?? await _roomsDownloader.DownloadListOfRooms(url);
             return JsonConvert
-               .DeserializeObject<JObject>(listOfRoomsJson)
+               .DeserializeObject<JObject>(_listOfRoomsJson)
                .First
                .First
                .Children<JObject>();

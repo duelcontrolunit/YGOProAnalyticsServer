@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServer.Services.Downloaders.Interfaces
 {
@@ -13,6 +14,7 @@ namespace YGOProAnalyticsServer.Services.Downloaders.Interfaces
         /// </summary>
         /// <param name="EndPointURL">The end point URL.</param>
         /// <returns>List of rooms as in JSON format.</returns>
+        /// <exception cref="WebException">When server is not reachable.</exception>
         Task<string> DownloadListOfRooms(string EndPointURL);
     }
 }
