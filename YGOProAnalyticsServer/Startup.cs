@@ -15,6 +15,8 @@ using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using YGOProAnalyticsServer.Services.Converters;
 using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 using YGOProAnalyticsServer.Services.Updaters;
+using YGOProAnalyticsServer.Services.Unzippers;
+using YGOProAnalyticsServer.Services.Unzippers.Interfaces;
 
 namespace YGOProAnalyticsServer
 {
@@ -40,7 +42,8 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
             services.AddScoped<IDuelLogConverter, DuelLogConverter>();
             services.AddScoped<IBanlistDataToBanlistUpdater, BanlistDataToBanlistUpdater>();
-
+            services.AddScoped<IFTPDownloader, FTPDownloader>();
+            services.AddScoped<IFileUnzipper, FileUnzipper>();
             services.AddSingleton<IAdminConfig, AdminConfig>();
             
         }
