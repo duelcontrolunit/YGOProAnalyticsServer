@@ -26,13 +26,25 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         public void DownloadDuelLogFromFTP_WrongUrlIsGiven_WeGetWebException()
         {
             _FTPDownloader = new FTPDownloader(new AdminConfig());
-            Assert.ThrowsAsync<System.Net.WebException>(async () => await _FTPDownloader.DownloadDuelLogFromFTP("ftp://NotExsitingWebsite.co423m"));
+            Assert.ThrowsAsync<System.Net.WebException>(async () =>
+            await _FTPDownloader.DownloadDuelLogFromFTP("ftp://NotExsitingWebsite.co423m")
+            );
         }
         [Test]
         public void DownloadDecksFromFTP_WrongUrlIsGiven_WeGetWebException()
         {
             _FTPDownloader = new FTPDownloader(new AdminConfig());
-            Assert.ThrowsAsync<System.Net.WebException>(async () => await _FTPDownloader.DownloadDecksFromFTP("ftp://NotExsitingWebsite.co423m"));
+            Assert.ThrowsAsync<System.Net.WebException>(async () =>
+            await _FTPDownloader.DownloadDecksFromFTP("ftp://NotExsitingWebsite.co423m")
+            );
+        }
+        [Test]
+        public void DownloadListOfFilesFromFTP_WrongUrlIsGiven_WeGetWebException()
+        {
+            _FTPDownloader = new FTPDownloader(new AdminConfig());
+            Assert.Throws<System.Net.WebException>(() =>
+            _FTPDownloader.DownloadListOfFilesFromFTP("ftp://NotExsitingWebsite.co423m")
+            );
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
@@ -98,5 +100,23 @@ namespace YGOProAnalyticsServer.Services.Downloaders
                 throw new FileNotFoundException("Downloaded file couldn't be found.");
             }
         }
+        /// <inheritdoc />
+        public List<string> DownloadListOfFilesFromFTP(string EndPointFTP)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(EndPointFTP);
+            request.Method = WebRequestMethods.Ftp.ListDirectory;
+            request.Credentials = new NetworkCredential(_adminConfig.FTPUser, _adminConfig.FTPPassword);
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(responseStream);
+            string names = reader.ReadToEnd();
+
+            reader.Close();
+            response.Close();
+            var result = names.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            result.Sort();
+            return result;
+        }
+
     }
 }
