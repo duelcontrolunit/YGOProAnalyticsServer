@@ -48,7 +48,7 @@ namespace YGOProAnalyticsServer.DbModels
         public int HowManyTimesWasUsed { get; protected set; } = 0;
 
         /// <summary>
-        /// Increment how many times was used
+        /// Increment how many times was used.
         /// </summary>
         public void IncrementHowManyTimesWasUsed()
         {
