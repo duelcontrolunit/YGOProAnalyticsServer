@@ -17,6 +17,8 @@ using YGOProAnalyticsServer.Services.Updaters.Interfaces;
 using YGOProAnalyticsServer.Services.Updaters;
 using YGOProAnalyticsServer.Services.Unzippers;
 using YGOProAnalyticsServer.Services.Unzippers.Interfaces;
+using YGOProAnalyticsServer.Services.Others.Interfaces;
+using YGOProAnalyticsServer.Services.Others;
 
 namespace YGOProAnalyticsServer
 {
@@ -44,6 +46,9 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IBanlistDataToBanlistUpdater, BanlistDataToBanlistUpdater>();
             services.AddScoped<IFTPDownloader, FTPDownloader>();
             services.AddScoped<IFileUnzipper, FileUnzipper>();
+            services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
+            services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
+
             services.AddSingleton<IAdminConfig, AdminConfig>();
             
         }
