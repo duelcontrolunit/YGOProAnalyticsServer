@@ -60,6 +60,10 @@ namespace YGOProAnalyticsServer.Database
                 .HasOne(a => a.Archetype)
                 .WithMany(b => b.Cards);
 
+            modelBuilder.Entity<Banlist>()
+                .HasMany(x => x.Statistics)
+                .WithOne(y => y.Banlist);
+
             base.OnModelCreating(modelBuilder);
         }
     }
