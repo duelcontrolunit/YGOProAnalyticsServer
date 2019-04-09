@@ -129,6 +129,11 @@ namespace YGOProAnalyticsServer.DbModels
         public DateTime ReleaseDate { get; protected set; }
 
         /// <summary>
+        /// Collection of the statistics of this banlist.
+        /// </summary>
+        public ICollection<BanlistStatistics> Statistics { get; protected set; } = new List<BanlistStatistics>();
+
+        /// <summary>
         /// Gets the release date of the banlist.
         /// </summary>
         /// <returns>Release date of the banlist.</returns>
