@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServer.Services.Downloaders.Interfaces
 {
-    /// <summary>Provides methods to download From FTP</summary>
+    /// <summary>Provides methods to download From FTP.</summary>
     public interface IFTPDownloader
     {
         /// <summary>Downloads the duel log from FTP.</summary>
