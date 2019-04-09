@@ -8,23 +8,23 @@ using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Downloaders
 {
+    /// <summary>
+    /// Use it to download data from FTP
+    /// </summary>
+    /// <seealso cref="YGOProAnalyticsServer.Services.Downloaders.Interfaces.IFTPDownloader" />
     public class FTPDownloader : IFTPDownloader
     {
         private IAdminConfig _adminConfig;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FTPDownloader"/> class.
+        /// </summary>
+        /// <param name="adminConfig">The admin configuration.</param>
         public FTPDownloader(IAdminConfig adminConfig)
         {
             _adminConfig = adminConfig;
         }
 
-        /// <summary>
-        /// Downloads the duel log from FTP.
-        /// </summary>
-        /// <param name="EndPointFTP">The end point FTP link.</param>
-        /// <returns>
-        /// Path to the downloaded DuelLog file
-        /// </returns>
-        /// <exception cref="UriFormatException">Thrown when Uri format is not FTP</exception>
+        /// <inheritdoc />
         public async Task<string> DownloadDuelLogFromFTP(string EndPointFTP)
         {
 
@@ -37,7 +37,7 @@ namespace YGOProAnalyticsServer.Services.Downloaders
             }
             if (_ftpUri.Scheme != Uri.UriSchemeFtp)
             {
-                throw new UriFormatException("Format must be FTP");
+                throw new UriFormatException("Format must be FTP.");
             }
             using (var request = new WebClient())
             {
@@ -59,14 +59,7 @@ namespace YGOProAnalyticsServer.Services.Downloaders
             }
         }
 
-        /// <summary>
-        /// Downloads the decks file from FTP.
-        /// </summary>
-        /// <param name="EndPointFTP">The end point FTP link.</param>
-        /// <returns>
-        /// Path to the downloaded decks file
-        /// </returns>
-        /// <exception cref="UriFormatException">Thrown when Uri format is not FTP</exception>
+        /// <inheritdoc />
         public async Task<string> DownloadDecksFromFTP(string EndPointFTP)
         {
 
@@ -79,7 +72,7 @@ namespace YGOProAnalyticsServer.Services.Downloaders
             }
             if (_ftpUri.Scheme != Uri.UriSchemeFtp)
             {
-                throw new UriFormatException("Format must be FTP");
+                throw new UriFormatException("Format must be FTP.");
             }
             using (var request = new WebClient())
             {
