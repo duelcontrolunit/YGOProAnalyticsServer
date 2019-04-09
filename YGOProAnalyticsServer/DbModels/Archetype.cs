@@ -60,6 +60,11 @@ namespace YGOProAnalyticsServer.DbModels
         public ICollection<Card> Cards { get; protected set; } = new List<Card>();
 
         /// <summary>
+        /// Decklists which belong to this archetype.
+        /// </summary>
+        public ICollection<Decklist> Decklists { get; protected set; } = new List<Decklist>();
+
+        /// <summary>
         /// Pure archetype is archetype defined by Konami.
         /// Non-pure archetype is archetype created from two pure archatypes.
         /// </summary>

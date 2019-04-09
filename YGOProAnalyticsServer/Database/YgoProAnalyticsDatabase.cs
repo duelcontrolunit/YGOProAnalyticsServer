@@ -64,6 +64,14 @@ namespace YGOProAnalyticsServer.Database
                 .HasMany(x => x.Statistics)
                 .WithOne(y => y.Banlist);
 
+            modelBuilder.Entity<Decklist>()
+                .HasOne(x => x.Archetype)
+                .WithMany(y => y.Decklists);
+
+            modelBuilder.Entity<Decklist>()
+                .HasMany(x => x.DecklistStatistics)
+                .WithOne(y => y.Decklist);
+
             base.OnModelCreating(modelBuilder);
         }
     }
