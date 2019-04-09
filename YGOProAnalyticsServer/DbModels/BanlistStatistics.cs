@@ -10,7 +10,13 @@ namespace YGOProAnalyticsServer.DbModels
     {
         protected BanlistStatistics(){ }
 
-        protected static BanlistStatistics Create(DateTime dateWhenArchetypeWasUsed, Banlist banlist)
+        /// <summary>
+        /// Create new instance of <see cref="BanlistStatistics"/>.
+        /// </summary>
+        /// <param name="dateWhenArchetypeWasUsed">Date when archetype was used.</param>
+        /// <param name="banlist">Analyzed banlist.</param>
+        /// <returns>New instance of <see cref="BanlistStatistics"/>.</returns>
+        public static BanlistStatistics Create(DateTime dateWhenArchetypeWasUsed, Banlist banlist)
         {
             return new BanlistStatistics()
             {
