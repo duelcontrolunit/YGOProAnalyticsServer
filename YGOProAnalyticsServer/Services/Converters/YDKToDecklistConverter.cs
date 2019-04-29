@@ -4,13 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.Services.Converters.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Converters
 {
     /// <summary>Service used to convert ydk string to a new deck containing cards.</summary>
-    public class YDKToDecklistConverter
+    public class YDKToDecklistConverter : IYDKToDecklistConverter
     {
         private readonly YgoProAnalyticsDatabase _db;
+
+        /// <summary>Initializes a new instance of the <see cref="YDKToDecklistConverter"/> class.</summary>
+        /// <param name="db">The database.</param>
+        public YDKToDecklistConverter(YgoProAnalyticsDatabase db)
+        {
+            _db = db;
+        }
+
         /// <summary>
         /// Converts the specified ydk string to a new Deck containing Lists of Cards in it.
         /// </summary>
@@ -41,27 +50,33 @@ namespace YGOProAnalyticsServer.Services.Converters
                 }
                 else
                 {
-                    int passCode = Int32.Parse(line);
-                    if (_isCorrectPassCode(passCode))
+                    if (Int32.TryParse(line, out int passCode))
                     {
-                        var card = _db.Cards.FirstOrDefault(x => x.Id == passCode);
-                        if (!isSide)
+                        if (_isCorrectPassCode(passCode))
                         {
-                            if (card.Type.ToLower().Contains("fusion")
-                                || card.Type.ToLower().Contains("xyz")
-                                || card.Type.ToLower().Contains("link")
-                                || card.Type.ToLower().Contains("synchro"))
+                            var card = _db.Cards.FirstOrDefault(x => x.PassCode == passCode);
+                            if (card == null)
                             {
-                                extraDeck.Add(card);
+                                continue;
+                            }
+                            if (!isSide)
+                            {
+                                if (card.Type.ToLower().Contains("fusion")
+                                    || card.Type.ToLower().Contains("xyz")
+                                    || card.Type.ToLower().Contains("link")
+                                    || card.Type.ToLower().Contains("synchro"))
+                                {
+                                    extraDeck.Add(card);
+                                }
+                                else
+                                {
+                                    mainDeck.Add(card);
+                                }
                             }
                             else
                             {
-                                mainDeck.Add(card);
+                                sideDeck.Add(card);
                             }
-                        }
-                        else
-                        {
-                            sideDeck.Add(card);
                         }
                     }
                 }
