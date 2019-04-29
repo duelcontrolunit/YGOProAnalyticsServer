@@ -30,16 +30,19 @@ namespace YGOProAnalyticsServer.Services.Converters
             string[] lines = ydkString.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
             bool isSide = false;
             bool decklistStarted = false;
+
             foreach (string line in lines)
             {
                 if (line.Contains("#main"))
                 {
                     decklistStarted = true;
                 }
+
                 if (!decklistStarted)
                 {
                     continue;
                 }
+
                 if (line == "!side")
                 {
                     isSide = true;
