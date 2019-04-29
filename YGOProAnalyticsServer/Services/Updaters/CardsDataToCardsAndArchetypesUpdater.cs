@@ -60,7 +60,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 Archetype archetype;
                 if (item.GetValue("archetype").ToString() == string.Empty)
                 {
-                    archetype = _getArchetype("Neutral");
+                    archetype = _getArchetype(Archetype.Default);
                 }
                 else
                 {
