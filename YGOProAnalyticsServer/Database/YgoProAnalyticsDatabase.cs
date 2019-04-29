@@ -9,15 +9,23 @@ namespace YGOProAnalyticsServer.Database
 {
     public class YgoProAnalyticsDatabase : DbContext
     {
+        //Banlists
         public DbSet<Banlist> Banlists { get; set; }
+        public DbSet<BanlistStatistics> BanlistStatistics { get; set; }
+
+        //Archetypes
         public DbSet<Archetype> Archetypes { get; set; }
         public DbSet<ArchetypeStatistics> ArchetypeStatistics { get; set; }
 
-        //cards
+        //Cards
         public DbSet<Card> Cards { get; set; }
         public DbSet<MonsterCard> MonsterCards { get; set; }
         public DbSet<PendulumMonsterCard> PendulumMonsterCards { get; set; }
         public DbSet<LinkMonsterCard> LinkMonsterCards { get; set; }
+
+        //Decklists
+        public DbSet<Decklist> Decklists { get; set; }
+        public DbSet<DecklistStatistics> DecklistStatistics { get; set; }
 
         public const string connectionString =
                @"Server=(localdb)\mssqllocaldb;
@@ -63,6 +71,14 @@ namespace YGOProAnalyticsServer.Database
             modelBuilder.Entity<Banlist>()
                 .HasMany(x => x.Statistics)
                 .WithOne(y => y.Banlist);
+
+            modelBuilder.Entity<Decklist>()
+                .HasOne(x => x.Archetype)
+                .WithMany(y => y.Decklists);
+
+            modelBuilder.Entity<Decklist>()
+                .HasMany(x => x.DecklistStatistics)
+                .WithOne(y => y.Decklist);
 
             base.OnModelCreating(modelBuilder);
         }
