@@ -20,11 +20,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             _db = db;
         }
 
-        /// <summary>
-        /// Converts the specified ydk string to a new Deck containing Lists of Cards in it.
-        /// </summary>
-        /// <param name="ydkString">The ydk string.</param>
-        /// <returns>A new Deck containing Lists of Cards in it.</returns>
+        /// <inheritdoc />
         public Decklist Convert(string ydkString)
         {
             List<Card> mainDeck = new List<Card>();

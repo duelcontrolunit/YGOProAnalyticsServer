@@ -45,6 +45,12 @@ namespace YGOProAnalyticsServer.DbModels
         /// </value>
         public int NumberOfTimesWhenDeckWasUsed { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the number of times when deck won.
+        /// </summary>
+        /// <value>
+        /// The number of times when deck won.
+        /// </value>
         public int NumberOfTimesWhenDeckWon { get; protected set; }
 
         /// <summary>
