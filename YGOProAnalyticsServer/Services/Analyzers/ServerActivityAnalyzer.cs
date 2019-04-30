@@ -64,10 +64,11 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             int numberOfRecords = numberOfDays;
             var activityStatistics = await _db
                 .ServerActivityStatistics
-                .TakeLast(numberOfRecords)
+                .OrderByDescending(x => x.FromDate)
+                .Take(numberOfRecords)
                 .ToListAsync();
 
-            DateTime lastDayWhichShouldBeAnalyzed = DateTime.Now.AddDays(-numberOfDays);
+            DateTime lastDayWhichShouldBeAnalyzed = DateTime.Now.AddDays(-numberOfDays - 1);
             int numberOfGames = 0;
             foreach (var statistics in activityStatistics)
             {
@@ -84,7 +85,9 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         {
             return await _db.ServerActivityStatistics
                 .Where(x => x.FromDate.Year == year)
-                .SumAsync(x => x.NumberOfGames);
+                .Select(x => x.NumberOfGames)
+                .DefaultIfEmpty(0)
+                .SumAsync();
         }
     }
 }
