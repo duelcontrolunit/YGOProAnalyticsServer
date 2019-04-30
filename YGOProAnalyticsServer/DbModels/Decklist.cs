@@ -50,7 +50,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// The name.
         /// </value>
         [Required]
-        public string Name { get; protected set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The main deck.

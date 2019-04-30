@@ -101,6 +101,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private void _addMonsterProperties(string type, Archetype archetype, JObject item)
         {           
             _addBasicMonsterAttributesToCard(item);
+
             if (type.Contains("PENDULUM"))
             {
                 _CardBuilder.AddPendulumMonsterCardElements(item.Value<int>("scale"));
@@ -116,6 +117,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             var archetype = _archetypes.Where(x => x.Name == archetypeNameFromApi).FirstOrDefault();
             archetype = archetype ?? new Archetype(archetypeNameFromApi, true);
+
             if (!_archetypes.Contains(archetype))
             {
                 _archetypes.Add(archetype);
@@ -127,6 +129,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private void _addBasicMonsterAttributesToCard(JObject item)
         {
             var level = item.GetValue("level").ToString();
+
             if (level == "")
             {
                 level = 0.ToString();
@@ -143,6 +146,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             var linkval = item.GetValue("linkval").ToString();
             int linkvalCount = 0;
+
             if (linkval == "")
             {
                 linkvalCount = item.GetValue("linkmarkers").ToString().Split(',').Count() + 1;
