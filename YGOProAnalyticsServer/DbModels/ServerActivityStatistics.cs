@@ -10,20 +10,28 @@ namespace YGOProAnalyticsServer.DbModels
     /// </summary>
     public class ServerActivityStatistics
     {
-        protected ServerActivityStatistics(int id, DateTime statisticsFromDate, int numberOfGames)
-        {
-            Id = id;
-            FromDate = statisticsFromDate;
-            NumberOfGames = numberOfGames;
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServerActivityStatistics"/> class.
+        /// </summary>
+        /// <param name="statisticsFromDate">The statistics from date.</param>
         public ServerActivityStatistics(DateTime statisticsFromDate)
         {
             FromDate = statisticsFromDate;
         }
 
+        /// <summary>
+        /// The identifier.
+        /// </summary>
         public int Id { get; protected set; }
+
+        /// <summary>
+        /// Statistics from date.
+        /// </summary>
         public DateTime FromDate { get; protected set; }
+
+        /// <summary>
+        /// The number of games played that day. <see cref="FromDate"/>
+        /// </summary>
         public int NumberOfGames { get; set; } = 0;
     }
 }
