@@ -11,10 +11,10 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
     public interface IServerActivityAnalyzer
     {
         /// <summary>
-        /// Numbers the of games from last days.
+        /// Numbers of the games from last days.
         /// </summary>
         /// <param name="numberOfDays">The number of days.</param>
-        /// <returns>Numbers the of games from last days.</returns>
+        /// <returns>Numbers of the games from last days.</returns>
         Task<int> NumberOfGamesFromLastDaysAsync(int numberOfDays);
 
         /// <summary>
