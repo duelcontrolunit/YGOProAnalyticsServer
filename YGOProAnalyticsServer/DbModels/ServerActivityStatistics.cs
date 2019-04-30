@@ -19,7 +19,6 @@ namespace YGOProAnalyticsServer.DbModels
             FromDate = statisticsFromDate;
         }
 
-
         protected ServerActivityStatistics(){}
 
         /// <summary>

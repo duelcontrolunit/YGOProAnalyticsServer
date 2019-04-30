@@ -7,14 +7,22 @@ using System.Text;
 
 namespace YGOProAnalyticsServerTests.TestingHelpers
 {
+    /// <summary>
+    /// Provide support for testing in memory.
+    /// </summary>
     static class SqlInMemoryHelper
     {
-        public static DbContextOptions<T> SqlLiteOptions<T>()
-            where T : DbContext
+        /// <summary>
+        /// SqlLite options.
+        /// </summary>
+        /// <typeparam name="TDbContext">DbContext</typeparam>
+        /// <returns>Options</returns>
+        public static DbContextOptions<TDbContext> SqlLiteOptions<TDbContext>()
+            where TDbContext : DbContext
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
-            return new DbContextOptionsBuilder<T>()
+            return new DbContextOptionsBuilder<TDbContext>()
                     .UseSqlite(connection)
                     .ConfigureWarnings(x => x.Ignore(RelationalEventId.QueryClientEvaluationWarning))
                     .Options;
