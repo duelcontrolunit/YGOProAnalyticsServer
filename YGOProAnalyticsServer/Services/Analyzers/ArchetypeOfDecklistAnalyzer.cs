@@ -36,7 +36,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             List<Card> fullDeck = decklist.MainDeck.Concat(decklist.ExtraDeck).Concat(decklist.SideDeck).ToList();
             if (fullDeck.Count == 0)
             {
-                throw new EmptyDecklistException("The decklist given in the parameter contains no cards in Main, Extra and Side Deck."); 
+                throw new EmptyDecklistException("The decklist given in the parameter contains no cards in Main, Extra and Side Deck.");
             }
             List<Archetype> archetypes = fullDeck.ConvertAll<Archetype>(x => x.Archetype);
 
