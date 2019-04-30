@@ -9,6 +9,8 @@ namespace YGOProAnalyticsServer.Database
 {
     public class YgoProAnalyticsDatabase : DbContext
     {
+        public DbSet<ServerActivityStatistics> ServerActivityStatistics { get; set; }
+
         public DbSet<Banlist> Banlists { get; set; }
         public DbSet<Archetype> Archetypes { get; set; }
         public DbSet<ArchetypeStatistics> ArchetypeStatistics { get; set; }
