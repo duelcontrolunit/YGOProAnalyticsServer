@@ -6,9 +6,8 @@ using YGOProAnalyticsServer.DbModels;
 
 namespace YGOProAnalyticsServer.DTOs
 {
-    public class DeclistWitStatisticsDTO
+    public class DecklistWithStatisticsDTO
     {
-        //TODO: Statistics and side deck
         public int Id { get; set; }
         public string Name { get; set; }
         public string Archetype { get; set; }
@@ -16,7 +15,7 @@ namespace YGOProAnalyticsServer.DTOs
 
         public MainDeckDTO MainDeck { get; set; }
         public ExtraDeckDTO ExtraDeck { get; set; }
-
-
+        public DeckDTO SideDeck { get; set; }
+        public List<DeckStatisticsDTO> Statistics { get; set; }
     }
 }
