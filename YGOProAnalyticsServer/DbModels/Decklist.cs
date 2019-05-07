@@ -28,7 +28,7 @@ namespace YGOProAnalyticsServer.DbModels
             WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
         }
 
-        public Decklist(ICollection<Card> mainDeck, ICollection<Card> extraDeck, ICollection<Card> sideDeck)
+        public Decklist(IList<Card> mainDeck, IList<Card> extraDeck, IList<Card> sideDeck)
         {
             MainDeck = mainDeck;
             ExtraDeck = extraDeck;
@@ -58,7 +58,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <value>
         /// The main deck.
         /// </value>
-        public ICollection<Card> MainDeck { get; protected set; } = new List<Card>();
+        public IList<Card> MainDeck { get; protected set; } = new List<Card>();
 
         /// <summary>
         /// The extra deck.
@@ -66,7 +66,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <value>
         /// The extra deck.
         /// </value>
-        public ICollection<Card> ExtraDeck { get; protected set; } = new List<Card>();
+        public IList<Card> ExtraDeck { get; protected set; } = new List<Card>();
 
         /// <summary>
         /// The side deck.
@@ -74,7 +74,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <value>
         /// The side deck.
         /// </value>
-        public ICollection<Card> SideDeck { get; protected set; } = new List<Card>();
+        public IList<Card> SideDeck { get; protected set; } = new List<Card>();
 
         /// <summary>
         /// The archetype of the Decklist.

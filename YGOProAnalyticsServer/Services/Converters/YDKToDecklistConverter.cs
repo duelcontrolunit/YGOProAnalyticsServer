@@ -81,7 +81,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                 }
             }
 
-            return new Decklist(mainDeck, extraDeck, sideDeck);
+            return new Decklist(mainDeck.OrderBy(x=>x.PassCode).ToList(), extraDeck.OrderBy(x => x.PassCode).ToList(), sideDeck.OrderBy(x => x.PassCode).ToList());
         }
 
         /// <summary>

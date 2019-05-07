@@ -17,7 +17,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
     [TestFixture]
     class ArchetypeOfDecklistAnalyzerTests
     {
-        IArchetypeOfDecklistAnalyzer _analyzer;
+        IArchetypeAndDecklistAnalyzer _analyzer;
 
 
         [Test]
@@ -26,7 +26,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
             using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
             {
                 dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeOfDecklistAnalyzer(dbInMemory);
+                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
                 var nekrozArchetype = new Archetype("Nekroz", true);
                 var heraldArchetype = new Archetype("Herald", true);
                 await dbInMemory.SaveChangesAsync();
@@ -41,7 +41,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
             using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
             {
                 dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeOfDecklistAnalyzer(dbInMemory);
+                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
                 var nekrozArchetype = new Archetype("Nekroz", true);
                 var heraldArchetype = new Archetype("Herald", true);
                 await dbInMemory.SaveChangesAsync();
@@ -57,7 +57,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
             using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
             {
                 dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeOfDecklistAnalyzer(dbInMemory);
+                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
 
                 await dbInMemory.SaveChangesAsync();
                 var decklist = new Decklist(new List<Card> { _NekrozofBrionac(new Archetype(Archetype.Default, true)), _NekrozMirror(new Archetype(Archetype.Default, true)) }, new List<Card> { _Herald(new Archetype(Archetype.Default, true)) }, new List<Card>());
@@ -72,7 +72,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
             using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
             {
                 dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeOfDecklistAnalyzer(dbInMemory);
+                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
 
                 await dbInMemory.SaveChangesAsync();
                 var decklist = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());

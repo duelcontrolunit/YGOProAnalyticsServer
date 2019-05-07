@@ -6,7 +6,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
     /// <summary>
     /// Used to analyze the decklist for the archetype in it.
     /// </summary>
-    public interface IArchetypeOfDecklistAnalyzer
+    public interface IArchetypeAndDecklistAnalyzer
     {
         /// <summary>
         /// Sets the decklist archetype from archetype cards used in it.

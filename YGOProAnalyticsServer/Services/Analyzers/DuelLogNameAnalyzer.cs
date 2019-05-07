@@ -59,9 +59,8 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         }
 
         /// <inheritdoc />
-        public Banlist GetBanlist(string roomName, string endOfTheDuelFromDuelLog)
+        public Banlist GetBanlist(string roomName, DateTime endOfTheDuelFromDuelLog)
         {
-            var endOfTheDuelDate = _converter.ConvertDuelLogTimeToDateTime(endOfTheDuelFromDuelLog);
             if (IsDefaultBanlist(roomName))
             {
                 var defaultBanlist = _db.Banlists
@@ -75,7 +74,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             {
                 int banlistNumber = (int)char.GetNumericValue(roomName[roomName.LastIndexOf("LF") + 2]);
                 var banlist = _db.Banlists
-                    .Where(x => x.ReleaseDate <= endOfTheDuelDate)
+                    .Where(x => x.ReleaseDate <= endOfTheDuelFromDuelLog)
                     .Skip(banlistNumber - 1)
                     .FirstOrDefault();
                 banlist = banlist ?? throw new UnknownBanlistException("There is no banlist in given time in our database.");
