@@ -35,5 +35,10 @@
         /// The ydk folder location.
         /// </value>
         string DataFolderLocation { get; }
+
+        string CardApiURL { get; }
+        string BanlistApiURL { get; }
+
+        string ServerDataEndpointURL { get; }
     }
 }

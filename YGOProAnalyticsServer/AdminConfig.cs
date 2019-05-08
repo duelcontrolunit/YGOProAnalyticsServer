@@ -9,6 +9,8 @@ namespace YGOProAnalyticsServer
     /// <inheritdoc />
     public class AdminConfig : IAdminConfig
     {
+        public string CardApiURL { get; } = "";
+
         ///<inheritdoc />
         public string DefaultBanlistName { get; } = "";
 
@@ -17,5 +19,9 @@ namespace YGOProAnalyticsServer
         public string FTPPassword { get; } = "";
 
         public string DataFolderLocation { get; } = "";
+
+        public string BanlistApiURL => "";
+
+        public string ServerDataEndpointURL => "";
     }
 }

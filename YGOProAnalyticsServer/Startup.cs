@@ -19,6 +19,9 @@ using YGOProAnalyticsServer.Services.Unzippers;
 using YGOProAnalyticsServer.Services.Unzippers.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 using YGOProAnalyticsServer.Services.Others;
+using YGOProAnalyticsServer.Extensions;
+using System.Reflection;
+using MediatR;
 
 namespace YGOProAnalyticsServer
 {
@@ -35,7 +38,7 @@ namespace YGOProAnalyticsServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-           
+            services.AddMediatR();
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
 
             services.AddScoped<ICardBuilder, CardBuilder>();
@@ -50,7 +53,10 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
-            
+
+            services.AddScheduler(builder => {
+                builder.AddJobs(Assembly.GetExecutingAssembly());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

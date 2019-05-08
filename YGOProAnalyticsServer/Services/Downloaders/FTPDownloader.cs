@@ -60,10 +60,10 @@ namespace YGOProAnalyticsServer.Services.Downloaders
         }
 
         /// <inheritdoc />
-        public async Task<string> DownloadDecksFromFTP(string EndPointFTP)
+        public async Task<string> DownloadDeckFromFTP(string URLToDeckList)
         {
 
-            Uri _ftpUri = new Uri(EndPointFTP);
+            Uri _ftpUri = new Uri(URLToDeckList);
             string _folderPath = Path.Combine(_adminConfig.DataFolderLocation, "DecksZipFiles");
             string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.LocalPath));
             if (!Directory.Exists(_folderPath))
