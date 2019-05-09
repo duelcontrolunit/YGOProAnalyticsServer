@@ -7,6 +7,9 @@ using YGOProAnalyticsServer.Services.Factories.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Converters
 {
+    /// <summary>
+    /// Provide convert decklist to dto decklist feature.
+    /// </summary>
     public class DecklistToDecklistDtoConverter : IDecklistToDecklistDtoConverter
     {
         readonly IDecksDtosFactory _decksDtosFactory;
@@ -16,6 +19,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             _decksDtosFactory = decksDtosFactory ?? throw new ArgumentNullException(nameof(decksDtosFactory));
         }
 
+        /// <inheritdoc />
         public DecklistWithStatisticsDTO Convert(Decklist decklist)
         {
             var decklistDto = new DecklistWithStatisticsDTO() {

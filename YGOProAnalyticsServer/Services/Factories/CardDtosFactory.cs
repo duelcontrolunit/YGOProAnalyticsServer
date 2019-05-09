@@ -4,8 +4,10 @@ using YGOProAnalyticsServer.Services.Factories.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Factories
 {
+    /// <seealso cref="YGOProAnalyticsServer.Services.Factories.Interfaces.ICardDtosFactory" />
     public class CardDtosFactory : ICardDtosFactory
     {
+        /// <inheritdoc />
         public virtual CardDTO CreateCardDto(Card card)
         {
             return new CardDTO()
@@ -21,6 +23,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             };
         }
 
+         /// <inheritdoc />
         public virtual MonsterCardDTO CreateMonsterCardDto(Card card)
         {
             return new MonsterCardDTO()
@@ -40,6 +43,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             };
         }
 
+        /// <inheritdoc />
         public virtual PendulumMonsterCardDTO CreatePendulumMonsterCardDto(Card card)
         {
             return new PendulumMonsterCardDTO()
@@ -60,6 +64,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             };
         }
 
+        /// <inheritdoc />
         public virtual LinkMonsterCardDTO CreateLinkMonsterCardDto(Card card)
         {
             return new LinkMonsterCardDTO()

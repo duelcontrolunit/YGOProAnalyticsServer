@@ -9,15 +9,22 @@ using YGOProAnalyticsServer.Services.Factories.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Factories
 {
+    /// <seealso cref="YGOProAnalyticsServer.Services.Factories.Interfaces.IDecksDtosFactory" />
     public class DecksDtosFactory : IDecksDtosFactory
     {
         readonly ICardDtosFactory _cardDtosFactory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DecksDtosFactory"/> class.
+        /// </summary>
+        /// <param name="cardDtosFactory">The card dtos factory.</param>
+        /// <exception cref="ArgumentNullException">cardDtosFactory</exception>
         public DecksDtosFactory(ICardDtosFactory cardDtosFactory)
         {
             _cardDtosFactory = cardDtosFactory ?? throw new ArgumentNullException(nameof(cardDtosFactory));
         }
 
+        /// <inheritdoc />
         public MainDeckDTO CreateMainDeckDto(Decklist decklist)
         {
             var mainDeckDto = new MainDeckDTO();
@@ -38,6 +45,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             return mainDeckDto;
         }
 
+        /// <inheritdoc />
         public ExtraDeckDTO CreateExtraDeckDto(Decklist decklist)
         {
             var extraDeckDto = new ExtraDeckDTO();
@@ -50,6 +58,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             return extraDeckDto;
         }
 
+        /// <inheritdoc />
         public DeckDTO CreateDeckDto(Decklist decklist)
         {
             var deck = new DeckDTO();
@@ -62,7 +71,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             return deck;
         }
 
-        private void handleMonsterFor(DeckDTO deck, Card card, string lowerCardType)
+        protected void handleMonsterFor(DeckDTO deck, Card card, string lowerCardType)
         {
             handleXYZPendulumMonster(deck, card, lowerCardType);
             handlePendulumSynchroMonster(deck, card, lowerCardType);
