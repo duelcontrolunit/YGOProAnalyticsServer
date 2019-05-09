@@ -8,19 +8,19 @@ namespace YGOProAnalyticsServer.DTOs
 {
     public class DeckDTO
     {
-        public List<CardDTO> NormalMonsters { get; set; }
-        public List<CardDTO> EffectMonsters { get; set; }
-        public List<CardDTO> PendulumNormalMonsters { get; set; }
-        public List<CardDTO> PendulumEffectMonsters { get; set; }
-        public List<CardDTO> RitualMonsters { get; set; }
-        public List<CardDTO> SpellCardDTOs { get; set; }
-        public List<CardDTO> TrapCardDTOs { get; set; }
-        public List<CardDTO> XYZMonsters { get; set; }
-        public List<CardDTO> XYZPendulumMonsters { get; set; }
-        public List<CardDTO> SynchroMonsters { get; set; }
-        public List<CardDTO> SynchroPendulumMonsters { get; set; }
-        public List<CardDTO> FusionMonsters { get; set; }
-        public List<CardDTO> FusionPendulumMonsters { get; set; }
-        public List<CardDTO> LinkMonsters { get; set; }
+        public List<MonsterCardDTO> NormalMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<MonsterCardDTO> EffectMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> PendulumNormalMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> PendulumEffectMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<MonsterCardDTO> RitualMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<CardDTO> SpellCards { get; set; } = new List<CardDTO>();
+        public List<CardDTO> TrapCards { get; set; } = new List<CardDTO>();
+        public List<MonsterCardDTO> XYZMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> XYZPendulumMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<MonsterCardDTO> SynchroMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> SynchroPendulumMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<MonsterCardDTO> FusionMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> FusionPendulumMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<LinkMonsterCardDTO> LinkMonsters { get; set; } = new List<LinkMonsterCardDTO>();
     }
 }

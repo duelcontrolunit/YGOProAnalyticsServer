@@ -8,12 +8,12 @@ namespace YGOProAnalyticsServer.DTOs
 {
     public class MainDeckDTO
     {
-        public List<Card> NormalMonsters { get; set; }
-        public List<Card> EffectMonsters { get; set; }
-        public List<Card> PendulumNormalMonsters { get; set; }
-        public List<Card> PendulumEffectMonsters { get; set; }
-        public List<Card> RitualMonsters { get; set; }
-        public List<Card> SpellCards { get; set; }
-        public List<Card> TrapCards { get; set; }
+        public List<MonsterCardDTO> NormalMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<MonsterCardDTO> EffectMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> PendulumNormalMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<PendulumMonsterCardDTO> PendulumEffectMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
+        public List<MonsterCardDTO> RitualMonsters { get; set; } = new List<MonsterCardDTO>();
+        public List<CardDTO> SpellCards { get; set; } = new List<CardDTO>();
+        public List<CardDTO> TrapCards { get; set; } = new List<CardDTO>();
     }
 }

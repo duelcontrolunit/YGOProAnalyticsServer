@@ -8,7 +8,7 @@ namespace YGOProAnalyticsServer.DTOs
 {
     public class DecklistWithStatisticsDTO
     {
-        public int Id { get; set; }
+        public int DecklistId { get; set; }
         public string Name { get; set; }
         public string Archetype { get; set; }
         public DateTime WhenDeckWasFirstPlayed { get; set; }
