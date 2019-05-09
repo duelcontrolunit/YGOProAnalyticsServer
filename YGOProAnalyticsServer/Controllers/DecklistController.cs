@@ -33,14 +33,14 @@ namespace YGOProAnalyticsServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var deck = await _decklistService.GetByIdWithAllDataIncluded(id);
+            var decklist = await _decklistService.GetByIdWithAllDataIncluded(id);
              
-            if(deck == null)
+            if(decklist == null)
             {
                 return NotFound("There is no decklist with given id.");
             }
 
-            var decklistDto = _decklistToDtoConverter.Convert(deck);
+            var decklistDto = _decklistToDtoConverter.Convert(decklist);
 
             return new JsonResult(decklistDto);
         }
