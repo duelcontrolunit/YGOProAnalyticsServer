@@ -19,6 +19,8 @@ using YGOProAnalyticsServer.Services.Unzippers;
 using YGOProAnalyticsServer.Services.Unzippers.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 using YGOProAnalyticsServer.Services.Others;
+using YGOProAnalyticsServer.Services.Factories.Interfaces;
+using YGOProAnalyticsServer.Services.Factories;
 
 namespace YGOProAnalyticsServer
 {
@@ -48,6 +50,9 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IFileUnzipper, FileUnzipper>();
             services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
             services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
+            services.AddScoped<ICardDtosFactory, CardDtosFactory>();
+            services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
+            services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
             
