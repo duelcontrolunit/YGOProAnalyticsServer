@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.DTOs.Interfaces;
 
 namespace YGOProAnalyticsServer.DTOs
 {
-    public class ExtraDeckDTO
+    public class ExtraDeckDTO : IXYZPendulumContainer, ISynchroPendulumMonsterContainer,
+        IFusionPendulumMonsterContainer, IXYZMonstersContainer, ISynchroMonstersContainer,
+        IFusionMonstersContainer, ILinkMonstersContainer
     {
         public List<CardDTO> XYZMonsters { get; set; } = new List<CardDTO>();
         public List<PendulumMonsterCardDTO> XYZPendulumMonsters { get; set; } = new List<PendulumMonsterCardDTO>();
