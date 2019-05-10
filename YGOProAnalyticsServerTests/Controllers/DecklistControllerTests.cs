@@ -27,6 +27,7 @@ namespace YGOProAnalyticsServerTests.Controllers
         public void SetUp()
         {
             _db = new YgoProAnalyticsDatabase(SqlInMemoryHelper.SqlLiteOptions<YgoProAnalyticsDatabase>());
+            _db.Database.EnsureCreated();
             _decklistToDtoConverter = new Mock<IDecklistToDecklistDtoConverter>();
             _decklistService = new Mock<IDecklistService>();
         }
