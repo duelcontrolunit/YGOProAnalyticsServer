@@ -212,7 +212,9 @@ namespace YGOProAnalyticsServer.Services.Factories
             string lowerCardType)
             where TEffectMonstersContainer : IEffectMonsterContainer
         {
-            if (lowerCardType.Contains("effect") && isNotAnyExtraMonsterType(lowerCardType))
+            if (lowerCardType.Contains("effect") 
+                && isNotAnyExtraMonsterType(lowerCardType)
+                && !lowerCardType.Contains("pendulum"))
             {
                 container.EffectMonsters.Add(
                     _cardDtosFactory.CreateMonsterCardDto(card)
@@ -230,7 +232,10 @@ namespace YGOProAnalyticsServer.Services.Factories
             string lowerCardType)
             where TNormalMonstersContainer : INormalMonstersContainer
         {
-            if (isNotAnyExtraMonsterType(lowerCardType)) return;
+            if (!isNotAnyExtraMonsterType(lowerCardType)
+                || lowerCardType.Contains("pendulum")
+                || lowerCardType.Contains("ritual")
+                || lowerCardType.Contains("effect")) return;
 
             container.NormalMonsters.Add(
                 _cardDtosFactory.CreateMonsterCardDto(card)
@@ -243,7 +248,9 @@ namespace YGOProAnalyticsServer.Services.Factories
             string lowerCardType)
             where TRitualMonstersContainer : IRitualMonstersContainer
         {
-            if (lowerCardType.Contains("ritual") && isNotAnyExtraMonsterType(lowerCardType))
+            if (lowerCardType.Contains("ritual") 
+                && isNotAnyExtraMonsterType(lowerCardType)
+                && !lowerCardType.Contains("pendulum"))
             {
                 container.RitualMonsters.Add(
                     _cardDtosFactory.CreateMonsterCardDto(card)
