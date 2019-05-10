@@ -16,6 +16,7 @@ namespace YGOProAnalyticsServerTests.Others
     {
         DecklistService _decklistService;
         YgoProAnalyticsDatabase _db;
+        readonly CardsAndDecksHelper _helper = new CardsAndDecksHelper();
 
         [SetUp]
         public void SetUp()
@@ -48,17 +49,17 @@ namespace YGOProAnalyticsServerTests.Others
             var banlist = new Banlist("2019.11 TCG", 1);
             var archetype = new Archetype("Valid archetype", false);
 
-            var bannedPendulumMonster = _getCard(archetype);
-            bannedPendulumMonster.MonsterCard = _getMonsterCard(bannedPendulumMonster);
-            bannedPendulumMonster.MonsterCard.PendulumMonsterCard = _getPendulumMonsterCard(bannedPendulumMonster.MonsterCard);
+            var bannedPendulumMonster = _helper.GetCard(archetype);
+            bannedPendulumMonster.MonsterCard = _helper.GetMonsterCard(bannedPendulumMonster);
+            bannedPendulumMonster.MonsterCard.PendulumMonsterCard = _helper.GetPendulumMonsterCard(bannedPendulumMonster.MonsterCard);
             banlist.ForbiddenCards.Add(bannedPendulumMonster);
 
-            var limitedLinkMonster = _getCard(archetype);
-            limitedLinkMonster.MonsterCard = _getMonsterCard(limitedLinkMonster);
-            limitedLinkMonster.MonsterCard.LinkMonsterCard = _getLinkMonsterCard(limitedLinkMonster.MonsterCard);
+            var limitedLinkMonster = _helper.GetCard(archetype);
+            limitedLinkMonster.MonsterCard = _helper.GetMonsterCard(limitedLinkMonster);
+            limitedLinkMonster.MonsterCard.LinkMonsterCard = _helper.GetLinkMonsterCard(limitedLinkMonster.MonsterCard);
             banlist.LimitedCards.Add(limitedLinkMonster);
 
-            var decklist = _getValidDecklistWithStatistics(archetype);
+            var decklist = _helper.GetValidDecklistWithStatistics(archetype);
             decklist.MainDeck.Add(bannedPendulumMonster);
             decklist.ExtraDeck.Add(limitedLinkMonster);
 
@@ -85,65 +86,6 @@ namespace YGOProAnalyticsServerTests.Others
             });
 
             Assert.IsNotNull("");
-        }
-
-        private Decklist _getValidDecklistWithStatistics(Archetype archetype)
-        {
-            var decklist = new Decklist("Valid decklist", archetype, new DateTime(1997, 4, 29));
-            decklist.DecklistStatistics.Add(_getValidStatisticsForValidDeck());
-
-            return decklist;
-        }
-
-        private PendulumMonsterCard _getPendulumMonsterCard(MonsterCard monster)
-        {
-            return PendulumMonsterCard.Create(5, monster);
-        }
-
-        private LinkMonsterCard _getLinkMonsterCard(MonsterCard monster)
-        {
-            return LinkMonsterCard.Create(1, topLeftLinkMarker: true, false, false, false, false, false, false, false, monster);
-        }
-
-        private Card _getCard(Archetype archetype)
-        {
-            return Card.Create(
-                passCode: 12345,
-                name: "monster name",
-                description: "monster desc",
-                type: "monster Type",
-                race: "monster race",
-                imageUrl: "imgUrl",
-                smallImageUrl: "smallImgUrl",
-                archetype
-            );
-        }
-
-        private MonsterCard _getMonsterCard(Card card)
-        {
-            return MonsterCard.Create(
-                attack: "1234",
-                defence: "?",
-                levelOrRank: 5,
-                attribute: "dark",
-                card: card
-            );
-        }
-
-        private DecklistStatistics _getValidStatisticsForValidDeck()
-        {
-            DecklistStatistics statistics = new DecklistStatistics();
-            statistics.IncrementNumberOfTimesWhenDeckWasUsed();
-
-            statistics.GetType()
-                .GetProperty(nameof(DecklistStatistics.DateWhenDeckWasUsed))
-                .SetValue(statistics, new DateTime(1997, 4, 29));
-
-            statistics.GetType()
-               .GetProperty(nameof(DecklistStatistics.Id))
-               .SetValue(statistics, 1);
-
-            return statistics;
         }
     }
 }
