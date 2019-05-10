@@ -31,6 +31,12 @@ namespace YGOProAnalyticsServerTests.Controllers
             _decklistService = new Mock<IDecklistService>();
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _db.Dispose();
+        }
+
         [Test]
         public async Task Get_DecklistNotExist_WeGet404Response()
         {
