@@ -14,5 +14,7 @@ namespace YGOProAnalyticsServer
         public string FTPUser { get; } = "";
 
         public string FTPPassword { get; } = "";
+
+        public string YgoProListOfRoomsUrl => "http://szefoserver.ddns.net:7211/api/getrooms?&pass=";
     }
 }

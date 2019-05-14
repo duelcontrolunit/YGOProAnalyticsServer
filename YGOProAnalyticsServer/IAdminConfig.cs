@@ -27,5 +27,13 @@
         /// The FTP password.
         /// </value>
         string FTPPassword { get; }
+
+        /// <summary>
+        /// Gets the list of rooms URL (ygopro server).
+        /// </summary>
+        /// <value>
+        /// The of rooms URL (ygopro server).
+        /// </value>
+        string YgoProListOfRoomsUrl { get; }
     }
 }
