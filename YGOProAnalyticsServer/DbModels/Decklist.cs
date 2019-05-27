@@ -12,6 +12,10 @@ namespace YGOProAnalyticsServer.DbModels
     /// <summary>Representation of a Decklist</summary>
     public class Decklist
     {
+        public static readonly string IncludeMainDeckCards = $"{nameof(CardsInMainDeckJoin)}.{nameof(CardInMainDeckDecklistJoin.Card)}";
+        public static readonly string IncludeExtraDeckCards = $"{nameof(CardsInExtraDeckJoin)}.{nameof(CardInExtraDeckDecklistJoin.Card)}";
+        public static readonly string IncludeSideDeckCards = $"{nameof(CardsInSideDeckJoin)}.{nameof(CardInSideDeckDecklistJoin.Card)}";
+
         protected Decklist()
         {
             MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);

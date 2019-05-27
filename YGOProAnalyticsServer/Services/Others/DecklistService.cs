@@ -33,28 +33,21 @@ namespace YGOProAnalyticsServer.Services.Others
         protected IQueryable<Decklist> includeMainDeckWithAllData(IQueryable<Decklist> query)
         {
             return query
-                .Include($"{nameof(Decklist.CardsInMainDeckJoin)}" +
-                         $".{nameof(CardInMainDeckDecklistJoin.Card)}")
+                .Include($"{Decklist.IncludeMainDeckCards}")
 
-                .Include($"{nameof(Decklist.CardsInMainDeckJoin)}" +
-                         $".{nameof(CardInMainDeckDecklistJoin.Card)}" +
-                         $".{nameof(Card.Archetype)}")
+                .Include($"{Decklist.IncludeMainDeckCards}.{nameof(Card.Archetype)}")
 
-                .Include($"{nameof(Decklist.CardsInMainDeckJoin)}" +
-                         $".{nameof(CardInMainDeckDecklistJoin.Card)}" +
+                .Include($"{Decklist.IncludeMainDeckCards}" +
                          $".{nameof(Card.MonsterCard)}" +
                          $".{nameof(MonsterCard.PendulumMonsterCard)}")
 
-                .Include($"{nameof(Decklist.CardsInMainDeckJoin)}" +
-                         $".{nameof(CardInMainDeckDecklistJoin.Card)}" +
+                .Include($"{Decklist.IncludeMainDeckCards}" +
                          $".{Card.IncludeWithForbiddenCardsBanlist}")
 
-                .Include($"{nameof(Decklist.CardsInMainDeckJoin)}" +
-                         $".{nameof(CardInMainDeckDecklistJoin.Card)}" +
+                .Include($"{Decklist.IncludeMainDeckCards}" +
                          $".{Card.IncludeWithLimitedCardsBanlist}")
 
-                .Include($"{nameof(Decklist.CardsInMainDeckJoin)}" +
-                         $".{nameof(CardInMainDeckDecklistJoin.Card)}" +
+                .Include($"{Decklist.IncludeMainDeckCards}" +
                          $".{Card.IncludeWithSemiLimitedCardsBanlist}")
                ;
         }
@@ -62,69 +55,53 @@ namespace YGOProAnalyticsServer.Services.Others
         protected IQueryable<Decklist> includeExtraDeckWithAllData(IQueryable<Decklist> query)
         {
             return query
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}")
+               .Include($"{Decklist.IncludeExtraDeckCards}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{nameof(Card.Archetype)}")
+               .Include($"{Decklist.IncludeExtraDeckCards}.{nameof(Card.Archetype)}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{nameof(Card.MonsterCard)}" +
-                          $".{nameof(MonsterCard.PendulumMonsterCard)}")
+               .Include($"{Decklist.IncludeExtraDeckCards}" +
+                        $".{nameof(Card.MonsterCard)}" +
+                        $".{nameof(MonsterCard.PendulumMonsterCard)}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{nameof(Card.MonsterCard)}" +
-                          $".{nameof(MonsterCard.LinkMonsterCard)}")
+                .Include($"{Decklist.IncludeExtraDeckCards}" +
+                        $".{nameof(Card.MonsterCard)}" +
+                        $".{nameof(MonsterCard.LinkMonsterCard)}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{Card.IncludeWithForbiddenCardsBanlist}")
+               .Include($"{Decklist.IncludeExtraDeckCards}" +
+                        $".{Card.IncludeWithForbiddenCardsBanlist}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{Card.IncludeWithLimitedCardsBanlist}")
+               .Include($"{Decklist.IncludeExtraDeckCards}" +
+                        $".{Card.IncludeWithLimitedCardsBanlist}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{Card.IncludeWithSemiLimitedCardsBanlist}")
-                ;
+               .Include($"{Decklist.IncludeExtraDeckCards}" +
+                        $".{Card.IncludeWithSemiLimitedCardsBanlist}")
+              ;
         }
 
         protected IQueryable<Decklist> includeSideDeckWithAllData(IQueryable<Decklist> query)
         {
             return query
-                 .Include($"{nameof(Decklist.CardsInSideDeckJoin)}" +
-                          $".{nameof(CardInSideDeckDecklistJoin.Card)}")
+              .Include($"{Decklist.IncludeSideDeckCards}")
 
-                 .Include($"{nameof(Decklist.CardsInSideDeckJoin)}" +
-                          $".{nameof(CardInSideDeckDecklistJoin.Card)}" +
-                          $".{nameof(Card.Archetype)}")
+              .Include($"{Decklist.IncludeSideDeckCards}.{nameof(Card.Archetype)}")
 
-                 .Include($"{nameof(Decklist.CardsInSideDeckJoin)}" +
-                          $".{nameof(CardInSideDeckDecklistJoin.Card)}" +
-                          $".{nameof(Card.MonsterCard)}" +
-                          $".{nameof(MonsterCard.PendulumMonsterCard)}")
+              .Include($"{Decklist.IncludeSideDeckCards}" +
+                       $".{nameof(Card.MonsterCard)}" +
+                       $".{nameof(MonsterCard.PendulumMonsterCard)}")
 
-                 .Include($"{nameof(Decklist.CardsInExtraDeckJoin)}" +
-                          $".{nameof(CardInExtraDeckDecklistJoin.Card)}" +
-                          $".{nameof(Card.MonsterCard)}" +
-                          $".{nameof(MonsterCard.LinkMonsterCard)}")
+                .Include($"{Decklist.IncludeSideDeckCards}" +
+                        $".{nameof(Card.MonsterCard)}" +
+                        $".{nameof(MonsterCard.LinkMonsterCard)}")
 
-                 .Include($"{nameof(Decklist.CardsInSideDeckJoin)}" +
-                          $".{nameof(CardInSideDeckDecklistJoin.Card)}" +
-                          $".{Card.IncludeWithForbiddenCardsBanlist}")
+              .Include($"{Decklist.IncludeSideDeckCards}" +
+                       $".{Card.IncludeWithForbiddenCardsBanlist}")
 
-                 .Include($"{nameof(Decklist.CardsInSideDeckJoin)}" +
-                          $".{nameof(CardInSideDeckDecklistJoin.Card)}" +
-                          $".{Card.IncludeWithLimitedCardsBanlist}")
+              .Include($"{Decklist.IncludeSideDeckCards}" +
+                       $".{Card.IncludeWithLimitedCardsBanlist}")
 
-                 .Include($"{nameof(Decklist.CardsInSideDeckJoin)}" +
-                          $".{nameof(CardInSideDeckDecklistJoin.Card)}" +
-                          $".{Card.IncludeWithSemiLimitedCardsBanlist}")
-                ;
+              .Include($"{Decklist.IncludeSideDeckCards}" +
+                       $".{Card.IncludeWithSemiLimitedCardsBanlist}")
+             ;
         }
     }
 }
