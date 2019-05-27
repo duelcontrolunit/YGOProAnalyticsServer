@@ -12,7 +12,9 @@ namespace YGOProAnalyticsServer.Events
         public Dictionary<DateTime, List<DuelLog>> ConvertedDuelLogs { get; }
         public Dictionary<DateTime, List<DecklistWithName>> UnzippedDecklistsWithDecklistFileName { get; }
 
-        public DataFromYgoProServerRetrieved(Dictionary<DateTime, List<DuelLog>> convertedDuelLogs, Dictionary<DateTime, List<DecklistWithName>> unzippedDecklistsWithDecklistFileName)
+        public DataFromYgoProServerRetrieved(
+            Dictionary<DateTime, List<DuelLog>> convertedDuelLogs,
+            Dictionary<DateTime, List<DecklistWithName>> unzippedDecklistsWithDecklistFileName)
         {
             ConvertedDuelLogs = convertedDuelLogs;
             UnzippedDecklistsWithDecklistFileName = unzippedDecklistsWithDecklistFileName;

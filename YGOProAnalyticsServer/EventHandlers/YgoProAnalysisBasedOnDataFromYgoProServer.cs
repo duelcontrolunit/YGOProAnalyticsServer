@@ -22,7 +22,11 @@ namespace YGOProAnalyticsServer.EventHandlers
         IArchetypeAndDecklistAnalyzer _archetypeAndDecklistAnalyzer;
         IYDKToDecklistConverter _yDKToDecklistConverter;
 
-        public YgoProAnalysisBasedOnDataFromYgoProServer(IDuelLogNameAnalyzer duelLogNameAnalyzer, YgoProAnalyticsDatabase db, IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer, IYDKToDecklistConverter yDKToDecklistConverter)
+        public YgoProAnalysisBasedOnDataFromYgoProServer(
+            IDuelLogNameAnalyzer duelLogNameAnalyzer, 
+            YgoProAnalyticsDatabase db, 
+            IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer, 
+            IYDKToDecklistConverter yDKToDecklistConverter)
         {
             _duelLogNameAnalyzer = duelLogNameAnalyzer;
             _db = db;
@@ -63,7 +67,6 @@ namespace YGOProAnalyticsServer.EventHandlers
                     allDecksWhichWonFromOneDay,
                     allDecksWhichLostFromOneDay,
                     duelLog);
-
             }
 
             DateTime dateFromDuelLog = duelLogsFromOneDay.Key.Date;

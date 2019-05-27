@@ -12,7 +12,6 @@ using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Analyzers
 {
-
     /// <<inheritdoc />
     public class ArchetypeAndDecklistAnalyzer : IArchetypeAndDecklistAnalyzer
     {
@@ -52,20 +51,23 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             {
                 fullDeck.Add(card);
             }
+
             foreach (var card in decklist.ExtraDeck)
             {
                 fullDeck.Add(card);
             }
+
             foreach (var card in decklist.SideDeck)
             {
                 fullDeck.Add(card);
             }
+
             if (fullDeck.Count == 0)
             {
                 throw new EmptyDecklistException("The decklist given in the parameter contains no cards in Main, Extra and Side Deck.");
             }
-            List<Archetype> archetypes = fullDeck.ConvertAll<Archetype>(x => x.Archetype);
 
+            List<Archetype> archetypes = fullDeck.ConvertAll<Archetype>(x => x.Archetype);
             if (archetypes.Where(x => x.Name == Archetype.Default).Count() / fullDeck.Count() >= 0.8)
             {
                 return new Archetype(Archetype.Default, true);
@@ -94,9 +96,10 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 {
                     _archetypes.Add(archetype);
                 }
-                //await _db.SaveChangesAsync();
+                
                 return archetype;
             }
+
             return new Archetype(Archetype.Default, true);
         }
 
@@ -104,9 +107,10 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <param name="decklist">The decklist.</param>
         /// <param name="listOfDecks">The list of decks.</param>
         /// <returns>Amount of duplicates removed.</returns>
-        public NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(Decklist decklist, List<Decklist> listOfDecks)
+        public NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(
+            Decklist decklist, 
+            List<Decklist> listOfDecks)
         {
-
             int duplicateCount = 0;
             List<Decklist> listWithoutDuplicates = new List<Decklist>();
             foreach (var deck in listOfDecks)
@@ -117,6 +121,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                     {
                         listWithoutDuplicates.Add(decklist);
                     }
+
                     duplicateCount++;
                 }
                 else
@@ -202,8 +207,8 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                     return false;
                 }
             }
+
             return true;
         }
-
     }
 }

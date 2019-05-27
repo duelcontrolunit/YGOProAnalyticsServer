@@ -40,7 +40,9 @@ namespace YGOProAnalyticsServer.EventHandlers
             _db = db;
         }
 
-        public async Task Handle(CardsRelatedUpdatesCompleted notification, CancellationToken cancellationToken)
+        public async Task Handle(
+            CardsRelatedUpdatesCompleted notification, 
+            CancellationToken cancellationToken)
         {
             var convertedDuelLogs = await _getConvertedDuelLogs();
             var unzippedDecklistsWithDecklistFileName = await _getUnzippedDecklists();
@@ -57,23 +59,28 @@ namespace YGOProAnalyticsServer.EventHandlers
         private async Task<Dictionary<DateTime, List<DecklistWithName>>> _getUnzippedDecklists()
         {
             var unzippedDecklists = new Dictionary<DateTime, List<DecklistWithName>>();
-            var listOfDecklists = _fTPDownloader.DownloadListOfFilesFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/");
+            var listOfDecklists = _fTPDownloader
+                .DownloadListOfFilesFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/");
             AnalysisMetadata metaData = _getMetaData();
             DateTime dateOfDecklistsPack = new DateTime();
 
             foreach (string decklistZipName in listOfDecklists)
             {
-                string pathToDecklistsZip = await _fTPDownloader.DownloadDeckFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/" + decklistZipName);
+                string pathToDecklistsZip = await _fTPDownloader
+                    .DownloadDeckFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/" + decklistZipName);
                 dateOfDecklistsPack = DateTime.Parse(_extractDate(decklistZipName, "decks_save_"));
                 if (dateOfDecklistsPack > metaData.LastDecklistsPackDate)
+                {
                     unzippedDecklists.Add(
-                         dateOfDecklistsPack,
-                        _unzipper.GetDecksFromZip(pathToDecklistsZip)
-                    );
+                        dateOfDecklistsPack,
+                       _unzipper.GetDecksFromZip(pathToDecklistsZip)
+                   );
+                }   
             }
 
             metaData.LastDecklistsPackDate = dateOfDecklistsPack;
             await _db.SaveChangesAsync();
+
             return unzippedDecklists;
         }
 
@@ -98,6 +105,7 @@ namespace YGOProAnalyticsServer.EventHandlers
 
             metaData.LastDuelLogDateAnalyzed = dateOfDuelLog;
             await _db.SaveChangesAsync();
+
             return convertedDuelLogs;
         }
 

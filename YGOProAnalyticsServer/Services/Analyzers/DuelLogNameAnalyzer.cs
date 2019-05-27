@@ -63,6 +63,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             }
             else
             {
+
                 return false;
             }
         }

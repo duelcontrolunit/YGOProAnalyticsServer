@@ -93,6 +93,7 @@ namespace YGOProAnalyticsServer.DbModels
                 NumberOfTimesWhenDeckWon += value;
             }
         }
+
         public static DecklistStatistics Create(Decklist decklist, DateTime dateWhenDeckWasUsed)
         {
             return new DecklistStatistics

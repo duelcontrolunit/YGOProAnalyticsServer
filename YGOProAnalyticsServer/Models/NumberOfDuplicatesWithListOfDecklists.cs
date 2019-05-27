@@ -7,10 +7,16 @@ using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 
 namespace YGOProAnalyticsServer.Models
 {
-    /// <summary>Class should be returned by <see cref="IArchetypeAndDecklistAnalyzer.RemoveDuplicateDecklistsFromListOfDecklists(Decklist, List{Decklist})"/></summary>
+    /// <summary>
+    ///Class should be returned by 
+    /// <see cref="IArchetypeAndDecklistAnalyzer.RemoveDuplicateDecklistsFromListOfDecklists(Decklist, List{Decklist})"/>
+    ///</summary>
     public class NumberOfDuplicatesWithListOfDecklists
     {
-        public NumberOfDuplicatesWithListOfDecklists(int duplicateCount, List<Decklist> newListOfDecklists, Decklist decklistThatWasChecked)
+        public NumberOfDuplicatesWithListOfDecklists(
+            int duplicateCount, 
+            List<Decklist> newListOfDecklists, 
+            Decklist decklistThatWasChecked)
         {
             DuplicateCount = duplicateCount;
             NewListOfDecklists = newListOfDecklists ?? throw new ArgumentNullException(nameof(newListOfDecklists));
@@ -24,8 +30,10 @@ namespace YGOProAnalyticsServer.Models
         /// The duplicate count.
         /// </value>
         public int DuplicateCount { get; }
+
         /// <summary>
-        /// List of Decklists without duplicates of a decklist given in the argument of <see cref="IArchetypeAndDecklistAnalyzer.RemoveDuplicateDecklistsFromListOfDecklists(Decklist, List{Decklist})"/>
+        /// List of Decklists without duplicates of a decklist given in the argument of 
+        /// <see cref="IArchetypeAndDecklistAnalyzer.RemoveDuplicateDecklistsFromListOfDecklists(Decklist, List{Decklist})"/>
         /// </summary>
         /// <value>
         /// The new list of decklists.

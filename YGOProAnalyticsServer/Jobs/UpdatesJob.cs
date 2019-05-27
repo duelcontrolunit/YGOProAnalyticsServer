@@ -42,10 +42,8 @@ namespace YGOProAnalyticsServer.Jobs
                 }
                 catch (Exception e)
                 {
-                    //Log here
-                    var x = e;
+                    //TODO: Log here
                 }
-
             }
         }
     }

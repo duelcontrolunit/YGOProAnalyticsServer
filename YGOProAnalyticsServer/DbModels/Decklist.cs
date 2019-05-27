@@ -58,8 +58,6 @@ namespace YGOProAnalyticsServer.DbModels
         [Required]
         public string Name { get; set; }
 
-
-
         /// <summary>
         /// The main deck.
         /// </summary>
@@ -69,7 +67,6 @@ namespace YGOProAnalyticsServer.DbModels
         [NotMapped]
         public ICollection<Card> MainDeck { get; protected set; } = new List<Card>();
         public ICollection<CardInMainDeckDecklistJoin> CardsInMainDeckJoin { get; set; } = new List<CardInMainDeckDecklistJoin>();
-
 
         /// <summary>
         /// The extra deck.
