@@ -19,24 +19,6 @@ namespace YGOProAnalyticsServer.DbModels
             SideDeck = new JoinCollectionFacade<Card, Decklist, CardInSideDeckDecklistJoin>(this, CardsInSideDeckJoin);
         }
 
-        //protected Decklist(int id, string name, DateTime whenDecklistWasFirstPlayed)
-        //{
-        //    Id = id;
-        //    Name = name;
-        //    WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
-        //}
-
-        ///// <summary>Initializes a new instance of the <see cref="Decklist"/> class.</summary>
-        ///// <param name="name">The name of the decklist.</param>
-        ///// <param name="archetype">The archetype of the decklist.</param>
-        ///// <param name="whenDecklistWasFirstPlayed">DateTime when decklist was first played.</param>
-        //public Decklist(string name, Archetype archetype, DateTime whenDecklistWasFirstPlayed)
-        //{
-        //    Name = name;
-        //    Archetype = archetype;
-        //    WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
-        //}
-
         public Decklist(IList<Card> mainDeck, IList<Card> extraDeck, IList<Card> sideDeck)
         {
             MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);

@@ -65,7 +65,6 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             {
                 return false;
             }
-
         }
 
         /// <inheritdoc />

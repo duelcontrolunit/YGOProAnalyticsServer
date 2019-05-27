@@ -123,7 +123,6 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 {
                     listWithoutDuplicates.Add(deck);
                 }
-
             }
 
             return new NumberOfDuplicatesWithListOfDecklists(duplicateCount, listWithoutDuplicates, decklist);
@@ -137,14 +136,13 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <returns></returns>
         public bool CheckIfDecklistsAreDuplicate(Decklist decklist1, Decklist decklist2)
         {
-
-
             if (decklist2.MainDeck.Count != decklist1.MainDeck.Count
                 || decklist2.ExtraDeck.Count != decklist1.ExtraDeck.Count
                 || decklist2.SideDeck.Count != decklist1.SideDeck.Count)
             {
                 return false;
             }
+
             var mainDeck1 = new List<Card>();
             foreach (var card in decklist1.MainDeck)
             {
@@ -204,7 +202,6 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                     return false;
                 }
             }
-
             return true;
         }
 
