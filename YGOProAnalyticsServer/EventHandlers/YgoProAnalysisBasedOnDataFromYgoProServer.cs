@@ -84,12 +84,12 @@ namespace YGOProAnalyticsServer.EventHandlers
         }
 
         private async Task _updateDecklistsStatisticsAndAddNewDecksToDatabase(
-            List<Decklist> allDecklistsFromOneDay, 
+            List<Decklist> allDecklistsFromOneDay,
             DateTime dateFromDuelLog)
         {
             var newDecks = new List<Decklist>();
             var decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
-            foreach(var decklist in allDecklistsFromOneDay)
+            foreach (var decklist in allDecklistsFromOneDay)
             {
                 bool isDuplicate = false;
                 foreach (var decklistFromDb in decklistsFromDb)
@@ -123,7 +123,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                     .DecklistStatistics
                     .Where(x => x.DateWhenDeckWasUsed.Date == statistics.DateWhenDeckWasUsed.Date)
                     .FirstOrDefault();
-                if(statisticsFromDb == null)
+                if (statisticsFromDb == null)
                 {
                     statisticsFromDb = DecklistStatistics.Create(
                         decklistFromDb,
@@ -191,13 +191,13 @@ namespace YGOProAnalyticsServer.EventHandlers
         private List<Decklist> _removeDuplicatesAndMerge(List<Decklist> decklists1, List<Decklist> decklists2)
         {
             var allDecklists = decklists1.Concat(decklists2).ToList();
-            foreach(var decklistInDecklists1 in decklists1)
+            foreach (var decklistInDecklists1 in decklists1)
             {
-                foreach(var decklistInDecklists2 in decklists2)
+                foreach (var decklistInDecklists2 in decklists2)
                 {
-                    if(_archetypeAndDecklistAnalyzer.CheckIfDecklistsAreDuplicate(decklistInDecklists1, decklistInDecklists2))
+                    if (_archetypeAndDecklistAnalyzer.CheckIfDecklistsAreDuplicate(decklistInDecklists1, decklistInDecklists2))
                     {
-                        foreach(var decklistStatistics in decklistInDecklists2.DecklistStatistics)
+                        foreach (var decklistStatistics in decklistInDecklists2.DecklistStatistics)
                         {
                             var stats = decklistInDecklists1
                                 .DecklistStatistics
@@ -236,7 +236,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             foreach (var deckWhichWonFileName in duelLog.DecksWhichWonFileNames)
             {
-                
+
                 var decklistWithFileName = decklistsAsStringsWithFilenames.Value.FirstOrDefault(x => x.DecklistFileName == deckWhichWonFileName);
                 if (decklistWithFileName == null)
                 {

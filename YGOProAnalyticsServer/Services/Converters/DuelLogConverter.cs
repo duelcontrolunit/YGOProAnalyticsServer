@@ -51,7 +51,7 @@ namespace YGOProAnalyticsServer.Services.Converters
         /// <inheritdoc />
         public DateTime ConvertDuelLogTimeToDateTime(string duelLogTime)
         {
-            if(!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
+            if (!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
             {
                 throw new FormatException(_getDuelLogTimeFormatExceptionMessage(duelLogTime));
             }

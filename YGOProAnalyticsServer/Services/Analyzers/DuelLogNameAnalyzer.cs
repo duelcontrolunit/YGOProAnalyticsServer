@@ -28,7 +28,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <param name="db">The database.</param>
         /// <param name="config">The configuration.</param>
         public DuelLogNameAnalyzer(
-            YgoProAnalyticsDatabase db, 
+            YgoProAnalyticsDatabase db,
             IAdminConfig config,
             IDuelLogConverter converter)
         {

@@ -63,6 +63,7 @@ namespace YGOProAnalyticsServer.DbModels
         }
         /// <summary>
         /// Add amount to NumberOfDecksWhereWasUsed.
+        /// If amount is less or equal to 0 the amount is ignored.
         /// </summary>
         public void IncrementNumberOfDecksWhereWasUsedByAmount(int amount)
         {
@@ -81,6 +82,7 @@ namespace YGOProAnalyticsServer.DbModels
         }
         /// <summary>
         /// Add amount to NumberOfTimesWhenArchetypeWin.
+        /// If amount is less or equal to 0 the amount is ignored.
         /// </summary>
         public void IncrementNumberOfTimesWhenArchetypeWonByAmount(int amount)
         {

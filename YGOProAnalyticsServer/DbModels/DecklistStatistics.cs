@@ -71,18 +71,20 @@ namespace YGOProAnalyticsServer.DbModels
 
         /// <summary>
         /// Increments the number of times when deck was used by an intiger.
+        /// If the value is less or equal to 0 the value is ignored.
         /// </summary>
         public void IncrementNumberOfTimesWhenDeckWasUsedByAmount(int value)
         {
             if (value > 0)
             {
-               NumberOfTimesWhenDeckWasUsed += value;
+                NumberOfTimesWhenDeckWasUsed += value;
             }
-            
+
         }
 
         /// <summary>
         /// Increments the number of times when deck won by an intiger.
+        /// If the value is less or equal to 0 the value is ignored.
         /// </summary>
         public void IncrementNumberOfTimesWhenDeckWonByAmount(int value)
         {
