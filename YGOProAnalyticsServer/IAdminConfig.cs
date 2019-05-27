@@ -27,5 +27,18 @@
         /// The FTP password.
         /// </value>
         string FTPPassword { get; }
+
+        /// <summary>
+        /// Gets the ydk folder location.
+        /// </summary>
+        /// <value>
+        /// The ydk folder location.
+        /// </value>
+        string DataFolderLocation { get; }
+
+        string CardApiURL { get; }
+        string BanlistApiURL { get; }
+
+        string ServerDataEndpointURL { get; }
     }
 }

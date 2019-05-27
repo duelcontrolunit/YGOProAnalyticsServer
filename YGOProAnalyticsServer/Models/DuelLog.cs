@@ -24,12 +24,14 @@ namespace YGOProAnalyticsServer.Models
         /// replayFilename
         /// </exception>
         public DuelLog( 
+            DateTime dateOfTheBeginningOfTheDuel,
             DateTime dateOfTheEndOfTheDuel, 
             int roomId, 
             int roomMode, 
             string name, 
             string replayFilename)
         {
+            DateOfTheBeginningOfTheDuel = dateOfTheBeginningOfTheDuel;
             DateOfTheEndOfTheDuel = dateOfTheEndOfTheDuel;
             RoomId = roomId;
             RoomMode = roomMode;
@@ -38,6 +40,10 @@ namespace YGOProAnalyticsServer.Models
             DecksWhichWonFileNames = new List<string>();
             DecksWhichLostFileNames = new List<string>();
         }
+        /// <summary>
+        /// The date of the beginning of the duel.
+        /// </summary>
+        public DateTime DateOfTheBeginningOfTheDuel { get; protected set; }
 
         /// <summary>
         /// The date of the end of the duel.

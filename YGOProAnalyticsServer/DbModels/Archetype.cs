@@ -74,5 +74,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// Collection of statistics of this archetype.
         /// </summary>
         public ICollection<ArchetypeStatistics> Statistics { get; protected set; } = new List<ArchetypeStatistics>();
+
+        public const string Default = "Neutral";
     }
 }
