@@ -18,7 +18,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
     /// </summary>
     public class DuelLogNameAnalyzer : IDuelLogNameAnalyzer
     {
-        readonly YgoProAnalyticsDatabase _db;
+        readonly List<Banlist> _banlists;
         readonly IAdminConfig _config;
         readonly IDuelLogConverter _converter;
 
@@ -28,11 +28,11 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <param name="db">The database.</param>
         /// <param name="config">The configuration.</param>
         public DuelLogNameAnalyzer(
-            YgoProAnalyticsDatabase db, 
+            YgoProAnalyticsDatabase db,
             IAdminConfig config,
             IDuelLogConverter converter)
         {
-            _db = db;
+            _banlists = db.Banlists.ToList();
             _config = config;
             _converter = converter;
         }
@@ -49,7 +49,23 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         {
             return !IsNoDeckCheckEnabled(roomName)
                    && !IsDuelVersusAI(roomName)
-                   && !_isNoBanlist(roomName);
+                   && !_isNoBanlist(roomName)
+                   && !IsWrongNumberBanlist(roomName);
+        }
+
+        /// <inheritdoc />
+        public bool IsWrongNumberBanlist(string roomName)
+        {
+            if (_isBanlistOtherThanDefaultBanlist(roomName))
+            {
+                int banlistNumber = (int)char.GetNumericValue(roomName[roomName.LastIndexOf("LF") + 2]);
+                return banlistNumber <= 0;
+            }
+            else
+            {
+
+                return false;
+            }
         }
 
         /// <inheritdoc />
@@ -59,12 +75,11 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         }
 
         /// <inheritdoc />
-        public Banlist GetBanlist(string roomName, string endOfTheDuelFromDuelLog)
+        public Banlist GetBanlist(string roomName, DateTime endOfTheDuelFromDuelLog)
         {
-            var endOfTheDuelDate = _converter.ConvertDuelLogTimeToDateTime(endOfTheDuelFromDuelLog);
             if (IsDefaultBanlist(roomName))
             {
-                var defaultBanlist = _db.Banlists
+                var defaultBanlist = _banlists
                     .Where(x => x.Name == _config.DefaultBanlistName)
                     .FirstOrDefault();
                 defaultBanlist = defaultBanlist ?? throw new UnknownBanlistException("Default banlist not found. Check in AdminConfig if it is properly set up.");
@@ -74,8 +89,8 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             else if (_isBanlistOtherThanDefaultBanlist(roomName))
             {
                 int banlistNumber = (int)char.GetNumericValue(roomName[roomName.LastIndexOf("LF") + 2]);
-                var banlist = _db.Banlists
-                    .Where(x => x.ReleaseDate <= endOfTheDuelDate)
+                var banlist = _banlists
+                    .Where(x => x.ReleaseDate <= endOfTheDuelFromDuelLog)
                     .Skip(banlistNumber - 1)
                     .FirstOrDefault();
                 banlist = banlist ?? throw new UnknownBanlistException("There is no banlist in given time in our database.");

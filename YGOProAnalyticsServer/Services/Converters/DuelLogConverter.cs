@@ -29,17 +29,19 @@ namespace YGOProAnalyticsServer.Services.Converters
             var convertedDuelLogs = new List<DuelLog>();
             foreach (var log in duelLogs.Children<JObject>())
             {
-                string endOfTheDuelDateAndTime = log.Value<string>("time");
+                string beginningOfTheDuelDateAndTime = log.Value<string>("starttime");
+                string endOfTheDuelDateAndTime = log.Value<string>("endtime");
                 int roomId = log.Value<int>("roomid");
 
                 var duelLog = new DuelLog(
+                        ConvertDuelLogTimeToDateTime(beginningOfTheDuelDateAndTime),
                         ConvertDuelLogTimeToDateTime(endOfTheDuelDateAndTime),
                         roomId,
                         log.Value<int>("roommode"),
                         log.Value<string>("name"),
                         log.Value<string>("replay_filename")
                     );
-                _addDecksFileNamesToProperColleciton(log, endOfTheDuelDateAndTime, roomId, duelLog);
+                _addDecksFileNamesToProperColleciton(log, duelLog);
                 convertedDuelLogs.Add(duelLog);
             }
 
@@ -49,7 +51,7 @@ namespace YGOProAnalyticsServer.Services.Converters
         /// <inheritdoc />
         public DateTime ConvertDuelLogTimeToDateTime(string duelLogTime)
         {
-            if(!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
+            if (!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
             {
                 throw new FormatException(_getDuelLogTimeFormatExceptionMessage(duelLogTime));
             }
@@ -71,25 +73,20 @@ namespace YGOProAnalyticsServer.Services.Converters
         /// <para>If deck lsot, we want add file name of the deck to <see cref="DuelLog.DecksWhichLostFileNames"/></para>
         /// </summary>
         /// <param name="log">Single duel log (not entire file, but just one log).</param>
-        /// <param name="endOfTheDuelDateAndTime">Date and time end of the duel.</param>
-        /// <param name="roomId">Room id from duel log.</param>
-        /// <param name="duelLog">
         ///     If deck won, we want add file name of the deck to <see cref="DuelLog.DecksWhichWonFileNames"/>
         ///     <para>If deck lsot, we want add file name of the deck to <see cref="DuelLog.DecksWhichLostFileNames"/></para>
         /// </param>
-        private void _addDecksFileNamesToProperColleciton(JObject log, string endOfTheDuelDateAndTime, int roomId, DuelLog duelLog)
+        private void _addDecksFileNamesToProperColleciton(JObject log, DuelLog duelLog)
         {
             foreach (var player in log.GetValue("players").Children())
             {
-                var playerNameField = player.Value<string>("name");
-                var playerName = playerNameField.Substring(0, playerNameField.IndexOf('(') - 1);
                 if (player.Value<bool>("winner"))
                 {
-                    duelLog.DecksWhichWonFileNames.Add($"{endOfTheDuelDateAndTime} {roomId} 1 {playerName}.ydk");
+                    duelLog.DecksWhichWonFileNames.Add(player.Value<string>("deckname").ToString());
                 }
                 else
                 {
-                    duelLog.DecksWhichLostFileNames.Add($"{endOfTheDuelDateAndTime} {roomId} 0 {playerName}.ydk");
+                    duelLog.DecksWhichLostFileNames.Add(player.Value<string>("deckname").ToString());
                 }
             }
         }

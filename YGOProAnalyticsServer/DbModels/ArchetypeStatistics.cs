@@ -8,12 +8,17 @@ namespace YGOProAnalyticsServer.DbModels
     /// </summary>
     public class ArchetypeStatistics
     {
+        protected ArchetypeStatistics()
+        {
+        }
+
         /// <summary>
         /// Initialize archetype statistics. Remember to assign archetype.
         /// </summary>
         /// <param name="dateWhenArchetypeWasUsed">Date of the analysis.</param>
-        public ArchetypeStatistics(DateTime dateWhenArchetypeWasUsed)
+        public ArchetypeStatistics(Archetype archetype, DateTime dateWhenArchetypeWasUsed)
         {
+            Archetype = archetype;
             DateWhenArchetypeWasUsed = dateWhenArchetypeWasUsed;
         }
 
@@ -33,7 +38,7 @@ namespace YGOProAnalyticsServer.DbModels
         [Required]
         public Archetype Archetype { get; set; }
 
-         /// <summary>
+        /// <summary>
         /// Date when archetype was used.
         /// </summary>
         [Required]
@@ -56,6 +61,17 @@ namespace YGOProAnalyticsServer.DbModels
         {
             NumberOfDecksWhereWasUsed++;
         }
+        /// <summary>
+        /// Add amount to NumberOfDecksWhereWasUsed.
+        /// If amount is less or equal to 0 the amount is ignored.
+        /// </summary>
+        public void IncrementNumberOfDecksWhereWasUsedByAmount(int amount)
+        {
+            if (amount > 0)
+            {
+                NumberOfDecksWhereWasUsed += amount;
+            }
+        }
 
         /// <summary>
         /// Add one to NumberOfTimesWhenArchetypeWin.
@@ -63,6 +79,17 @@ namespace YGOProAnalyticsServer.DbModels
         public void IncrementNumberOfTimesWhenArchetypeWon()
         {
             NumberOfTimesWhenArchetypeWon++;
+        }
+        /// <summary>
+        /// Add amount to NumberOfTimesWhenArchetypeWin.
+        /// If amount is less or equal to 0 the amount is ignored.
+        /// </summary>
+        public void IncrementNumberOfTimesWhenArchetypeWonByAmount(int amount)
+        {
+            if (amount > 0)
+            {
+                NumberOfTimesWhenArchetypeWon += amount;
+            }
         }
     }
 }

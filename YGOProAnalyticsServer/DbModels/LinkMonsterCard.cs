@@ -61,13 +61,13 @@ namespace YGOProAnalyticsServer.DbModels
         /// <param name="bottomRightLinkMarker">Bottom-Right link marker.</param>
         protected LinkMonsterCard(
             int linkValue,
-            bool topLeftLinkMarker, 
-            bool topLinkMarker, 
-            bool topRightLinkMarker, 
-            bool middleLeftLinkMarker, 
+            bool topLeftLinkMarker,
+            bool topLinkMarker,
+            bool topRightLinkMarker,
+            bool middleLeftLinkMarker,
             bool middleRightLinkMarker,
-            bool bottomLeftLinkMarker, 
-            bool bottomLinkMarker, 
+            bool bottomLeftLinkMarker,
+            bool bottomLinkMarker,
             bool bottomRightLinkMarker
         )
         {

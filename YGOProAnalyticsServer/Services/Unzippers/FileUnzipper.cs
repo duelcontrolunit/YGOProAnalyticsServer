@@ -17,27 +17,38 @@ namespace YGOProAnalyticsServer.Services.Unzippers
         /// <inheritdoc />
         public string GetDuelLogFromZip(string duelLogZipFilePath)
         {
-            ZipArchive duelLogZipArchive = ZipFile.OpenRead(duelLogZipFilePath);
-            Stream duelLogStream = duelLogZipArchive.Entries.First().Open();
-            StreamReader sr = new StreamReader(duelLogStream);
-            return sr.ReadToEnd();
+            using (ZipArchive duelLogZipArchive = ZipFile.OpenRead(duelLogZipFilePath))
+            {
+                using (Stream duelLogStream = duelLogZipArchive.Entries.First().Open())
+                {
+                    using (StreamReader sr = new StreamReader(duelLogStream))
+                    {
+                        return sr.ReadToEnd();
+                    }
+                }
+            }
         }
 
         /// <inheritdoc />
         public List<DecklistWithName> GetDecksFromZip(string decksZipFilePath)
         {
             List<DecklistWithName> decks = new List<DecklistWithName>();
-            ZipArchive decksZipArchive = ZipFile.OpenRead(decksZipFilePath);
-            foreach (ZipArchiveEntry decksArchiveEntry in decksZipArchive.Entries)
+            using (ZipArchive decksZipArchive = ZipFile.OpenRead(decksZipFilePath))
             {
-                StreamReader sr = new StreamReader(decksArchiveEntry.Open());
-                var deckData = sr.ReadToEnd();
-                if (deckData == "")
+                foreach (ZipArchiveEntry decksArchiveEntry in decksZipArchive.Entries)
                 {
-                    continue;
+                    using (StreamReader sr = new StreamReader(decksArchiveEntry.Open()))
+                    {
+                        var deckData = sr.ReadToEnd();
+                        if (deckData == "")
+                        {
+                            continue;
+                        }
+                        var decklistWithName = new DecklistWithName(decksArchiveEntry.Name, deckData);
+                        decks.Add(decklistWithName);
+                    }
+
                 }
-                var decklistWithName = new DecklistWithName(decksArchiveEntry.Name, deckData);
-                decks.Add(decklistWithName);
             }
             return decks;
         }

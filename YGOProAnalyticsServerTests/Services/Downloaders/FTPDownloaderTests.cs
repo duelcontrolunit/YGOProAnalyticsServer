@@ -35,7 +35,7 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         {
             _FTPDownloader = new FTPDownloader(new AdminConfig());
             Assert.ThrowsAsync<System.Net.WebException>(async () =>
-            await _FTPDownloader.DownloadDecksFromFTP("ftp://NotExsitingWebsite.co423m")
+            await _FTPDownloader.DownloadDeckFromFTP("ftp://NotExsitingWebsite.co423m")
             );
         }
         [Test]
