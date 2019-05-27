@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Models;
 
@@ -9,7 +10,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
     /// </summary>
     public interface IArchetypeAndDecklistAnalyzer
     {
-        NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(Decklist decklist, System.Collections.Generic.List<Decklist> listOfDecks);
+        NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(Decklist decklist, IEnumerable<Decklist> listOfDecks);
 
         /// <summary>Sets the decklist archetype from archetype cards used in it.</summary>
         /// <param name="decklist">The decklist (Must contain non empty list of cards in deck).</param>

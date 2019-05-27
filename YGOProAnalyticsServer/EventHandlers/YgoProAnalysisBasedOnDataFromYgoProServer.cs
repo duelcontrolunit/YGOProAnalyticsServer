@@ -155,7 +155,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                 }
 
                 var numberOfDuplicatesWithListOfDecklists = _archetypeAndDecklistAnalyzer.
-                    RemoveDuplicateDecklistsFromListOfDecklists(decklist, allDecksFromOneDay);
+                    RemoveDuplicateDecklistsFromListOfDecklists(decklist, allDecksFromOneDay.OrderBy(x => x.WhenDecklistWasFirstPlayed));
                 decklistsWithoutDuplicates.Add(numberOfDuplicatesWithListOfDecklists.DecklistThatWasChecked);
                 var statistics = decklist.DecklistStatistics
                     .FirstOrDefault(x => x.DateWhenDeckWasUsed == decklist.WhenDecklistWasFirstPlayed);
