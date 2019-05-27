@@ -16,7 +16,7 @@ namespace YGOProAnalyticsServer.Jobs
         public string CronSchedule { get; } = "30 6 * * *";
 
         public string CronTimeZone { get; } = null;
-        public bool RunImmediately { get; } = true;
+        public bool RunImmediately { get; } = false;
 
         readonly IServiceScopeFactory _scopeFactory;
 
