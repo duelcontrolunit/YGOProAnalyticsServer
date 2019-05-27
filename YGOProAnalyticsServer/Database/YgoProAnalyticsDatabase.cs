@@ -10,6 +10,8 @@ namespace YGOProAnalyticsServer.Database
 {
     public class YgoProAnalyticsDatabase : DbContext
     {
+        public DbSet<ServerActivityStatistics> ServerActivityStatistics { get; set; }
+
         //Banlists
         public DbSet<Banlist> Banlists { get; set; }
         public DbSet<BanlistStatistics> BanlistStatistics { get; set; }

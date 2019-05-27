@@ -23,6 +23,8 @@ using YGOProAnalyticsServer.Extensions;
 using System.Reflection;
 using MediatR;
 using YGOProAnalyticsServer.Jobs;
+using YGOProAnalyticsServer.Services.Factories.Interfaces;
+using YGOProAnalyticsServer.Services.Factories;
 
 namespace YGOProAnalyticsServer
 {
@@ -55,6 +57,10 @@ namespace YGOProAnalyticsServer
             services.AddScoped<ICardsDataToCardsAndArchetypesUpdater, CardsDataToCardsAndArchetypesUpdater>();
             services.AddScoped<IArchetypeAndDecklistAnalyzer, ArchetypeAndDecklistAnalyzer>();
             services.AddScoped<IYDKToDecklistConverter, YDKToDecklistConverter>();
+            services.AddScoped<ICardDtosFactory, CardDtosFactory>();
+            services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
+            services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
+            services.AddScoped<IDecklistService, DecklistService>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 
