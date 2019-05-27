@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Exceptions;
+using YGOProAnalyticsServer.Models;
 using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Analyzers
@@ -16,24 +17,49 @@ namespace YGOProAnalyticsServer.Services.Analyzers
     public class ArchetypeAndDecklistAnalyzer : IArchetypeAndDecklistAnalyzer
     {
         private readonly YgoProAnalyticsDatabase _db;
+        private readonly List<Archetype> _archetypes;
 
         /// <summary>Initializes a new instance of the <see cref="ArchetypeAndDecklistAnalyzer"/> class.</summary>
         /// <param name="db">The database.</param>
         public ArchetypeAndDecklistAnalyzer(YgoProAnalyticsDatabase db)
         {
             _db = db;
+            _archetypes = db.Archetypes.ToList();
         }
 
         /// <<inheritdoc />
-        public async Task<Decklist> SetDecklistArchetypeFromArchetypeCardsUsedInIt(Decklist decklist)
+        public Archetype GetArchetypeOfTheDecklistWithStatistics(Decklist decklist, DateTime whenDecklistWasUsed)
         {
-            decklist.Archetype = await _getNameOfMostUsedArchetypeInDecklist(decklist);
-            return decklist;
+            if (decklist.Archetype == null)
+            {
+                decklist.Archetype = _getTheMostUsedArchetypeInDecklist(decklist);
+            }
+
+            var statistics = decklist.Archetype.Statistics.FirstOrDefault(x => x.DateWhenArchetypeWasUsed == whenDecklistWasUsed);
+            if (statistics == null)
+            {
+                statistics = new ArchetypeStatistics(decklist.Archetype, whenDecklistWasUsed);
+                decklist.Archetype.Statistics.Add(statistics);
+            }
+
+            return decklist.Archetype;
         }
 
-        private async Task<Archetype> _getNameOfMostUsedArchetypeInDecklist(Decklist decklist)
+        private Archetype _getTheMostUsedArchetypeInDecklist(Decklist decklist)
         {
-            List<Card> fullDeck = decklist.MainDeck.Concat(decklist.ExtraDeck).Concat(decklist.SideDeck).ToList();
+            List<Card> fullDeck = new List<Card>();
+            foreach (var card in decklist.MainDeck)
+            {
+                fullDeck.Add(card);
+            }
+            foreach (var card in decklist.ExtraDeck)
+            {
+                fullDeck.Add(card);
+            }
+            foreach (var card in decklist.SideDeck)
+            {
+                fullDeck.Add(card);
+            }
             if (fullDeck.Count == 0)
             {
                 throw new EmptyDecklistException("The decklist given in the parameter contains no cards in Main, Extra and Side Deck.");
@@ -61,14 +87,14 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             {
                 string newArchetypeName = new StringBuilder(archetypesDictionary.ElementAt(0).Key.Name).Append(' ')
                     .Append(archetypesDictionary.ElementAt(1).Key.Name).ToString();
-                var archetype = _db.Archetypes.Where(x => x.Name == newArchetypeName).FirstOrDefault();
+                var archetype = _archetypes.Where(x => x.Name == newArchetypeName).FirstOrDefault();
                 archetype = archetype ?? new Archetype(newArchetypeName, false);
 
-                if (!_db.Archetypes.Contains(archetype))
+                if (!_archetypes.Contains(archetype))
                 {
-                    _db.Archetypes.Add(archetype);
+                    _archetypes.Add(archetype);
                 }
-                await _db.SaveChangesAsync();
+                //await _db.SaveChangesAsync();
                 return archetype;
             }
             return new Archetype(Archetype.Default, true);
@@ -78,45 +104,109 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <param name="decklist">The decklist.</param>
         /// <param name="listOfDecks">The list of decks.</param>
         /// <returns>Amount of duplicates removed.</returns>
-        public int RemoveDuplicateDecklistsFromListOfDecklists(Decklist decklist, ref List<Decklist> listOfDecks)
+        public NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(Decklist decklist, List<Decklist> listOfDecks)
         {
-            int duplicateCount = 0;
 
+            int duplicateCount = 0;
+            List<Decklist> listWithoutDuplicates = new List<Decklist>();
             foreach (var deck in listOfDecks)
             {
-                if (deck.MainDeck.Count != decklist.MainDeck.Count
-                    || deck.ExtraDeck.Count != decklist.ExtraDeck.Count
-                    || deck.SideDeck.Count != decklist.SideDeck.Count)
+                if (CheckIfDecklistsAreDuplicate(decklist, deck))
                 {
-                    continue;
-                }
-
-                for (int i = 0; i < deck.MainDeck.Count; i++)
-                {
-                    if(deck.MainDeck[i].PassCode != decklist.MainDeck[i].PassCode)
+                    if (duplicateCount == 0)
                     {
-                        continue;
+                        listWithoutDuplicates.Add(decklist);
                     }
-
-                    if (deck.ExtraDeck[i].PassCode != decklist.ExtraDeck[i].PassCode)
-                    {
-                        continue;
-                    }
-
-                    if (deck.MainDeck[i].PassCode != decklist.MainDeck[i].PassCode)
-                    {
-                        continue;
-                    }
-
-                    if (duplicateCount > 0)
-                    {
-                        listOfDecks.Remove(deck);
-                    }
-
                     duplicateCount++;
                 }
+                else
+                {
+                    listWithoutDuplicates.Add(deck);
+                }
+
             }
-            return duplicateCount;
+
+            return new NumberOfDuplicatesWithListOfDecklists(duplicateCount, listWithoutDuplicates, decklist);
         }
+
+        /// <summary>
+        /// Checks if decklists are duplicate.
+        /// </summary>
+        /// <param name="decklist1">The decklist1.</param>
+        /// <param name="decklist2">The decklist2.</param>
+        /// <returns></returns>
+        public bool CheckIfDecklistsAreDuplicate(Decklist decklist1, Decklist decklist2)
+        {
+
+
+            if (decklist2.MainDeck.Count != decklist1.MainDeck.Count
+                || decklist2.ExtraDeck.Count != decklist1.ExtraDeck.Count
+                || decklist2.SideDeck.Count != decklist1.SideDeck.Count)
+            {
+                return false;
+            }
+            var mainDeck1 = new List<Card>();
+            foreach (var card in decklist1.MainDeck)
+            {
+                mainDeck1.Add(card);
+            }
+
+            var mainDeck2 = new List<Card>();
+            foreach (var card in decklist2.MainDeck)
+            {
+                mainDeck2.Add(card);
+            }
+
+            for (int i = 0; i < decklist2.MainDeck.Count; i++)
+            {
+                if (mainDeck1[i].PassCode != mainDeck2[i].PassCode)
+                {
+                    return false;
+                }
+            }
+
+            var extraDeck1 = new List<Card>();
+            foreach (var card in decklist1.ExtraDeck)
+            {
+                extraDeck1.Add(card);
+            }
+
+            var extraDeck2 = new List<Card>();
+            foreach (var card in decklist2.ExtraDeck)
+            {
+                extraDeck2.Add(card);
+            }
+
+            for (int i = 0; i < decklist2.ExtraDeck.Count; i++)
+            {
+                if (extraDeck1[i].PassCode != extraDeck2[i].PassCode)
+                {
+                    return false;
+                }
+            }
+
+            var sideDeck1 = new List<Card>();
+            foreach (var card in decklist1.SideDeck)
+            {
+                sideDeck1.Add(card);
+            }
+
+            var sideDeck2 = new List<Card>();
+            foreach (var card in decklist2.SideDeck)
+            {
+                sideDeck2.Add(card);
+            }
+
+            for (int i = 0; i < decklist2.SideDeck.Count; i++)
+            {
+                if (sideDeck1[i].PassCode != sideDeck2[i].PassCode)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 }

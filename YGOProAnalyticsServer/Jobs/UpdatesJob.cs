@@ -1,5 +1,6 @@
 ﻿using CronScheduler.AspNetCore;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,29 +16,37 @@ namespace YGOProAnalyticsServer.Jobs
         public string CronSchedule { get; } = "30 6 * * *";
 
         public string CronTimeZone { get; } = null;
+        public bool RunImmediately { get; } = true;
 
-        public bool RunImmediately { get; } = false;
+        readonly IServiceScopeFactory _scopeFactory;
 
-        readonly IBanlistDataToBanlistUpdater _banlistUpdater;
-        readonly ICardsDataToCardsAndArchetypesUpdater _cardsAndArchetypesUpdater;
-        readonly IAdminConfig _adminConfig;
-        readonly IMediator _mediator;
-
-        public UpdatesJob(
-            IBanlistDataToBanlistUpdater banlistUpdater, 
-            ICardsDataToCardsAndArchetypesUpdater cardsAndArchetypesUpdater,
-            IAdminConfig adminConfig)
+        public UpdatesJob(IServiceScopeFactory scopeFactory)
         {
-            _banlistUpdater = banlistUpdater ?? throw new ArgumentNullException(nameof(banlistUpdater));
-            _cardsAndArchetypesUpdater = cardsAndArchetypesUpdater ?? throw new ArgumentNullException(nameof(cardsAndArchetypesUpdater));
-            _adminConfig = adminConfig ?? throw new ArgumentNullException(nameof(adminConfig));
+            _scopeFactory = scopeFactory;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            await _banlistUpdater.UpdateBanlists(_adminConfig.BanlistApiURL);
-            await _cardsAndArchetypesUpdater.UpdateCardsAndArchetypes(_adminConfig.CardApiURL);
-            await _mediator.Publish(new CardsRelatedUpdatesCompleted());
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                try
+                {
+                    var banlistUpdater = scope.ServiceProvider.GetRequiredService<IBanlistDataToBanlistUpdater>();
+                    var cardsAndArchetypesUpdater = scope.ServiceProvider.GetRequiredService<ICardsDataToCardsAndArchetypesUpdater>();
+                    var adminConfig = scope.ServiceProvider.GetRequiredService<IAdminConfig>();
+                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+                    await cardsAndArchetypesUpdater.UpdateCardsAndArchetypes(adminConfig.CardApiURL);
+                    await banlistUpdater.UpdateBanlists(adminConfig.BanlistApiURL);
+                    await mediator.Publish(new CardsRelatedUpdatesCompleted());
+                }
+                catch (Exception e)
+                {
+                    //Log here
+                    var x = e;
+                }
+
+            }
         }
     }
 }

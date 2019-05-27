@@ -22,6 +22,7 @@ using YGOProAnalyticsServer.Services.Others;
 using YGOProAnalyticsServer.Extensions;
 using System.Reflection;
 using MediatR;
+using YGOProAnalyticsServer.Jobs;
 
 namespace YGOProAnalyticsServer
 {
@@ -51,11 +52,16 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IFileUnzipper, FileUnzipper>();
             services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
             services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
+            services.AddScoped<ICardsDataToCardsAndArchetypesUpdater, CardsDataToCardsAndArchetypesUpdater>();
+            services.AddScoped<IArchetypeAndDecklistAnalyzer, ArchetypeAndDecklistAnalyzer>();
+            services.AddScoped<IYDKToDecklistConverter, YDKToDecklistConverter>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 
-            services.AddScheduler(builder => {
-                builder.AddJobs(Assembly.GetExecutingAssembly());
+            services.AddScheduler(builder =>
+            {
+                //builder.AddJobs(Assembly.GetExecutingAssembly());
+                builder.AddJob<UpdatesJob>();
             });
         }
 

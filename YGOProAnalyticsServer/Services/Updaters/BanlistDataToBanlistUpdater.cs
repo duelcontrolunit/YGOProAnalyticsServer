@@ -18,6 +18,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IBanlistDataDownloader _banlistDataDownloader;
+        readonly List<Banlist> _banlists;
 
         bool _areUpdatedForbiddenCardsNow = false;
         bool _areUpdatedLimitedCardsNow = false;
@@ -33,11 +34,13 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             _db = db;
             _banlistDataDownloader = banlistDataDownloader;
+            _banlists = _db.Banlists.ToList();
         }
 
         /// <inheritdoc />
         public async Task UpdateBanlists(string url)
         {
+            List<Card> cards = _db.Cards.ToList();
             string banlistDataAsString = await _banlistDataDownloader.DownloadBanlistFromWebsite(url);
             var banlistDatas = banlistDataAsString.Split("\n");
             Banlist banlist = null;
@@ -63,17 +66,16 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 }
 
                 _checkIfWeAnalyzeForbiddenOrLimitedOrSemiLimitedCards(line);
-                if (!_isInformationAboutCardCountLimitations(line))
+                if (banlist != null && !_isInformationAboutCardCountLimitations(line))
                 {
                     int cardPassCode = int.Parse(line.Substring(0, line.IndexOf(' ')));
-                    var card = await _db
-                        .Cards
-                        .Where(x => x.PassCode == cardPassCode)
-                        .FirstOrDefaultAsync();
+                    var card = cards
+                        .FirstOrDefault(x => x.PassCode == cardPassCode);
                     if (card == null)
                     {
                         continue;
                     }
+
                     _addCardToAppropriateBanlistSection(banlist, card);
                 }
             }
@@ -100,7 +102,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
         private bool _isBanlistAlreadyInDatabase(string banlistName)
         {
-            return _db.Banlists.Where(x => x.Name == banlistName).FirstOrDefault() != null;
+            return _banlists.Where(x => x.Name == banlistName).FirstOrDefault() != null;
         }
 
         private void _ifThereIsAnyBanlistAddItToDbContext(Banlist banlist)

@@ -19,7 +19,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
     public class CardsDataToCardsAndArchetypesUpdater : ICardsDataToCardsAndArchetypesUpdater
     {
         private readonly ICardsDataDownloader _cardsDataDownloader;
-        private readonly ICardBuilder _CardBuilder;
+        private readonly ICardBuilder _cardBuilder;
         private readonly YgoProAnalyticsDatabase _db;
         private readonly List<Archetype> _archetypes;
         private readonly List<Card> _cards;
@@ -36,7 +36,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             YgoProAnalyticsDatabase db)
         {
             _cardsDataDownloader = cardsDataDownloader;
-            _CardBuilder = cardBuilder;
+            _cardBuilder = cardBuilder;
             _db = db;
             _archetypes = _db.Archetypes.ToList();
             _cards = _db.Cards.ToList();
@@ -73,7 +73,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 }
 
                 _addBasicCardProperties(item, archetype);
-                _db.Cards.Add(_CardBuilder.Build());
+                _db.Cards.Add(_cardBuilder.Build());
             }
 
             await _db.SaveChangesAsync();          
@@ -81,7 +81,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
         private void _addBasicCardProperties(JObject item, Archetype archetype)
         {
-            _CardBuilder.AddBasicCardElements(
+            _cardBuilder.AddBasicCardElements(
                                 item.Value<int>("id"),
                                 item.Value<string>("name"),
                                 item.Value<string>("desc"),
@@ -104,7 +104,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
             if (type.Contains("PENDULUM"))
             {
-                _CardBuilder.AddPendulumMonsterCardElements(item.Value<int>("scale"));
+                _cardBuilder.AddPendulumMonsterCardElements(item.Value<int>("scale"));
             }
 
             if (type.Contains("LINK"))
@@ -135,7 +135,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 level = 0.ToString();
             }
 
-            _CardBuilder.AddMonsterCardElements(
+            _cardBuilder.AddMonsterCardElements(
                     item.GetValue("atk").ToString(),
                     item.GetValue("def").ToString(),
                     int.Parse(level),
@@ -156,7 +156,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 linkvalCount = int.Parse(linkval);
             }
 
-            _CardBuilder.AddLinkMonsterCardElements(
+            _cardBuilder.AddLinkMonsterCardElements(
                     linkvalCount,
                     _isLinkMarker("Top-Left", item),
                     _isLinkMarker("Top", item),

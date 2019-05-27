@@ -18,7 +18,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
     /// </summary>
     public class DuelLogNameAnalyzer : IDuelLogNameAnalyzer
     {
-        readonly YgoProAnalyticsDatabase _db;
+        readonly List<Banlist> _banlists;
         readonly IAdminConfig _config;
         readonly IDuelLogConverter _converter;
 
@@ -32,7 +32,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             IAdminConfig config,
             IDuelLogConverter converter)
         {
-            _db = db;
+            _banlists = db.Banlists.ToList();
             _config = config;
             _converter = converter;
         }
@@ -49,7 +49,23 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         {
             return !IsNoDeckCheckEnabled(roomName)
                    && !IsDuelVersusAI(roomName)
-                   && !_isNoBanlist(roomName);
+                   && !_isNoBanlist(roomName)
+                   && !IsWrongNumberBanlist(roomName);
+        }
+
+        /// <inheritdoc />
+        public bool IsWrongNumberBanlist(string roomName)
+        {
+            if (_isBanlistOtherThanDefaultBanlist(roomName))
+            {
+                int banlistNumber = (int)char.GetNumericValue(roomName[roomName.LastIndexOf("LF") + 2]);
+                return banlistNumber <= 0;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         /// <inheritdoc />
@@ -63,7 +79,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         {
             if (IsDefaultBanlist(roomName))
             {
-                var defaultBanlist = _db.Banlists
+                var defaultBanlist = _banlists
                     .Where(x => x.Name == _config.DefaultBanlistName)
                     .FirstOrDefault();
                 defaultBanlist = defaultBanlist ?? throw new UnknownBanlistException("Default banlist not found. Check in AdminConfig if it is properly set up.");
@@ -73,7 +89,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             else if (_isBanlistOtherThanDefaultBanlist(roomName))
             {
                 int banlistNumber = (int)char.GetNumericValue(roomName[roomName.LastIndexOf("LF") + 2]);
-                var banlist = _db.Banlists
+                var banlist = _banlists
                     .Where(x => x.ReleaseDate <= endOfTheDuelFromDuelLog)
                     .Skip(banlistNumber - 1)
                     .FirstOrDefault();

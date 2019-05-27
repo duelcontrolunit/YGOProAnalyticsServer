@@ -13,10 +13,10 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
         /// Get banlist based on room name and end of the duel date.
         /// </summary>
         /// <param name="roomName">Room name</param>
-        /// <param name="endOfTheDuelDate">Date of the end of the duel.</param>
+        /// <param name="beginningOfTheDuelDate">Date of the start of the duel.</param>
         /// <returns>Banlist.</returns>
         /// <exception cref="UnknownBanlistException"></exception>
-        Banlist GetBanlist(string roomName, DateTime endOfTheDuelDate);
+        Banlist GetBanlist(string roomName, DateTime beginningOfTheDuelDate);
 
         /// <summary>
         /// It return information if during the duel was any banlist.
@@ -54,5 +54,13 @@ namespace YGOProAnalyticsServer.Services.Analyzers.Interfaces
         ///  Information if is no deck shuffle enabled.
         /// </returns>
         bool IsNoDeckShuffleEnabled(string roomName);
+        /// <summary>
+        /// Determines whether a negative or 0 number was used in roomName.
+        /// </summary>
+        /// <param name="roomName">Name of the room.</param>
+        /// <returns>
+        ///   <c>true</c> if a negative or 0 number wass used in roomName otherwise, <c>false</c>.
+        /// </returns>
+        bool IsWrongNumberBanlist(string roomName);
     }
 }

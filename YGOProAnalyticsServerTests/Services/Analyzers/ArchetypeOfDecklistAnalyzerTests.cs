@@ -31,7 +31,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 var heraldArchetype = new Archetype("Herald", true);
                 await dbInMemory.SaveChangesAsync();
                 var decklist = new Decklist(new List<Card> { _NekrozofBrionac(nekrozArchetype), _NekrozMirror(nekrozArchetype) }, new List<Card> { _Herald(heraldArchetype) }, new List<Card>());
-                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist);
+                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist,DateTime.Now.Date,true);
                 Assert.AreEqual("Nekroz", resultDecklist.Archetype.Name);
             }
         }
@@ -46,7 +46,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 var heraldArchetype = new Archetype("Herald", true);
                 await dbInMemory.SaveChangesAsync();
                 var decklist = new Decklist(new List<Card> { _NekrozofBrionac(nekrozArchetype), _NekrozMirror(new Archetype(Archetype.Default,true)) }, new List<Card> { _Herald(heraldArchetype) }, new List<Card>());
-                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist);
+                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist, DateTime.Now.Date, true);
                 Assert.AreEqual("Nekroz Herald", resultDecklist.Archetype.Name);
             }
         }
@@ -61,7 +61,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
 
                 await dbInMemory.SaveChangesAsync();
                 var decklist = new Decklist(new List<Card> { _NekrozofBrionac(new Archetype(Archetype.Default, true)), _NekrozMirror(new Archetype(Archetype.Default, true)) }, new List<Card> { _Herald(new Archetype(Archetype.Default, true)) }, new List<Card>());
-                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist);
+                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist, DateTime.Now.Date, true);
                 Assert.AreEqual(Archetype.Default, resultDecklist.Archetype.Name);
             }
         }
@@ -77,7 +77,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 await dbInMemory.SaveChangesAsync();
                 var decklist = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());
 
-                Assert.ThrowsAsync<EmptyDecklistException>(() => _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist));
+                Assert.ThrowsAsync<EmptyDecklistException>(() => _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist, DateTime.Now.Date, true));
             }
         }
 

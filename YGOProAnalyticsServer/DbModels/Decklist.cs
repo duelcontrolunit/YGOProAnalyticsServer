@@ -4,35 +4,59 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using YGOProAnalyticsServer.Database.ManyToManySupport;
+using YGOProAnalyticsServer.DbModels.DbJoinModels;
 
 namespace YGOProAnalyticsServer.DbModels
 {
     /// <summary>Representation of a Decklist</summary>
     public class Decklist
     {
+        protected Decklist()
+        {
+            MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);
+            ExtraDeck = new JoinCollectionFacade<Card, Decklist, CardInExtraDeckDecklistJoin>(this, CardsInExtraDeckJoin);
+            SideDeck = new JoinCollectionFacade<Card, Decklist, CardInSideDeckDecklistJoin>(this, CardsInSideDeckJoin);
+        }
 
-        protected Decklist(int id, string name, DateTime whenDecklistWasFirstPlayed)
-        {
-            Id = id;
-            Name = name;
-            WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
-        }
-        /// <summary>Initializes a new instance of the <see cref="Decklist"/> class.</summary>
-        /// <param name="name">The name of the decklist.</param>
-        /// <param name="archetype">The archetype of the decklist.</param>
-        /// <param name="whenDecklistWasFirstPlayed">DateTime when decklist was first played.</param>
-        public Decklist(string name, Archetype archetype, DateTime whenDecklistWasFirstPlayed)
-        {
-            Name = name;
-            Archetype = archetype;
-            WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
-        }
+        //protected Decklist(int id, string name, DateTime whenDecklistWasFirstPlayed)
+        //{
+        //    Id = id;
+        //    Name = name;
+        //    WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
+        //}
+
+        ///// <summary>Initializes a new instance of the <see cref="Decklist"/> class.</summary>
+        ///// <param name="name">The name of the decklist.</param>
+        ///// <param name="archetype">The archetype of the decklist.</param>
+        ///// <param name="whenDecklistWasFirstPlayed">DateTime when decklist was first played.</param>
+        //public Decklist(string name, Archetype archetype, DateTime whenDecklistWasFirstPlayed)
+        //{
+        //    Name = name;
+        //    Archetype = archetype;
+        //    WhenDecklistWasFirstPlayed = whenDecklistWasFirstPlayed;
+        //}
 
         public Decklist(IList<Card> mainDeck, IList<Card> extraDeck, IList<Card> sideDeck)
         {
-            MainDeck = mainDeck;
-            ExtraDeck = extraDeck;
-            SideDeck = sideDeck;
+            MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);
+            ExtraDeck = new JoinCollectionFacade<Card, Decklist, CardInExtraDeckDecklistJoin>(this, CardsInExtraDeckJoin);
+            SideDeck = new JoinCollectionFacade<Card, Decklist, CardInSideDeckDecklistJoin>(this, CardsInSideDeckJoin);
+
+            foreach (var card in mainDeck)
+            {
+                MainDeck.Add(card);
+            }
+
+            foreach (var card in extraDeck)
+            {
+                ExtraDeck.Add(card);
+            }
+
+            foreach (var card in sideDeck)
+            {
+                SideDeck.Add(card);
+            }
         }
 
         /// <summary>
@@ -52,13 +76,18 @@ namespace YGOProAnalyticsServer.DbModels
         [Required]
         public string Name { get; set; }
 
+
+
         /// <summary>
         /// The main deck.
         /// </summary>
         /// <value>
         /// The main deck.
         /// </value>
-        public IList<Card> MainDeck { get; protected set; } = new List<Card>();
+        [NotMapped]
+        public ICollection<Card> MainDeck { get; protected set; } = new List<Card>();
+        public ICollection<CardInMainDeckDecklistJoin> CardsInMainDeckJoin { get; set; } = new List<CardInMainDeckDecklistJoin>();
+
 
         /// <summary>
         /// The extra deck.
@@ -66,15 +95,18 @@ namespace YGOProAnalyticsServer.DbModels
         /// <value>
         /// The extra deck.
         /// </value>
-        public IList<Card> ExtraDeck { get; protected set; } = new List<Card>();
+        [NotMapped]
+        public ICollection<Card> ExtraDeck { get; protected set; } = new List<Card>();
+        public ICollection<CardInExtraDeckDecklistJoin> CardsInExtraDeckJoin { get; set; } = new List<CardInExtraDeckDecklistJoin>();
 
         /// <summary>
         /// The side deck.
         /// </summary>
         /// <value>
         /// The side deck.
-        /// </value>
-        public IList<Card> SideDeck { get; protected set; } = new List<Card>();
+        [NotMapped]
+        public ICollection<Card> SideDeck { get; protected set; } = new List<Card>();
+        public ICollection<CardInSideDeckDecklistJoin> CardsInSideDeckJoin { get; set; } = new List<CardInSideDeckDecklistJoin>();
 
         /// <summary>
         /// The archetype of the Decklist.

@@ -11,13 +11,13 @@ namespace YGOProAnalyticsServer.Services.Converters
     /// <summary>Service used to convert ydk string to a new deck containing cards.</summary>
     public class YDKToDecklistConverter : IYDKToDecklistConverter
     {
-        private readonly YgoProAnalyticsDatabase _db;
+        private readonly List<Card> cards;
 
         /// <summary>Initializes a new instance of the <see cref="YDKToDecklistConverter"/> class.</summary>
         /// <param name="db">The database.</param>
         public YDKToDecklistConverter(YgoProAnalyticsDatabase db)
         {
-            _db = db;
+            cards = db.Cards.ToList();
         }
 
         /// <inheritdoc />
@@ -53,7 +53,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                     {
                         if (_isCorrectPassCode(passCode))
                         {
-                            var card = _db.Cards.FirstOrDefault(x => x.PassCode == passCode);
+                            var card = cards.FirstOrDefault(x => x.PassCode == passCode);
                             if (card == null)
                             {
                                 continue;
@@ -80,7 +80,6 @@ namespace YGOProAnalyticsServer.Services.Converters
                     }
                 }
             }
-
             return new Decklist(mainDeck.OrderBy(x=>x.PassCode).ToList(), extraDeck.OrderBy(x => x.PassCode).ToList(), sideDeck.OrderBy(x => x.PassCode).ToList());
         }
 

@@ -68,5 +68,36 @@ namespace YGOProAnalyticsServer.DbModels
         {
             NumberOfTimesWhenDeckWon++;
         }
+
+        /// <summary>
+        /// Increments the number of times when deck was used by an intiger.
+        /// </summary>
+        public void IncrementNumberOfTimesWhenDeckWasUsedByAmount(int value)
+        {
+            if (value > 0)
+            {
+               NumberOfTimesWhenDeckWasUsed += value;
+            }
+            
+        }
+
+        /// <summary>
+        /// Increments the number of times when deck won by an intiger.
+        /// </summary>
+        public void IncrementNumberOfTimesWhenDeckWonByAmount(int value)
+        {
+            if (value > 0)
+            {
+                NumberOfTimesWhenDeckWon += value;
+            }
+        }
+        public static DecklistStatistics Create(Decklist decklist, DateTime dateWhenDeckWasUsed)
+        {
+            return new DecklistStatistics
+            {
+                Decklist = decklist,
+                DateWhenDeckWasUsed = dateWhenDeckWasUsed
+            };
+        }
     }
 }
