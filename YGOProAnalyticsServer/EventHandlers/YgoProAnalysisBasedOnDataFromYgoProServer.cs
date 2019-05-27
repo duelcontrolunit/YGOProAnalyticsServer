@@ -23,9 +23,9 @@ namespace YGOProAnalyticsServer.EventHandlers
         IYDKToDecklistConverter _yDKToDecklistConverter;
 
         public YgoProAnalysisBasedOnDataFromYgoProServer(
-            IDuelLogNameAnalyzer duelLogNameAnalyzer, 
-            YgoProAnalyticsDatabase db, 
-            IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer, 
+            IDuelLogNameAnalyzer duelLogNameAnalyzer,
+            YgoProAnalyticsDatabase db,
+            IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer,
             IYDKToDecklistConverter yDKToDecklistConverter)
         {
             _duelLogNameAnalyzer = duelLogNameAnalyzer;
@@ -69,26 +69,22 @@ namespace YGOProAnalyticsServer.EventHandlers
                     duelLog);
             }
 
-            DateTime dateFromDuelLog = duelLogsFromOneDay.Key.Date;
             var decklistsWhichWonWithoutDuplicatesFromOneDay = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
-                dateFromDuelLog,
                 allDecksWhichWonFromOneDay,
                 true);
             var decklistsWhichLostWithoutDuplicatesFromOneDay = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
-                dateFromDuelLog,
                 allDecksWhichLostFromOneDay,
                 false);
             var allDecklistsFromOneDay = _removeDuplicatesAndMerge(
                 decklistsWhichWonWithoutDuplicatesFromOneDay,
                 decklistsWhichLostWithoutDuplicatesFromOneDay);
 
-            await _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromOneDay, dateFromDuelLog);
+            await _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromOneDay);
             await _db.SaveChangesAsync();
         }
 
         private async Task _updateDecklistsStatisticsAndAddNewDecksToDatabase(
-            List<Decklist> allDecklistsFromOneDay,
-            DateTime dateFromDuelLog)
+            List<Decklist> allDecklistsFromOneDay)
         {
             var newDecks = new List<Decklist>();
             var decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
@@ -110,8 +106,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                decklist.WhenDecklistWasFirstPlayed = dateFromDuelLog;
-                decklist.Name = $"{decklist.Archetype.Name}_{dateFromDuelLog.Date}";
+                decklist.Name = $"{decklist.Archetype.Name}_{decklist.WhenDecklistWasFirstPlayed}";
                 newDecks.Add(decklist);
             }
 
@@ -140,7 +135,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
         }
 
-        private List<Decklist> _analyzeDecklistsAndArchetypesAndRemoveDuplicates(DateTime dateFromDuelLog, List<Decklist> allDecksFromOneDay, bool decksWon)
+        private List<Decklist> _analyzeDecklistsAndArchetypesAndRemoveDuplicates(List<Decklist> allDecksFromOneDay, bool decksWon)
         {
             List<Decklist> decklistsWithoutDuplicates = new List<Decklist>();
             foreach (var decklist in allDecksFromOneDay)
@@ -163,10 +158,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     RemoveDuplicateDecklistsFromListOfDecklists(decklist, allDecksFromOneDay);
                 decklistsWithoutDuplicates.Add(numberOfDuplicatesWithListOfDecklists.DecklistThatWasChecked);
                 var statistics = decklist.DecklistStatistics
-                    .FirstOrDefault(x => x.DateWhenDeckWasUsed == dateFromDuelLog);
+                    .FirstOrDefault(x => x.DateWhenDeckWasUsed == decklist.WhenDecklistWasFirstPlayed);
                 if (statistics == null)
                 {
-                    statistics = DecklistStatistics.Create(decklist, dateFromDuelLog);
+                    statistics = DecklistStatistics.Create(decklist, decklist.WhenDecklistWasFirstPlayed);
                     decklist.DecklistStatistics.Add(statistics);
                 }
 
@@ -178,9 +173,9 @@ namespace YGOProAnalyticsServer.EventHandlers
                         IncrementNumberOfTimesWhenDeckWonByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
                 }
 
-                var archetype = _archetypeAndDecklistAnalyzer.GetArchetypeOfTheDecklistWithStatistics(decklist, dateFromDuelLog);
+                var archetype = _archetypeAndDecklistAnalyzer.GetArchetypeOfTheDecklistWithStatistics(decklist, decklist.WhenDecklistWasFirstPlayed);
                 var archetypeStatisticsFromDay = archetype.Statistics
-                    .First(x => x.DateWhenArchetypeWasUsed == dateFromDuelLog);
+                    .First(x => x.DateWhenArchetypeWasUsed == decklist.WhenDecklistWasFirstPlayed);
                 archetypeStatisticsFromDay.IncrementNumberOfDecksWhereWasUsedByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
                 if (decksWon)
                 {
@@ -247,8 +242,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
+                Decklist decklist = _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData);
+                decklist.WhenDecklistWasFirstPlayed = duelLog.DateOfTheBeginningOfTheDuel.Date;
                 allDecksWhichWonFromOneDay.Add(
-                    _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData)
+                    decklist
                 );
             }
 
@@ -261,8 +258,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
+                Decklist decklist = _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData);
+                decklist.WhenDecklistWasFirstPlayed = duelLog.DateOfTheBeginningOfTheDuel.Date;
                 allDecksWhichLostFromOneDay.Add(
-                   _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData)
+                   decklist
                 );
             }
         }
