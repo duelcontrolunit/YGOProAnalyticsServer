@@ -23,8 +23,10 @@ namespace YGOProAnalyticsServer.Controllers
             IYgoProServerStatusService serverStatusService,
             IAdminConfig adminConfig)
         {
-            _activityStatisticsService = activityStatisticsService ?? throw new ArgumentNullException(nameof(activityStatisticsService));
-            _serverStatusService = serverStatusService ?? throw new ArgumentNullException(nameof(serverStatusService));
+            _activityStatisticsService = activityStatisticsService 
+                ?? throw new ArgumentNullException(nameof(activityStatisticsService));
+            _serverStatusService = serverStatusService 
+                ?? throw new ArgumentNullException(nameof(serverStatusService));
             _adminConfig = adminConfig ?? throw new ArgumentNullException(nameof(adminConfig));
             _ygoProListOfRoomsURL = _adminConfig.YgoProListOfRoomsUrl;
         }

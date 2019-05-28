@@ -56,6 +56,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
             services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
             services.AddScoped<IDecklistService, DecklistService>();
+            services.AddScoped<IServerActivityStatisticsService, ServerActivityStatisticsService>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
             
