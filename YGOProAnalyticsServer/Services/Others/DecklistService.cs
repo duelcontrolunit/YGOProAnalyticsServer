@@ -36,7 +36,7 @@ namespace YGOProAnalyticsServer.Services.Others
 
                 if(banlist != null)
                 {
-                    return await _getDecksWhereBanlistFilterIsActive(
+                    return await _getDecksWhenBanlistFilterIsActive(
                         howManyTake,
                         howManySkip,
                         archetypeName,
@@ -58,7 +58,7 @@ namespace YGOProAnalyticsServer.Services.Others
             }
         }
 
-        private async Task<List<Decklist>> _getDecksWhereBanlistFilterIsActive(
+        private async Task<List<Decklist>> _getDecksWhenBanlistFilterIsActive(
             int howManyTake,
             int howManySkip,
             string archetypeName,
