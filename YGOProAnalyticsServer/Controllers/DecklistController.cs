@@ -30,6 +30,15 @@ namespace YGOProAnalyticsServer.Controllers
             _decklistService = decklistService ?? throw new ArgumentNullException(nameof(decklistService));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] int pageNumber = 1, [FromQuery] int banlistId = -1)
+        {
+            var decklists = await _decklistService.Get(100, (pageNumber - 1) * 100, banlistId);
+            var decklistsDtos = _decklistToDtoConverter.Convert(decklists);
+
+            return new JsonResult(decklistsDtos);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {

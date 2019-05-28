@@ -1,5 +1,6 @@
 ﻿using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
+using System.Collections.Generic;
 
 namespace YGOProAnalyticsServer.Services.Converters.Interfaces
 {
@@ -14,5 +15,6 @@ namespace YGOProAnalyticsServer.Services.Converters.Interfaces
         /// <param name="decklist">The decklist.</param>
         /// <returns>New DecklistWithStatisticsDTO.</returns>
         DecklistWithStatisticsDTO Convert(Decklist decklist);
+        IEnumerable<DecklistWithStatisticsDTO> Convert(IEnumerable<Decklist> decklists);
     }
 }

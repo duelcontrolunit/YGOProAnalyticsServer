@@ -48,5 +48,18 @@ namespace YGOProAnalyticsServer.Services.Converters
 
             return decklistDto;
         }
+
+        public IEnumerable<DecklistWithStatisticsDTO> Convert(IEnumerable<Decklist> decklists)
+        {
+            var decklistsDtos = new List<DecklistWithStatisticsDTO>();
+            foreach (var decklist in decklists)
+            {
+                decklistsDtos.Add(
+                    Convert(decklist)
+                );
+            }
+
+            return decklistsDtos;
+        }
     }
 }
