@@ -31,9 +31,16 @@ namespace YGOProAnalyticsServer.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int pageNumber = 1, [FromQuery] int banlistId = -1)
+        public async Task<IActionResult> FindAll(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int banlistId = -1,
+            [FromBody] string archetypeName = "")
         {
-            var decklists = await _decklistService.Get(100, (pageNumber - 1) * 100, banlistId);
+            var decklists = await _decklistService.FindAll(
+                100,
+                (pageNumber - 1) * 100,
+                banlistId,
+                archetypeName);
             var decklistsDtos = _decklistToDtoConverter.Convert(decklists);
 
             return new JsonResult(decklistsDtos);

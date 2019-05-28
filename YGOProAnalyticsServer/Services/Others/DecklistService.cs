@@ -21,52 +21,27 @@ namespace YGOProAnalyticsServer.Services.Others
             _banlistService = banlistService ?? throw new ArgumentNullException(nameof(banlistService));
         }
 
-        public async Task<IEnumerable<Decklist>> Get(
+        /// <inheritdoc />
+        public async Task<IEnumerable<Decklist>> FindAll(
             int howManyTake,
             int howManySkip,
-            int banlistId)
+            int banlistId,
+            string archetypeName)
         {
             var query = _getDecklistsQuery();
-            if (banlistId != -1)
+            if (banlistId < 1)
             {
-                Banlist banlist = await _db
-                    .Banlists
-                    .Where(x => x.Id == banlistId)
-                    .Include(Banlist.IncludeWithForbiddenCards)
-                    .Include(Banlist.IncludeWithLimitedCards)
-                    .Include(Banlist.IncludeWithSemiLimitedCards)
-                    .FirstOrDefaultAsync();
+                Banlist banlist = await _banlistService
+                    .GetBanlistWithAllCardsIncludedAsync(banlistId);
 
                 if(banlist != null)
                 {
-                    int skipMultiplicator = 1;
-                    bool notAllDecksWereChecked = true;
-                    var decksForReturn = new List<Decklist>();
-                    do
-                    {
-                        var decks = await query
-                            .Skip(howManySkip * skipMultiplicator)
-                            .Take(howManyTake)
-                            .ToListAsync();
-
-                        foreach (var decklist in decks)
-                        {
-                            if (_banlistService.CanDeckBeUsedOnGivenBanlist(decklist, banlist)
-                                && decksForReturn.Count < 100)
-                            {
-                                decksForReturn.Add(decklist);
-                            }
-                        }
-
-                        if (decks.Count == 0)
-                        {
-                            notAllDecksWereChecked = false;
-                        }
-
-                        skipMultiplicator++;
-                    } while (decksForReturn.Count < 100 && notAllDecksWereChecked);
-
-                    return decksForReturn;
+                    return await _getDecksWhereBanlistFilterIsActive(
+                        howManyTake,
+                        howManySkip,
+                        archetypeName,
+                        query,
+                        banlist);
                 }
                 else
                 {
@@ -75,13 +50,78 @@ namespace YGOProAnalyticsServer.Services.Others
             }
             else
             {
+                return await _getListOfDecklists(
+                    howManyTake,
+                    howManySkip,
+                    archetypeName,
+                    query);
+            }
+        }
+
+        private async Task<List<Decklist>> _getDecksWhereBanlistFilterIsActive(
+            int howManyTake,
+            int howManySkip,
+            string archetypeName,
+            IQueryable<Decklist> query,
+            Banlist banlist)
+        {
+            int skipMultiplicator = 1;
+            bool notAllDecksWereChecked = true;
+            var decksForReturn = new List<Decklist>();
+            do
+            {
+                var decks = await _getListOfDecklists(
+                    howManyTake,
+                    howManySkip * skipMultiplicator,
+                    archetypeName,
+                    query
+                );
+
+                foreach (var decklist in decks)
+                {
+                    if (_banlistService.CanDeckBeUsedOnGivenBanlist(decklist, banlist)
+                        && decksForReturn.Count < 100)
+                    {
+                        decksForReturn.Add(decklist);
+                    }
+                }
+
+                if (decks.Count() == 0)
+                {
+                    notAllDecksWereChecked = false;
+                }
+
+                skipMultiplicator++;
+            } while (decksForReturn.Count < 100 && notAllDecksWereChecked);
+
+            return decksForReturn;
+        }
+
+        /// <summary>
+        /// If there is no archetype given by user, archetype filter is disabled.
+        /// </summary>
+        private async Task<IEnumerable<Decklist>> _getListOfDecklists(
+            int howManyTake,
+            int howManySkip,
+            string archetypeName,
+            IQueryable<Decklist> query)
+        {
+            if (string.IsNullOrEmpty(archetypeName))
+            {
                 return await query
                     .Skip(howManySkip)
                     .Take(howManyTake)
                     .ToListAsync();
             }
+
+            return await query
+                    .Skip(howManySkip)
+                    .Take(howManyTake)
+                    .Where(x => x.Archetype.Name.Contains(archetypeName))
+                    .ToListAsync();
         }
 
+        /// <inheritdoc />
         public async Task<Decklist> GetByIdWithAllDataIncluded(int id)
         {
             var query = _getDecklistsQuery();
@@ -91,6 +131,9 @@ namespace YGOProAnalyticsServer.Services.Others
                 .FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Gets the decklists query with all data explicitly included.
+        /// </summary>
         private IQueryable<Decklist> _getDecklistsQuery()
         {
             var query = includeMainDeckWithAllData(_db.Decklists);

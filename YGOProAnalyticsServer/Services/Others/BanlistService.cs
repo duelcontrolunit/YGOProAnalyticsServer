@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 
@@ -9,6 +11,24 @@ namespace YGOProAnalyticsServer.Services.Others
 {
     public class BanlistService : IBanlistService
     {
+        readonly YgoProAnalyticsDatabase _db;
+
+        public BanlistService(YgoProAnalyticsDatabase db)
+        {
+            _db = db ?? throw new ArgumentNullException(nameof(db));
+        }
+
+        public async Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId)
+        {
+            return await _db
+                    .Banlists
+                    .Where(x => x.Id == banlistId)
+                    .Include(Banlist.IncludeWithForbiddenCards)
+                    .Include(Banlist.IncludeWithLimitedCards)
+                    .Include(Banlist.IncludeWithSemiLimitedCards)
+                    .FirstOrDefaultAsync();
+        }
+
         public bool CanDeckBeUsedOnGivenBanlist(Decklist decklist, Banlist banlist)
         {
             var countedCards = _countCards(decklist);
