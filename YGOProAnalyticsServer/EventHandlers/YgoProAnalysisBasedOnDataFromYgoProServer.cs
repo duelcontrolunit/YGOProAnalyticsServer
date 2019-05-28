@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +11,6 @@ using YGOProAnalyticsServer.Events;
 using YGOProAnalyticsServer.Models;
 using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
-using System.IO;
 
 namespace YGOProAnalyticsServer.EventHandlers
 {
@@ -23,9 +22,9 @@ namespace YGOProAnalyticsServer.EventHandlers
         IYDKToDecklistConverter _yDKToDecklistConverter;
 
         public YgoProAnalysisBasedOnDataFromYgoProServer(
-            IDuelLogNameAnalyzer duelLogNameAnalyzer, 
-            YgoProAnalyticsDatabase db, 
-            IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer, 
+            IDuelLogNameAnalyzer duelLogNameAnalyzer,
+            YgoProAnalyticsDatabase db,
+            IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer,
             IYDKToDecklistConverter yDKToDecklistConverter)
         {
             _duelLogNameAnalyzer = duelLogNameAnalyzer;
@@ -39,22 +38,22 @@ namespace YGOProAnalyticsServer.EventHandlers
             var duelLogsFromAllDates = notification.ConvertedDuelLogs;
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
 
-            foreach (var duelLogsFromOneDay in duelLogsFromAllDates)
+            foreach (var duelLogsPack in duelLogsFromAllDates)
             {
                 await _analyze(
-                    duelLogsFromOneDay,
-                    decklistsAsStringsWithFilenames.Where(x => x.Key == duelLogsFromOneDay.Key).First()
+                    duelLogsPack,
+                    decklistsAsStringsWithFilenames.Where(x => x.Key == duelLogsPack.Key).First()
                 );
             }
         }
 
         private async Task _analyze(
-            KeyValuePair<DateTime, List<DuelLog>> duelLogsFromOneDay,
+            KeyValuePair<DateTime, List<DuelLog>> duelLogsFromThePack,
             KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames)
         {
-            var allDecksWhichWonFromOneDay = new List<Decklist>();
-            var allDecksWhichLostFromOneDay = new List<Decklist>();
-            foreach (var duelLog in duelLogsFromOneDay.Value)
+            var allDecksWhichWonFromThePack = new List<Decklist>();
+            var allDecksWhichLostFromThePack = new List<Decklist>();
+            foreach (var duelLog in duelLogsFromThePack.Value)
             {
                 if (!isBanlistOk(duelLog))
                 {
@@ -64,35 +63,31 @@ namespace YGOProAnalyticsServer.EventHandlers
                 _analyzeBanlist(duelLog);
                 _assignConvertedDecklistToProperCollection(
                     decklistsAsStringsWithFilenames,
-                    allDecksWhichWonFromOneDay,
-                    allDecksWhichLostFromOneDay,
+                    allDecksWhichWonFromThePack,
+                    allDecksWhichLostFromThePack,
                     duelLog);
             }
 
-            DateTime dateFromDuelLog = duelLogsFromOneDay.Key.Date;
-            var decklistsWhichWonWithoutDuplicatesFromOneDay = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
-                dateFromDuelLog,
-                allDecksWhichWonFromOneDay,
+            var decklistsWhichWonWithoutDuplicatesFromThePack = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
+                allDecksWhichWonFromThePack,
                 true);
-            var decklistsWhichLostWithoutDuplicatesFromOneDay = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
-                dateFromDuelLog,
-                allDecksWhichLostFromOneDay,
+            var decklistsWhichLostWithoutDuplicatesFromThePack = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
+                allDecksWhichLostFromThePack,
                 false);
-            var allDecklistsFromOneDay = _removeDuplicatesAndMerge(
-                decklistsWhichWonWithoutDuplicatesFromOneDay,
-                decklistsWhichLostWithoutDuplicatesFromOneDay);
+            var allDecklistsFromThePack = _removeDuplicatesAndMerge(
+                decklistsWhichWonWithoutDuplicatesFromThePack,
+                decklistsWhichLostWithoutDuplicatesFromThePack);
 
-            await _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromOneDay, dateFromDuelLog);
+            await _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromThePack);
             await _db.SaveChangesAsync();
         }
 
         private async Task _updateDecklistsStatisticsAndAddNewDecksToDatabase(
-            List<Decklist> allDecklistsFromOneDay,
-            DateTime dateFromDuelLog)
+            List<Decklist> allDecklistsFromThePack)
         {
             var newDecks = new List<Decklist>();
             var decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
-            foreach (var decklist in allDecklistsFromOneDay)
+            foreach (var decklist in allDecklistsFromThePack)
             {
                 bool isDuplicate = false;
                 foreach (var decklistFromDb in decklistsFromDb)
@@ -110,8 +105,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                decklist.WhenDecklistWasFirstPlayed = dateFromDuelLog;
-                decklist.Name = $"{decklist.Archetype.Name}_{dateFromDuelLog.Date}";
+                decklist.Name = $"{decklist.Archetype.Name}_{decklist.WhenDecklistWasFirstPlayed}";
                 newDecks.Add(decklist);
             }
 
@@ -140,10 +134,12 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
         }
 
-        private List<Decklist> _analyzeDecklistsAndArchetypesAndRemoveDuplicates(DateTime dateFromDuelLog, List<Decklist> allDecksFromOneDay, bool decksWon)
+        private List<Decklist> _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
+            List<Decklist> allDecksFromThePack,
+            bool decksWon)
         {
             List<Decklist> decklistsWithoutDuplicates = new List<Decklist>();
-            foreach (var decklist in allDecksFromOneDay)
+            foreach (var decklist in allDecksFromThePack)
             {
                 bool decklistAlreadyExisting = false;
                 foreach (var decklistChecked in decklistsWithoutDuplicates)
@@ -160,13 +156,15 @@ namespace YGOProAnalyticsServer.EventHandlers
                 }
 
                 var numberOfDuplicatesWithListOfDecklists = _archetypeAndDecklistAnalyzer.
-                    RemoveDuplicateDecklistsFromListOfDecklists(decklist, allDecksFromOneDay);
+                    RemoveDuplicateDecklistsFromListOfDecklists(
+                    decklist,
+                    allDecksFromThePack.OrderBy(x => x.WhenDecklistWasFirstPlayed));
                 decklistsWithoutDuplicates.Add(numberOfDuplicatesWithListOfDecklists.DecklistThatWasChecked);
                 var statistics = decklist.DecklistStatistics
-                    .FirstOrDefault(x => x.DateWhenDeckWasUsed == dateFromDuelLog);
+                    .FirstOrDefault(x => x.DateWhenDeckWasUsed == decklist.WhenDecklistWasFirstPlayed);
                 if (statistics == null)
                 {
-                    statistics = DecklistStatistics.Create(decklist, dateFromDuelLog);
+                    statistics = DecklistStatistics.Create(decklist, decklist.WhenDecklistWasFirstPlayed);
                     decklist.DecklistStatistics.Add(statistics);
                 }
 
@@ -178,13 +176,18 @@ namespace YGOProAnalyticsServer.EventHandlers
                         IncrementNumberOfTimesWhenDeckWonByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
                 }
 
-                var archetype = _archetypeAndDecklistAnalyzer.GetArchetypeOfTheDecklistWithStatistics(decklist, dateFromDuelLog);
+                var archetype = _archetypeAndDecklistAnalyzer.GetArchetypeOfTheDecklistWithStatistics(
+                    decklist,
+                    decklist.WhenDecklistWasFirstPlayed);
                 var archetypeStatisticsFromDay = archetype.Statistics
-                    .First(x => x.DateWhenArchetypeWasUsed == dateFromDuelLog);
-                archetypeStatisticsFromDay.IncrementNumberOfDecksWhereWasUsedByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
+                    .First(x => x.DateWhenArchetypeWasUsed == decklist.WhenDecklistWasFirstPlayed);
+
+                archetypeStatisticsFromDay.IncrementNumberOfDecksWhereWasUsedByAmount(
+                    numberOfDuplicatesWithListOfDecklists.DuplicateCount);
                 if (decksWon)
                 {
-                    archetypeStatisticsFromDay.IncrementNumberOfTimesWhenArchetypeWonByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
+                    archetypeStatisticsFromDay.IncrementNumberOfTimesWhenArchetypeWonByAmount(
+                        numberOfDuplicatesWithListOfDecklists.DuplicateCount);
                 }
             }
 
@@ -233,8 +236,8 @@ namespace YGOProAnalyticsServer.EventHandlers
 
         private void _assignConvertedDecklistToProperCollection(
             KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames,
-            List<Decklist> allDecksWhichWonFromOneDay,
-            List<Decklist> allDecksWhichLostFromOneDay,
+            List<Decklist> allDecksWhichWonFromThePack,
+            List<Decklist> allDecksWhichLostFromThePack,
             DuelLog duelLog)
         {
             foreach (var deckWhichWonFileName in duelLog.DecksWhichWonFileNames)
@@ -247,8 +250,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                allDecksWhichWonFromOneDay.Add(
-                    _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData)
+                Decklist decklist = _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData);
+                decklist.WhenDecklistWasFirstPlayed = duelLog.DateOfTheBeginningOfTheDuel.Date;
+                allDecksWhichWonFromThePack.Add(
+                    decklist
                 );
             }
 
@@ -261,8 +266,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                allDecksWhichLostFromOneDay.Add(
-                   _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData)
+                Decklist decklist = _yDKToDecklistConverter.Convert(decklistWithFileName.DecklistData);
+                decklist.WhenDecklistWasFirstPlayed = duelLog.DateOfTheBeginningOfTheDuel.Date;
+                allDecksWhichLostFromThePack.Add(
+                   decklist
                 );
             }
         }
