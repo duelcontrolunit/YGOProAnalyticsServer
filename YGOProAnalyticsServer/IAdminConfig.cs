@@ -43,10 +43,28 @@
         /// </value>
         string DataFolderLocation { get; }
 
+        /// <summary>
+        /// Gets the card API URL.
+        /// </summary>
+        /// <value>
+        /// The card API URL.
+        /// </value>
         string CardApiURL { get; }
-      
+
+        /// <summary>
+        /// Gets the banlist API URL.
+        /// </summary>
+        /// <value>
+        /// The banlist API URL.
+        /// </value>
         string BanlistApiURL { get; }
 
+        /// <summary>
+        /// Gets the server data endpoint URL.
+        /// </summary>
+        /// <value>
+        /// The server data endpoint URL.
+        /// </value>
         string ServerDataEndpointURL { get; }
     }
 }
