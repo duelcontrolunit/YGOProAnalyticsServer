@@ -11,17 +11,17 @@ namespace YGOProAnalyticsServer.Models
     public class DecklistWithName
     {
         /// <summary>Initializes a new instance of the <see cref="DecklistWithName"/> class.</summary>
-        /// <param name="decklistName">Name of the decklist.</param>
+        /// <param name="decklistFileName">Name of the decklist.</param>
         /// <param name="decklistData">The decklist data.</param>
-        public DecklistWithName(string decklistName, string decklistData)
+        public DecklistWithName(string decklistFileName, string decklistData)
         {
-            DecklistName = decklistName;
+            DecklistFileName = decklistFileName;
             DecklistData = decklistData;
         }
 
-        /// <summary>Gets or sets the name of the decklist.</summary>
-        /// <value>The name of the decklist.</value>
-        public string DecklistName { get; protected set; }
+        /// <summary>Gets or sets the filename of the decklist.</summary>
+        /// <value>The filename of the decklist.</value>
+        public string DecklistFileName { get; protected set; }
         /// <summary>Gets or sets the decklist data.</summary>
         /// <value>The decklist data.</value>
         public string DecklistData { get; protected set; }

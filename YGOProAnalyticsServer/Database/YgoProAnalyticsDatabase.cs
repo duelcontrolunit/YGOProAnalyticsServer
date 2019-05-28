@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.DbModels.DbJoinModels;
 
 namespace YGOProAnalyticsServer.Database
 {
@@ -29,6 +30,10 @@ namespace YGOProAnalyticsServer.Database
         public DbSet<Decklist> Decklists { get; set; }
         public DbSet<DecklistStatistics> DecklistStatistics { get; set; }
 
+
+        //MetaData
+        public DbSet<AnalysisMetadata> AnalysisMetadata { get; set; }
+
         public const string connectionString =
                @"Server=(localdb)\mssqllocaldb;
                  Database= YgoProAnalytics;
@@ -50,6 +55,15 @@ namespace YGOProAnalyticsServer.Database
 
             modelBuilder.Entity<SemiLimitedCardBanlistJoin>()
               .HasKey(t => new { t.CardId, t.BanlistId });
+
+            modelBuilder.Entity<CardInMainDeckDecklistJoin>()
+             .HasKey(t => new { t.Id });
+
+            modelBuilder.Entity<CardInExtraDeckDecklistJoin>()
+            .HasKey(t => new { t.Id });
+
+            modelBuilder.Entity<CardInSideDeckDecklistJoin>()
+            .HasKey(t => new { t.Id });
 
             modelBuilder.Entity<Card>()
                 .HasOne(a => a.MonsterCard)

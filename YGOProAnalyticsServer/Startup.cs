@@ -19,6 +19,10 @@ using YGOProAnalyticsServer.Services.Unzippers;
 using YGOProAnalyticsServer.Services.Unzippers.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 using YGOProAnalyticsServer.Services.Others;
+using YGOProAnalyticsServer.Extensions;
+using System.Reflection;
+using MediatR;
+using YGOProAnalyticsServer.Jobs;
 using YGOProAnalyticsServer.Services.Factories.Interfaces;
 using YGOProAnalyticsServer.Services.Factories;
 using AutoMapper;
@@ -39,7 +43,7 @@ namespace YGOProAnalyticsServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-           
+            services.AddMediatR();
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
             _addAutomapper(services);
             services.AddScoped<ICardBuilder, CardBuilder>();
@@ -52,6 +56,9 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IFileUnzipper, FileUnzipper>();
             services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
             services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
+            services.AddScoped<ICardsDataToCardsAndArchetypesUpdater, CardsDataToCardsAndArchetypesUpdater>();
+            services.AddScoped<IArchetypeAndDecklistAnalyzer, ArchetypeAndDecklistAnalyzer>();
+            services.AddScoped<IYDKToDecklistConverter, YDKToDecklistConverter>();
             services.AddScoped<ICardDtosFactory, CardDtosFactory>();
             services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
             services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
@@ -59,7 +66,12 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IServerActivityStatisticsService, ServerActivityStatisticsService>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
-            
+
+            services.AddScheduler(builder =>
+            {
+                //builder.AddJobs(Assembly.GetExecutingAssembly());
+                builder.AddJob<UpdatesJob>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -19,7 +19,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
     public class CardsDataToCardsAndArchetypesUpdater : ICardsDataToCardsAndArchetypesUpdater
     {
         private readonly ICardsDataDownloader _cardsDataDownloader;
-        private readonly ICardBuilder _CardBuilder;
+        private readonly ICardBuilder _cardBuilder;
         private readonly YgoProAnalyticsDatabase _db;
         private readonly List<Archetype> _archetypes;
         private readonly List<Card> _cards;
@@ -36,7 +36,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             YgoProAnalyticsDatabase db)
         {
             _cardsDataDownloader = cardsDataDownloader;
-            _CardBuilder = cardBuilder;
+            _cardBuilder = cardBuilder;
             _db = db;
             _archetypes = _db.Archetypes.ToList();
             _cards = _db.Cards.ToList();
@@ -60,7 +60,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 Archetype archetype;
                 if (item.GetValue("archetype").ToString() == string.Empty)
                 {
-                    archetype = _getArchetype("Neutral");
+                    archetype = _getArchetype(Archetype.Default);
                 }
                 else
                 {
@@ -73,7 +73,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 }
 
                 _addBasicCardProperties(item, archetype);
-                _db.Cards.Add(_CardBuilder.Build());
+                _db.Cards.Add(_cardBuilder.Build());
             }
 
             await _db.SaveChangesAsync();          
@@ -81,7 +81,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
         private void _addBasicCardProperties(JObject item, Archetype archetype)
         {
-            _CardBuilder.AddBasicCardElements(
+            _cardBuilder.AddBasicCardElements(
                                 item.Value<int>("id"),
                                 item.Value<string>("name"),
                                 item.Value<string>("desc"),
@@ -101,9 +101,10 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private void _addMonsterProperties(string type, Archetype archetype, JObject item)
         {           
             _addBasicMonsterAttributesToCard(item);
+
             if (type.Contains("PENDULUM"))
             {
-                _CardBuilder.AddPendulumMonsterCardElements(item.Value<int>("scale"));
+                _cardBuilder.AddPendulumMonsterCardElements(item.Value<int>("scale"));
             }
 
             if (type.Contains("LINK"))
@@ -116,6 +117,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             var archetype = _archetypes.Where(x => x.Name == archetypeNameFromApi).FirstOrDefault();
             archetype = archetype ?? new Archetype(archetypeNameFromApi, true);
+
             if (!_archetypes.Contains(archetype))
             {
                 _archetypes.Add(archetype);
@@ -127,12 +129,13 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private void _addBasicMonsterAttributesToCard(JObject item)
         {
             var level = item.GetValue("level").ToString();
+
             if (level == "")
             {
                 level = 0.ToString();
             }
 
-            _CardBuilder.AddMonsterCardElements(
+            _cardBuilder.AddMonsterCardElements(
                     item.GetValue("atk").ToString(),
                     item.GetValue("def").ToString(),
                     int.Parse(level),
@@ -143,6 +146,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             var linkval = item.GetValue("linkval").ToString();
             int linkvalCount = 0;
+
             if (linkval == "")
             {
                 linkvalCount = item.GetValue("linkmarkers").ToString().Split(',').Count() + 1;
@@ -152,7 +156,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 linkvalCount = int.Parse(linkval);
             }
 
-            _CardBuilder.AddLinkMonsterCardElements(
+            _cardBuilder.AddLinkMonsterCardElements(
                     linkvalCount,
                     _isLinkMarker("Top-Left", item),
                     _isLinkMarker("Top", item),

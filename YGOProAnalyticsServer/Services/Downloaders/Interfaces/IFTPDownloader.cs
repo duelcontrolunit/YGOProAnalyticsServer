@@ -14,7 +14,7 @@ namespace YGOProAnalyticsServer.Services.Downloaders.Interfaces
         /// <summary>Downloads the decks from FTP.</summary>
         /// <param name="EndPointFTP">The end point FTP.</param>
         /// <returns>Path string of downloaded file.</returns>
-        Task<string> DownloadDecksFromFTP(string EndPointFTP);
+        Task<string> DownloadDeckFromFTP(string EndPointFTP);
 
         /// <summary>Downloads the list of files from FTP.</summary>
         /// <param name="EndPointFTP">The end point FTP.</param>

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using YGOProAnalyticsServer.Database.ManyToManySupport;
+using YGOProAnalyticsServer.DbModels.DbJoinModels;
 
 namespace YGOProAnalyticsServer.DbModels
 {
@@ -113,6 +114,10 @@ namespace YGOProAnalyticsServer.DbModels
             BanlistsWhereThisCardIsForbidden = new JoinCollectionFacade<Banlist, Card, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
             BanlistsWhereThisCardIsLimited = new JoinCollectionFacade<Banlist, Card, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
             BanlistsWhereThisCardIsSemiLimited = new JoinCollectionFacade<Banlist, Card, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
+
+            DecksWhereThisCardIsInMainDeck = new JoinCollectionFacade<Decklist, Card, CardInMainDeckDecklistJoin>(this, MainDeckJoin);
+            DecksWhereThisCardIsInExtraDeck = new JoinCollectionFacade<Decklist, Card, CardInExtraDeckDecklistJoin>(this, ExtraDeckJoin);
+            DecksWhereThisCardIsInSideDeck = new JoinCollectionFacade<Decklist, Card, CardInSideDeckDecklistJoin>(this, SideDeckJoin);
         }
 
         /// <summary>
@@ -206,5 +211,18 @@ namespace YGOProAnalyticsServer.DbModels
         /// </summary>
         [NotMapped]
         public ICollection<Banlist> BanlistsWhereThisCardIsSemiLimited { get; protected set; }
+
+        public ICollection<CardInMainDeckDecklistJoin> MainDeckJoin { get; protected set; } = new List<CardInMainDeckDecklistJoin>();
+        public ICollection<CardInExtraDeckDecklistJoin> ExtraDeckJoin { get; protected set; } = new List<CardInExtraDeckDecklistJoin>();
+        public ICollection<CardInSideDeckDecklistJoin> SideDeckJoin { get; protected set; } = new List<CardInSideDeckDecklistJoin>();
+
+        [NotMapped]
+        public ICollection<Decklist> DecksWhereThisCardIsInMainDeck { get; protected set; }
+
+        [NotMapped]
+        public ICollection<Decklist> DecksWhereThisCardIsInExtraDeck { get; protected set; }
+
+        [NotMapped]
+        public ICollection<Decklist> DecksWhereThisCardIsInSideDeck { get; protected set; }
     }
 }

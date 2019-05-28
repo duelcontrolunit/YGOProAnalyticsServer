@@ -29,8 +29,8 @@ namespace YGOProAnalyticsServer.Services.Downloaders
         {
 
             Uri _ftpUri = new Uri(EndPointFTP);
-            string _folderPath = @"Data/DuelLogZipFiles";
-            string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.LocalPath));
+            string _folderPath = Path.Combine(_adminConfig.DataFolderLocation, "DuelLogZipFiles");
+            string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.AbsoluteUri));
             if (!Directory.Exists(_folderPath))
             {
                 Directory.CreateDirectory(_folderPath);
@@ -60,12 +60,12 @@ namespace YGOProAnalyticsServer.Services.Downloaders
         }
 
         /// <inheritdoc />
-        public async Task<string> DownloadDecksFromFTP(string EndPointFTP)
+        public async Task<string> DownloadDeckFromFTP(string URLToDeckList)
         {
 
-            Uri _ftpUri = new Uri(EndPointFTP);
-            string _folderPath = @"Data/DecksZipFiles";
-            string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.LocalPath));
+            Uri _ftpUri = new Uri(URLToDeckList);
+            string _folderPath = Path.Combine(_adminConfig.DataFolderLocation, "DecksZipFiles");
+            string _filePath = Path.Combine(_folderPath, Path.GetFileName(_ftpUri.AbsoluteUri));
             if (!Directory.Exists(_folderPath))
             {
                 Directory.CreateDirectory(_folderPath);
