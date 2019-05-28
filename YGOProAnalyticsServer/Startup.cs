@@ -25,6 +25,8 @@ using MediatR;
 using YGOProAnalyticsServer.Jobs;
 using YGOProAnalyticsServer.Services.Factories.Interfaces;
 using YGOProAnalyticsServer.Services.Factories;
+using AutoMapper;
+using System.Reflection;
 
 namespace YGOProAnalyticsServer
 {
@@ -43,7 +45,7 @@ namespace YGOProAnalyticsServer
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMediatR();
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
-
+            _addAutomapper(services);
             services.AddScoped<ICardBuilder, CardBuilder>();
             services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
             services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
@@ -61,6 +63,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
             services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
             services.AddScoped<IDecklistService, DecklistService>();
+            services.AddScoped<IServerActivityStatisticsService, ServerActivityStatisticsService>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 
@@ -86,6 +89,17 @@ namespace YGOProAnalyticsServer
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void _addAutomapper(IServiceCollection services)
+        {
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddMaps(Assembly.GetExecutingAssembly());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
         }
     }
 }
