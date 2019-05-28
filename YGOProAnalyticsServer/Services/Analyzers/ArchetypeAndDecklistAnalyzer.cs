@@ -109,7 +109,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <returns>Amount of duplicates removed.</returns>
         public NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(
             Decklist decklist, 
-            List<Decklist> listOfDecks)
+            IEnumerable<Decklist> listOfDecks)
         {
             int duplicateCount = 0;
             List<Decklist> listWithoutDuplicates = new List<Decklist>();
