@@ -32,5 +32,7 @@ namespace YGOProAnalyticsServer
 
         ///<inheritdoc />
         public string ServerDataEndpointURL => "";
+
+        public int DefaultNumberOfResultsPerBrowserPage => 100;
     }
 }

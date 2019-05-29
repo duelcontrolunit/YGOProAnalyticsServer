@@ -7,18 +7,20 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
     public interface IDecklistService
     {
         /// <summary>
-        /// Finds all decklists based on parameters.
+        /// Finds all.
         /// </summary>
-        /// <param name="howManyTake">The how many decklists take.</param>
-        /// <param name="howManySkip">The how many decklists (results from db) skip.</param>
+        /// <param name="howManyTake">The how many take.</param>
+        /// <param name="howManySkip">The how many skip.</param>
+        /// <param name="minNumberOfGames">The minimum number of games.</param>
         /// <param name="banlistId">The banlist identifier.</param>
         /// <param name="archetypeName">Name of the archetype.</param>
-        /// <returns>Decklists.</returns>
+        /// <returns>Decklists</returns>
         Task<System.Collections.Generic.IEnumerable<Decklist>> FindAll(
             int howManyTake,
             int howManySkip,
-            int banlistId,
-            string archetypeName);
+            int minNumberOfGames = 10,
+            int banlistId = -1,
+            string archetypeName = "");
 
         /// <summary>
         /// Decklist with all data included.

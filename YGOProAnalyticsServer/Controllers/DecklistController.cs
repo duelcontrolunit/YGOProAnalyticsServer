@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 
@@ -19,31 +21,41 @@ namespace YGOProAnalyticsServer.Controllers
         readonly YgoProAnalyticsDatabase _db;
         readonly IDecklistToDecklistDtoConverter _decklistToDtoConverter;
         readonly IDecklistService _decklistService;
+        readonly IAdminConfig _config;
+        readonly IMapper _mapper;
 
         public DecklistController(
             YgoProAnalyticsDatabase db,
             IDecklistToDecklistDtoConverter decklistToDtoConverter,
-            IDecklistService decklistService)
+            IDecklistService decklistService,
+            IAdminConfig config,
+            IMapper mapper)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _decklistToDtoConverter = decklistToDtoConverter ?? throw new ArgumentNullException(nameof(decklistToDtoConverter));
             _decklistService = decklistService ?? throw new ArgumentNullException(nameof(decklistService));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IActionResult> FindAll(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int banlistId = -1,
-            [FromBody] string archetypeName = "")
+            [FromQuery] string archetypeName = "",
+            [FromQuery] int minNumberOfGames = 10)
         {
             var decklists = await _decklistService.FindAll(
-                100,
-                (pageNumber - 1) * 100,
-                banlistId,
-                archetypeName);
-            var decklistsDtos = _decklistToDtoConverter.Convert(decklists);
+                howManyTake: _config.DefaultNumberOfResultsPerBrowserPage,
+                howManySkip: _config.DefaultNumberOfResultsPerBrowserPage * (pageNumber - 1),
+                minNumberOfGames: minNumberOfGames,
+                banlistId: banlistId,
+                archetypeName: archetypeName);
 
-            return new JsonResult(decklistsDtos);
+            var decklistDtos = _mapper
+                .Map<List<DecklistWithoutAnyAdditionalDataDTO>>(decklists);
+
+            return new JsonResult(decklistDtos);
         }
 
         [HttpGet("{id}")]

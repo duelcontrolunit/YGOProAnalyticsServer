@@ -25,100 +25,69 @@ namespace YGOProAnalyticsServer.Services.Others
         public async Task<IEnumerable<Decklist>> FindAll(
             int howManyTake,
             int howManySkip,
-            int banlistId,
-            string archetypeName)
+            int minNumberOfGames = 10,
+            int banlistId = -1,
+            string archetypeName = "")
         {
-            var query = _getDecklistsQuery();
-            if (banlistId < 1)
+            //TODO : cache for that sorted query per 11 hours
+            var localQuery = _getDecklistsQuery()
+                .OrderByDescending(
+                    x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
+                 )
+                 .AsEnumerable();
+
+            localQuery = localQuery.Where(
+                x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
+            );
+
+            if (!string.IsNullOrEmpty(archetypeName))
             {
-                Banlist banlist = await _banlistService
+                localQuery = localQuery.Where(x => x.Archetype.Name.Contains(archetypeName));
+            }
+
+            if(banlistId > 0)
+            {
+                var banlist = await _banlistService
                     .GetBanlistWithAllCardsIncludedAsync(banlistId);
-
-                if(banlist != null)
+                if (banlist != null)
                 {
-                    return await _getDecksWhenBanlistFilterIsActive(
-                        howManyTake,
-                        howManySkip,
-                        archetypeName,
-                        query,
-                        banlist);
-                }
-                else
-                {
-                    return new List<Decklist>();
+                    localQuery = localQuery.Where(x => _banlistService.CanDeckBeUsedOnGivenBanlist(x, banlist));
                 }
             }
-            else
-            {
-                return await _getListOfDecklists(
-                    howManyTake,
-                    howManySkip,
-                    archetypeName,
-                    query);
-            }
-        }
-
-        private async Task<List<Decklist>> _getDecksWhenBanlistFilterIsActive(
-            int howManyTake,
-            int howManySkip,
-            string archetypeName,
-            IQueryable<Decklist> query,
-            Banlist banlist)
-        {
-            int skipMultiplicator = 1;
-            bool notAllDecksWereChecked = true;
-            var decksForReturn = new List<Decklist>();
-            do
-            {
-                var decks = await _getListOfDecklists(
-                    howManyTake,
-                    howManySkip * skipMultiplicator,
-                    archetypeName,
-                    query
-                );
-
-                foreach (var decklist in decks)
-                {
-                    if (_banlistService.CanDeckBeUsedOnGivenBanlist(decklist, banlist)
-                        && decksForReturn.Count < 100)
-                    {
-                        decksForReturn.Add(decklist);
-                    }
-                }
-
-                if (decks.Count() == 0)
-                {
-                    notAllDecksWereChecked = false;
-                }
-
-                skipMultiplicator++;
-            } while (decksForReturn.Count < 100 && notAllDecksWereChecked);
-
-            return decksForReturn;
+            
+            return localQuery
+                    .Skip(howManySkip)
+                    .Take(howManyTake)
+                    .ToList();
         }
 
         /// <summary>
-        /// If there is no archetype given by user, archetype filter is disabled.
+        /// Compares the by win ratio.
         /// </summary>
-        private async Task<IEnumerable<Decklist>> _getListOfDecklists(
-            int howManyTake,
-            int howManySkip,
-            string archetypeName,
-            IQueryable<Decklist> query)
+        /// <param name="firstDecklist">The first decklist.</param>
+        /// <param name="secondDecklist">The second decklist.</param>
+        /// <returns></returns>
+        public int CompareByWinRatio(
+            Decklist firstDecklist,
+            Decklist secondDecklist)
         {
-            if (string.IsNullOrEmpty(archetypeName))
+            if(GetWinRatio(firstDecklist) > GetWinRatio(secondDecklist))
             {
-                return await query
-                    .Skip(howManySkip)
-                    .Take(howManyTake)
-                    .ToListAsync();
+                return 1;
             }
+            else if(GetWinRatio(firstDecklist) == GetWinRatio(secondDecklist))
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+        }
 
-            return await query
-                    .Skip(howManySkip)
-                    .Take(howManyTake)
-                    .Where(x => x.Archetype.Name.Contains(archetypeName))
-                    .ToListAsync();
+        public int GetWinRatio(Decklist decklist)
+        {
+            return 4;
         }
 
         /// <inheritdoc />
