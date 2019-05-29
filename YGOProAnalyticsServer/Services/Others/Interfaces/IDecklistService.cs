@@ -29,5 +29,10 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <param name="id">The identifier.</param>
         /// <returns>Decklist with all data included.</returns>
         Task<Decklist> GetByIdWithAllDataIncluded(int id);
+
+        /// <summary>
+        /// Renew cache by key. CacheKey: <see cref="CacheKeys.OrderedDecklistsWithContentIncluded"/>
+        /// </summary>
+        void UpdateCache();
     }
 }

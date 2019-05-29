@@ -37,7 +37,7 @@ namespace YGOProAnalyticsServer.Services.Others
             string archetypeName = "",
             bool shouldGetDecksFromCache = true)
         {
-            IEnumerable<Decklist> localDecklistsQuery = _getDecklistQueryAsEnumerable(shouldGetDecksFromCache);
+            IEnumerable<Decklist> localDecklistsQuery = _getOrCreateAndGetDecklistFromCache(shouldGetDecksFromCache);
             localDecklistsQuery = localDecklistsQuery.Where(
                 x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
             );
@@ -64,62 +64,40 @@ namespace YGOProAnalyticsServer.Services.Others
                     .ToList();
         }
 
-        private IEnumerable<Decklist> _getDecklistQueryAsEnumerable(bool shouldGetDecksFromCache)
+        /// <inheritdoc />
+        public void UpdateCache()
+        {
+            _getOrCreateAndGetDecklistFromCache(true);
+        }
+
+        private IEnumerable<Decklist> _getOrCreateAndGetDecklistFromCache(bool shouldGetDecksFromCache)
         {
             IEnumerable<Decklist> localDecklistsQuery;
             if (!shouldGetDecksFromCache)
             {
-                localDecklistsQuery = _getOrderedDecklistsAsEnumerable();
+                localDecklistsQuery = _getOrderedNoTrackedDecklists();
             }
             else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
             {
                 var cacheOptions = new MemoryCacheEntryOptions()
                     .SetPriority(CacheItemPriority.High)
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(30));
+                    .SetSlidingExpiration(TimeSpan.FromHours(23));
 
-                localDecklistsQuery = _getOrderedDecklistsAsEnumerable();
-                _cache.Set("", localDecklistsQuery, cacheOptions);
+                localDecklistsQuery = _getOrderedNoTrackedDecklists();
+                _cache.Set(CacheKeys.OrderedDecklistsWithContentIncluded, localDecklistsQuery, cacheOptions);
             }
 
             return localDecklistsQuery;
         }
 
-        private IEnumerable<Decklist> _getOrderedDecklistsAsEnumerable()
+        private List<Decklist> _getOrderedNoTrackedDecklists()
         {
-            return _getDecklistsQuery()
+            _db.Database.SetCommandTimeout(3600);
+            return _getDecklistsQuery(false)
                 .OrderByDescending(
                     x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
                  )
-                 .AsEnumerable();
-        }
-
-        /// <summary>
-        /// Compares the by win ratio.
-        /// </summary>
-        /// <param name="firstDecklist">The first decklist.</param>
-        /// <param name="secondDecklist">The second decklist.</param>
-        /// <returns></returns>
-        public int CompareByWinRatio(
-            Decklist firstDecklist,
-            Decklist secondDecklist)
-        {
-            if(GetWinRatio(firstDecklist) > GetWinRatio(secondDecklist))
-            {
-                return 1;
-            }
-            else if(GetWinRatio(firstDecklist) == GetWinRatio(secondDecklist))
-            {
-                return 0;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
-        public int GetWinRatio(Decklist decklist)
-        {
-            return 4;
+                 .ToList();
         }
 
         /// <inheritdoc />
@@ -135,9 +113,18 @@ namespace YGOProAnalyticsServer.Services.Others
         /// <summary>
         /// Gets the decklists query with all data explicitly included.
         /// </summary>
-        private IQueryable<Decklist> _getDecklistsQuery()
+        private IQueryable<Decklist> _getDecklistsQuery(bool shouldBeTrackd = true)
         {
-            var query = includeMainDeckWithAllData(_db.Decklists);
+            IQueryable<Decklist> query;
+            if (shouldBeTrackd)
+            {
+                query = includeMainDeckWithAllData(_db.Decklists);
+            }
+            else
+            {
+                query = includeMainDeckWithAllData(_db.Decklists.AsNoTracking());
+            }
+           
             query = includeExtraDeckWithAllData(query);
             query = includeSideDeckWithAllData(query);
             query = query.Include(x => x.Archetype);
