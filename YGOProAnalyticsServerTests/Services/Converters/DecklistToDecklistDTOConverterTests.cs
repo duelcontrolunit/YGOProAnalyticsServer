@@ -72,10 +72,13 @@ namespace YGOProAnalyticsServerTests.Services.Converters
 
         private Decklist _getValidDecklist()
         {
-            var decklist = new Decklist(
-                _validDecklistName,
-                new Archetype(_validArchatypeName, false),
-                _date);
+            var decklist = new Decklist(new List<Card>(), new List<Card>(), new List<Card>())
+            {
+                Name = _validDecklistName,
+                Archetype = new Archetype(_validArchatypeName, false),
+                WhenDecklistWasFirstPlayed = _date
+            };
+
             decklist
                 .GetType()
                 .GetProperty(nameof(Decklist.Id))

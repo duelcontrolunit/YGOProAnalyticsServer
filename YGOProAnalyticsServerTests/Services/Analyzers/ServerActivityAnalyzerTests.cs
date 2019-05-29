@@ -29,7 +29,13 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         [Test]
         public void NumberOfGamesFromOneDay_WeGet3DuelLogs_Returned3()
         {
-            var duelLog = new DuelLog(DateTime.Now, 1, 1, "", "");
+            var duelLog = new DuelLog(
+                DateTime.Now,
+                DateTime.Now,
+                1,
+                1,
+                "",
+                "");
 
             int result = _analyzer
                 .NumberOfGamesFromOneDay(new List<DuelLog>() { duelLog, duelLog, duelLog });

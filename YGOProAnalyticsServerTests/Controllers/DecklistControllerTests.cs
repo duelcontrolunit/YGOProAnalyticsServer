@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using YGOProAnalyticsServer;
 using YGOProAnalyticsServer.Controllers;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
@@ -22,6 +24,8 @@ namespace YGOProAnalyticsServerTests.Controllers
         YgoProAnalyticsDatabase _db;
         Mock<IDecklistToDecklistDtoConverter> _decklistToDtoConverter;
         Mock<IDecklistService> _decklistService;
+        Mock<IAdminConfig> _adminConfigMock;
+        Mock<IMapper> _mapperMock;
 
         [SetUp]
         public void SetUp()
@@ -30,6 +34,8 @@ namespace YGOProAnalyticsServerTests.Controllers
             _db.Database.EnsureCreated();
             _decklistToDtoConverter = new Mock<IDecklistToDecklistDtoConverter>();
             _decklistService = new Mock<IDecklistService>();
+            _adminConfigMock = new Mock<IAdminConfig>();
+            _mapperMock = new Mock<IMapper>();
         }
 
         [TearDown]
@@ -70,15 +76,24 @@ namespace YGOProAnalyticsServerTests.Controllers
 
         private void _initController()
         {
-            _decklistController = new DecklistController(_db, _decklistToDtoConverter.Object, _decklistService.Object);
+            _decklistController = new DecklistController(
+                _db,
+                _decklistToDtoConverter.Object,
+                _decklistService.Object,
+                _adminConfigMock.Object,
+                _mapperMock.Object);
         }
 
         private Decklist _getValidDecklist()
         {
             return new Decklist(
-                "ValidDecklist",
-                new Archetype("validArchetype", false),
-                new DateTime(1997, 04, 29));
+                new List<Card>(),
+                new List<Card>(),
+                new List<Card>()){
+                Name = "ValidName",
+                Archetype = new Archetype("validArchetype", false),
+                WhenDecklistWasFirstPlayed = new DateTime(1997, 04, 29)
+            };
         }
 
         /// <summary>
