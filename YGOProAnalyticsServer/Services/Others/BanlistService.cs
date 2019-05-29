@@ -18,6 +18,7 @@ namespace YGOProAnalyticsServer.Services.Others
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
+        /// <inheritdoc />
         public async Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId)
         {
             return await _db
@@ -29,6 +30,7 @@ namespace YGOProAnalyticsServer.Services.Others
                     .FirstOrDefaultAsync();
         }
 
+        /// <inheritdoc />
         public bool CanDeckBeUsedOnGivenBanlist(Decklist decklist, Banlist banlist)
         {
             var countedCards = _countCards(decklist);

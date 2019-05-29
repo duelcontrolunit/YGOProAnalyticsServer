@@ -15,6 +15,11 @@ namespace YGOProAnalyticsServer.Services.Converters.Interfaces
         /// <param name="decklist">The decklist.</param>
         /// <returns>New DecklistWithStatisticsDTO.</returns>
         DecklistWithStatisticsDTO Convert(Decklist decklist);
+
+        /// <summary>
+        /// Convert <see cref="Decklist"/> collection to  <see cref="DecklistWithStatisticsDTO"/> collection.
+        /// </summary>
+        /// <param name="decklists">The decklists.</param>
         IEnumerable<DecklistWithStatisticsDTO> Convert(IEnumerable<Decklist> decklists);
     }
 }
