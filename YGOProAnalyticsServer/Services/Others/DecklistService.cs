@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DbModels.DbJoinModels;
+using YGOProAnalyticsServer.Helpers;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
@@ -14,11 +16,16 @@ namespace YGOProAnalyticsServer.Services.Others
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IBanlistService _banlistService;
+        readonly IMemoryCache _cache;
 
-        public DecklistService(YgoProAnalyticsDatabase db, IBanlistService banlistService)
+        public DecklistService(
+            YgoProAnalyticsDatabase db,
+            IBanlistService banlistService,
+            IMemoryCache cache)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _banlistService = banlistService ?? throw new ArgumentNullException(nameof(banlistService));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         /// <inheritdoc />
@@ -27,38 +34,63 @@ namespace YGOProAnalyticsServer.Services.Others
             int howManySkip,
             int minNumberOfGames = 10,
             int banlistId = -1,
-            string archetypeName = "")
+            string archetypeName = "",
+            bool shouldGetDecksFromCache = true)
         {
-            //TODO : cache for that sorted query per 11 hours
-            var localQuery = _getDecklistsQuery()
-                .OrderByDescending(
-                    x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
-                 )
-                 .AsEnumerable();
-
-            localQuery = localQuery.Where(
+            IEnumerable<Decklist> localDecklistsQuery = _getDecklistQueryAsEnumerable(shouldGetDecksFromCache);
+            localDecklistsQuery = localDecklistsQuery.Where(
                 x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
             );
 
             if (!string.IsNullOrEmpty(archetypeName))
             {
-                localQuery = localQuery.Where(x => x.Archetype.Name.Contains(archetypeName));
+                localDecklistsQuery = localDecklistsQuery.Where(x => x.Archetype.Name.Contains(archetypeName));
             }
 
-            if(banlistId > 0)
+            if (banlistId > 0)
             {
                 var banlist = await _banlistService
                     .GetBanlistWithAllCardsIncludedAsync(banlistId);
                 if (banlist != null)
                 {
-                    localQuery = localQuery.Where(x => _banlistService.CanDeckBeUsedOnGivenBanlist(x, banlist));
+                    localDecklistsQuery = localDecklistsQuery
+                        .Where(x => _banlistService.CanDeckBeUsedOnGivenBanlist(x, banlist));
                 }
             }
-            
-            return localQuery
+
+            return localDecklistsQuery
                     .Skip(howManySkip)
                     .Take(howManyTake)
                     .ToList();
+        }
+
+        private IEnumerable<Decklist> _getDecklistQueryAsEnumerable(bool shouldGetDecksFromCache)
+        {
+            IEnumerable<Decklist> localDecklistsQuery;
+            if (!shouldGetDecksFromCache)
+            {
+                localDecklistsQuery = _getOrderedDecklistsAsEnumerable();
+            }
+            else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
+            {
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetPriority(CacheItemPriority.High)
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(30));
+
+                localDecklistsQuery = _getOrderedDecklistsAsEnumerable();
+                _cache.Set("", localDecklistsQuery, cacheOptions);
+            }
+
+            return localDecklistsQuery;
+        }
+
+        private IEnumerable<Decklist> _getOrderedDecklistsAsEnumerable()
+        {
+            return _getDecklistsQuery()
+                .OrderByDescending(
+                    x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
+                 )
+                 .AsEnumerable();
         }
 
         /// <summary>

@@ -20,7 +20,8 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
             int howManySkip,
             int minNumberOfGames = 10,
             int banlistId = -1,
-            string archetypeName = "");
+            string archetypeName = "",
+            bool shouldGetDecksFromCache = true);
 
         /// <summary>
         /// Decklist with all data included.
