@@ -35,18 +35,23 @@ namespace YGOProAnalyticsServer.Services.Others
             int minNumberOfGames = 10,
             int banlistId = -1,
             string archetypeName = "",
+            DateTime? statisticsFrom = null,
+            DateTime? statisticsTo = null,
             bool shouldGetDecksFromCache = true)
         {
             IEnumerable<Decklist> localDecklistsQuery = _getOrCreateAndGetDecklistFromCache(shouldGetDecksFromCache);
-            localDecklistsQuery = localDecklistsQuery.Where(
-                x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
-            );
+            localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
+            localDecklistsQuery = _addArchetypeNameFilterToLocalDecklistQueryIfRequired(archetypeName, localDecklistsQuery);
+            localDecklistsQuery = await _addBanlistFilterToLocalDecklistQueryIfRequired(banlistId, localDecklistsQuery);
 
-            if (!string.IsNullOrEmpty(archetypeName))
-            {
-                localDecklistsQuery = localDecklistsQuery.Where(x => x.Archetype.Name.Contains(archetypeName));
-            }
+            return localDecklistsQuery
+                    .Skip(howManySkip)
+                    .Take(howManyTake)
+                    .ToList();
+        }
 
+        private async Task<IEnumerable<Decklist>> _addBanlistFilterToLocalDecklistQueryIfRequired(int banlistId, IEnumerable<Decklist> localDecklistsQuery)
+        {
             if (banlistId > 0)
             {
                 var banlist = await _banlistService
@@ -58,10 +63,30 @@ namespace YGOProAnalyticsServer.Services.Others
                 }
             }
 
-            return localDecklistsQuery
-                    .Skip(howManySkip)
-                    .Take(howManyTake)
-                    .ToList();
+            return localDecklistsQuery;
+        }
+
+        private static IEnumerable<Decklist> _addArchetypeNameFilterToLocalDecklistQueryIfRequired(
+            string archetypeName,
+            IEnumerable<Decklist> localDecklistsQuery)
+        {
+            if (!string.IsNullOrEmpty(archetypeName))
+            {
+                localDecklistsQuery = localDecklistsQuery.Where(x => x.Archetype.Name.Contains(archetypeName));
+            }
+
+            return localDecklistsQuery;
+        }
+
+        private IEnumerable<Decklist> _addMinNumberOfGamesFilterToLocalDecklistQuery(
+            int minNumberOfGames,
+            IEnumerable<Decklist> localDecklistsQuery)
+        {
+            localDecklistsQuery = localDecklistsQuery.Where(
+                x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
+            );
+
+            return localDecklistsQuery;
         }
 
         /// <inheritdoc />

@@ -43,14 +43,21 @@ namespace YGOProAnalyticsServer.Controllers
             [FromQuery] int pageNumber = 1,
             [FromQuery] int banlistId = -1,
             [FromQuery] string archetypeName = "",
-            [FromQuery] int minNumberOfGames = 10)
+            [FromQuery] int minNumberOfGames = 10,
+            [FromQuery] string statsticsFromDate = "",
+            [FromQuery] string statisticsToDate = "")
         {
+            var statisticsFrom = DateTime.Parse(statsticsFromDate);
+            var statisticsTo = DateTime.Parse(statisticsToDate);
+
             var decklists = await _decklistService.FindAll(
                 howManyTake: _config.DefaultNumberOfResultsPerBrowserPage,
                 howManySkip: _config.DefaultNumberOfResultsPerBrowserPage * (pageNumber - 1),
                 minNumberOfGames: minNumberOfGames,
                 banlistId: banlistId,
-                archetypeName: archetypeName);
+                archetypeName: archetypeName,
+                statisticsFrom: statisticsFrom,
+                statisticsTo: statisticsTo);
 
             var decklistDtos = _mapper
                 .Map<List<DecklistWithoutAnyAdditionalDataDTO>>(decklists);
