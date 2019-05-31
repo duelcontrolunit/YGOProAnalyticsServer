@@ -67,6 +67,7 @@ namespace YGOProAnalyticsServer.Services.Others
         /// <inheritdoc />
         public void UpdateCache()
         {
+            _cache.Remove(CacheKeys.OrderedDecklistsWithContentIncluded);
             _getOrCreateAndGetDecklistFromCache(true);
         }
 
