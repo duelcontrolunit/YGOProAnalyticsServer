@@ -44,12 +44,22 @@ namespace YGOProAnalyticsServer.Controllers
             [FromQuery] int banlistId = -1,
             [FromQuery] string archetypeName = "",
             [FromQuery] int minNumberOfGames = 10,
-            [FromQuery] string statsticsFromDate = "",
+            [FromQuery] string statisticsFromDate = "",
             [FromQuery] string statisticsToDate = "")
         {
-            var statisticsFrom = DateTime.Parse(statsticsFromDate);
-            var statisticsTo = DateTime.Parse(statisticsToDate);
+            DateTime? statisticsFrom = null;
+            DateTime? statisticsTo = null;
 
+            if (!string.IsNullOrEmpty(statisticsFromDate))
+            {
+                statisticsFrom = DateTime.Parse(statisticsFromDate);
+            }
+
+            if (!string.IsNullOrEmpty(statisticsToDate))
+            {
+                statisticsTo = DateTime.Parse(statisticsToDate);
+            }
+           
             var decklists = await _decklistService.FindAll(
                 howManyTake: _config.DefaultNumberOfResultsPerBrowserPage,
                 howManySkip: _config.DefaultNumberOfResultsPerBrowserPage * (pageNumber - 1),
@@ -59,8 +69,11 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsFrom: statisticsFrom,
                 statisticsTo: statisticsTo);
 
-            var decklistDtos = _mapper
-                .Map<List<DecklistWithoutAnyAdditionalDataDTO>>(decklists);
+            
+            var decklistDtos = _decklistToDtoConverter.Convert(
+                decklists,
+                statisticsFrom,
+                statisticsTo);
 
             return new JsonResult(decklistDtos);
         }

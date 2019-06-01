@@ -14,8 +14,12 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <param name="minNumberOfGames">The minimum number of games.</param>
         /// <param name="banlistId">The banlist identifier.</param>
         /// <param name="archetypeName">Name of the archetype.</param>
-        /// <param name="statisticsFrom">The statistics from.</param>
-        /// <param name="statisticsTo">The statistics to.</param>
+        /// <param name="statisticsFrom">
+        ///     Exclude that decks which have less than minNumberOfGames games from that date.
+        /// </param>
+        /// <param name="statisticsTo">
+        ///     Exclude that decks which have less than minNumberOfGames games to that date.
+        /// </param>
         /// <param name="shouldGetDecksFromCache">Should take decks from cache?</param>
         Task<System.Collections.Generic.IEnumerable<Decklist>> FindAll(
             int howManyTake,
