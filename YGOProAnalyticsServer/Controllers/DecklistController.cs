@@ -68,8 +68,7 @@ namespace YGOProAnalyticsServer.Controllers
                 archetypeName: archetypeName,
                 statisticsFrom: statisticsFrom,
                 statisticsTo: statisticsTo);
-
-            
+           
             var decklistDtos = _decklistToDtoConverter.Convert(
                 decklists,
                 statisticsFrom,
