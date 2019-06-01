@@ -201,6 +201,11 @@ namespace YGOProAnalyticsServer.Services.Others
             else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
             {
                 var cacheOptions = new MemoryCacheEntryOptions()
+                    //It is really important, because If there is no decklists in cache,
+                    //it is easy to achieve OutOfMemoryException.
+                    //In context of YGOProAnalyticsServer project
+                    //this entry should be updated only by 
+                    //UpdateCache() method directly after analysis process (When entire API is still blocked).
                     .SetPriority(CacheItemPriority.NeverRemove);
 
                 localDecklistsQuery = _getOrderedNoTrackedDecklists();
