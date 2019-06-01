@@ -7,6 +7,6 @@ namespace YGOProAnalyticsServer.Helpers
 {
     public static class CacheKeys
     {
-        public static string OrderedDecklistsWithContentIncluded { get; set; } = "_orderedDecklistsWithContentIncluded";
+        public const string OrderedDecklistsWithContentIncluded = "_orderedDecklistsWithContentIncluded";
     }
 }
