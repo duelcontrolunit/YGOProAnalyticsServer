@@ -18,8 +18,8 @@ namespace YGOProAnalyticsServer.DTOs.AutomapperProfiles
 
         public DecklistToDecklistWithoutAnyAdditionalDatProfile()
         {
-            CreateMap<Decklist, DecklistWithoutAnyAdditionalDataDTO>()
-                .ConstructUsing(x => new DecklistWithoutAnyAdditionalDataDTO(
+            CreateMap<Decklist, DecklistWithNumberOfGamesAndWinsDTO>()
+                .ConstructUsing(x => new DecklistWithNumberOfGamesAndWinsDTO(
                                 x.Id,
                                 x.Name,
                                 x.WhenDecklistWasFirstPlayed,

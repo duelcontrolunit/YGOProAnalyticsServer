@@ -65,15 +65,15 @@ namespace YGOProAnalyticsServer.Services.Converters
         }
 
         /// <inheritdoc />
-        public IEnumerable<DecklistWithoutAnyAdditionalDataDTO> Convert(
+        public IEnumerable<DecklistWithNumberOfGamesAndWinsDTO> Convert(
             IEnumerable<Decklist> decklists,
             DateTime? statisticsFrom = null,
             DateTime? statisticsTo = null)
         {
-            var dtos = new List<DecklistWithoutAnyAdditionalDataDTO>();
+            var dtos = new List<DecklistWithNumberOfGamesAndWinsDTO>();
             foreach (var decklist in decklists)
             {
-                var dto = new DecklistWithoutAnyAdditionalDataDTO(
+                var dto = new DecklistWithNumberOfGamesAndWinsDTO(
                     id: decklist.Id,
                     name: decklist.Name,
                     whenDecklistWasFirstPlayed: decklist.WhenDecklistWasFirstPlayed,

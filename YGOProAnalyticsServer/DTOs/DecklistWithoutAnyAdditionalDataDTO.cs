@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServer.DTOs
 {
-    public class DecklistWithoutAnyAdditionalDataDTO
+    public class DecklistWithNumberOfGamesAndWinsDTO
     {
-        public DecklistWithoutAnyAdditionalDataDTO(
+        public DecklistWithNumberOfGamesAndWinsDTO(
             int id,
             string name,
             DateTime whenDecklistWasFirstPlayed,

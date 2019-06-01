@@ -23,13 +23,13 @@ namespace YGOProAnalyticsServer.Services.Converters.Interfaces
         IEnumerable<DecklistWithStatisticsDTO> Convert(IEnumerable<Decklist> decklists);
 
         /// <summary>
-        /// Convert <see cref="Decklist"/> collection to  <see cref="DecklistWithoutAnyAdditionalDataDTO"/> collection.
+        /// Convert <see cref="Decklist"/> collection to  <see cref="DecklistWithNumberOfGamesAndWinsDTO"/> collection.
         /// </summary>
         /// <param name="decklists">The decklists.</param>
         /// <param name="statisticsFrom">The statistics from.</param>
         /// <param name="statisticsTo">The statistics to.</param>
         /// <returns></returns>
-        IEnumerable<DecklistWithoutAnyAdditionalDataDTO> Convert(
+        IEnumerable<DecklistWithNumberOfGamesAndWinsDTO> Convert(
             IEnumerable<Decklist> decklists,
             System.DateTime? statisticsFrom = null,
             System.DateTime? statisticsTo = null);
