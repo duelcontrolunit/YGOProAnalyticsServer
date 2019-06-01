@@ -108,7 +108,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             {
                 return decklist
                     .DecklistStatistics
-                    .Where(x => x.DateWhenDeckWasUsed >= statisticsFrom && x.DateWhenDeckWasUsed >= statisticsFrom)
+                    .Where(x => x.DateWhenDeckWasUsed >= statisticsFrom && x.DateWhenDeckWasUsed <= statisticsTo)
                     .Sum(x => x.NumberOfTimesWhenDeckWasUsed);
             }
             else
@@ -140,7 +140,7 @@ namespace YGOProAnalyticsServer.Services.Converters
             {
                 return decklist
                     .DecklistStatistics
-                    .Where(x => x.DateWhenDeckWasUsed >= statisticsFrom && x.DateWhenDeckWasUsed >= statisticsFrom)
+                    .Where(x => x.DateWhenDeckWasUsed >= statisticsFrom && x.DateWhenDeckWasUsed <= statisticsTo)
                     .Sum(x => x.NumberOfTimesWhenDeckWon);
             }
             else
