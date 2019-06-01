@@ -201,8 +201,7 @@ namespace YGOProAnalyticsServer.Services.Others
             else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
             {
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetPriority(CacheItemPriority.High)
-                    .SetSlidingExpiration(TimeSpan.FromHours(23));
+                    .SetPriority(CacheItemPriority.NeverRemove);
 
                 localDecklistsQuery = _getOrderedNoTrackedDecklists();
                 _cache.Set(CacheKeys.OrderedDecklistsWithContentIncluded, localDecklistsQuery, cacheOptions);
