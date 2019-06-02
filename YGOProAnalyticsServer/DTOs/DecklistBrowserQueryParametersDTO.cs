@@ -7,7 +7,6 @@ namespace YGOProAnalyticsServer.DTOs
 {
     public class DecklistBrowserQueryParametersDTO
     {
-
         /// <summary>
         /// (1, inf)
         /// </summary>

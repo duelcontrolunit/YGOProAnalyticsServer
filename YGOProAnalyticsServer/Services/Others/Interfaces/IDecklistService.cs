@@ -4,6 +4,9 @@ using YGOProAnalyticsServer.DbModels;
 
 namespace YGOProAnalyticsServer.Services.Others.Interfaces
 {
+    /// <summary>
+    /// Provide features related with decklists.
+    /// </summary>
     public interface IDecklistService
     {
         /// <summary>

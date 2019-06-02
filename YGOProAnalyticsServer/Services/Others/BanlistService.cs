@@ -9,6 +9,10 @@ using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
 {
+    /// <summary>
+    /// Provide features related with banlists.
+    /// </summary>
+    /// <seealso cref="YGOProAnalyticsServer.Services.Others.Interfaces.IBanlistService" />
     public class BanlistService : IBanlistService
     {
         readonly YgoProAnalyticsDatabase _db;
@@ -113,6 +117,9 @@ namespace YGOProAnalyticsServer.Services.Others
             }
         }
 
+        /// <summary>
+        /// CardId with info about how many copies this card is in deck.
+        /// </summary>
         public class CardWithInfoAboutNumberOfCopiesInDeck
         {
             public CardWithInfoAboutNumberOfCopiesInDeck(int cardId)
@@ -120,9 +127,19 @@ namespace YGOProAnalyticsServer.Services.Others
                 CardId = cardId;
             }
 
+            /// <summary>
+            /// Card identifier.
+            /// </summary>
             public int CardId { get; private set; }
+
+            /// <summary>
+            /// Number of card copies. One by default.
+            /// </summary>
             public int NumberOfCopies { get; private set; } = 1;
 
+            /// <summary>
+            /// Increments the number of copies.
+            /// </summary>
             public void IncrementNumberOfCopies()
             {
                 NumberOfCopies++;

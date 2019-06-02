@@ -12,6 +12,9 @@ using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
 {
+    /// <summary>
+    /// Provide features related with decklists.
+    /// </summary>
     public class DecklistService : IDecklistService
     {
         readonly YgoProAnalyticsDatabase _db;

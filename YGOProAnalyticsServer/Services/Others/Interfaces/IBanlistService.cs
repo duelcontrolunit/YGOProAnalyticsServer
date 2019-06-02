@@ -2,6 +2,9 @@
 
 namespace YGOProAnalyticsServer.Services.Others.Interfaces
 {
+    /// <summary>
+    /// Provide features related with banlists.
+    /// </summary>
     public interface IBanlistService
     {
         /// <summary>
