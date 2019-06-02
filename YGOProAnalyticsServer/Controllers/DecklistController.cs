@@ -11,6 +11,7 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
+using YGOProAnalyticsServer.Services.Validators.Interfaces;
 
 namespace YGOProAnalyticsServer.Controllers
 {
@@ -23,25 +24,33 @@ namespace YGOProAnalyticsServer.Controllers
         readonly IDecklistService _decklistService;
         readonly IAdminConfig _config;
         readonly IMapper _mapper;
+        readonly IDecklistBrowserQueryParametersDtoValidator _decklistBrowserQueryParamsValidator;
 
         public DecklistController(
             YgoProAnalyticsDatabase db,
             IDecklistToDecklistDtoConverter decklistToDtoConverter,
             IDecklistService decklistService,
             IAdminConfig config,
-            IMapper mapper)
+            IMapper mapper,
+            IDecklistBrowserQueryParametersDtoValidator decklistBrowserQueryParamsValidator)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _decklistToDtoConverter = decklistToDtoConverter ?? throw new ArgumentNullException(nameof(decklistToDtoConverter));
             _decklistService = decklistService ?? throw new ArgumentNullException(nameof(decklistService));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _decklistBrowserQueryParamsValidator = decklistBrowserQueryParamsValidator 
+                ?? throw new ArgumentNullException(nameof(decklistBrowserQueryParamsValidator));
         }
 
         [HttpGet]
         public async Task<IActionResult> FindAll([FromQuery] DecklistBrowserQueryParametersDTO queryParams)
         {
-            //TODO : Validation
+            if (!_decklistBrowserQueryParamsValidator.IsValid(queryParams))
+            {
+                return BadRequest("Invalid params. Please report it to administrator.");
+            }
+
             DateTime? statisticsFrom = null;
             DateTime? statisticsTo = null;
             if (!string.IsNullOrEmpty(queryParams.StatisticsFromDate))
