@@ -5,7 +5,10 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using YGOProAnalyticsServer;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
@@ -20,20 +23,24 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
     class DuelLogNameAnalyzerTests
     {
         IDuelLogNameAnalyzer _analyzer;
-        Mock<YgoProAnalyticsDatabase> _dbMock;
         Mock<IAdminConfig> _adminConfigMock;
         Mock<IDuelLogConverter> _duelLogConverter;
-        DbContextOptions<YgoProAnalyticsDatabase> _dbOptions = new DbContextOptionsBuilder<YgoProAnalyticsDatabase>().Options;
+        YgoProAnalyticsDatabase _db;
 
         [SetUp]
         public void SetUp()
         {
-            var dbSetBanlistMock = new Mock<DbSet<Banlist>>();
-            _dbMock = new Mock<YgoProAnalyticsDatabase>(_dbOptions);
-            _dbMock.Setup(x => x.Banlists).Returns(dbSetBanlistMock.Object);
+            _db = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>());
+            _db.Database.EnsureCreated();
             _adminConfigMock = new Mock<IAdminConfig>();
             _duelLogConverter = new Mock<IDuelLogConverter>();
-            _analyzer = new DuelLogNameAnalyzer(_dbMock.Object, _adminConfigMock.Object, _duelLogConverter.Object);
+            _analyzer = new DuelLogNameAnalyzer(_db, _adminConfigMock.Object, _duelLogConverter.Object);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _db.Dispose();
         }
 
         [TestCase("S,RANDOM#39848 (Duel:1)")]
@@ -161,7 +168,9 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 _adminConfigMock = new Mock<IAdminConfig>();
                 _duelLogConverter = new Mock<IDuelLogConverter>();
                 _analyzer = new DuelLogNameAnalyzer(db, _adminConfigMock.Object, _duelLogConverter.Object);
-                //Assert.Throws<UnknownBanlistException>(() => _analyzer.GetBanlist(duelLogName, duelLogDate));
+                Assert.Throws<UnknownBanlistException>(() => _analyzer.GetBanlist(
+                    duelLogName,
+                    _convertDuelLogTimeToDateTime(duelLogDate)));
             }
         }
 
@@ -184,9 +193,9 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 db.SaveChanges();
                 _analyzer = new DuelLogNameAnalyzer(db, adminConfigMock.Object, duelLogConverter.Object);
 
-                //var banlist = _analyzer.GetBanlist(duelLogName, duelLogDate);
+                var banlist = _analyzer.GetBanlist(duelLogName, _convertDuelLogTimeToDateTime(duelLogDate));
 
-                //Assert.AreEqual("2019.03 TCG", banlist.Name);
+                Assert.AreEqual("2019.03 TCG", banlist.Name);
             }
         }
 
@@ -202,7 +211,9 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 db.Database.EnsureCreated();
                 _analyzer = new DuelLogNameAnalyzer(db, _adminConfigMock.Object, _duelLogConverter.Object);
 
-                //Assert.Throws<UnknownBanlistException>(() => _analyzer.GetBanlist(duelLogName, duelLogDate));
+                Assert.Throws<UnknownBanlistException>(() => _analyzer.GetBanlist(
+                    duelLogName,
+                    _convertDuelLogTimeToDateTime(duelLogDate)));
             }
         }
 
@@ -226,9 +237,9 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 db.SaveChanges();
                 _analyzer = new DuelLogNameAnalyzer(db, _adminConfigMock.Object, duelLogConverterMock.Object);
 
-                //var banlist = _analyzer.GetBanlist(duelLogName, duelLogDate);
+                var banlist = _analyzer.GetBanlist(duelLogName, _convertDuelLogTimeToDateTime(duelLogDate));
 
-                //Assert.AreEqual(banlistName, banlist.Name);
+                Assert.AreEqual(banlistName, banlist.Name);
             }
         }
 
@@ -240,6 +251,25 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 .UseSqlite(connection)
                 .ConfigureWarnings(x => x.Ignore(RelationalEventId.QueryClientEvaluationWarning))
                 .Options;
+        }
+
+        private DateTime _convertDuelLogTimeToDateTime(string duelLogTime)
+        {
+            if (!Regex.IsMatch(duelLogTime, @"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}"))
+            {
+                throw new FormatException("Wrong format.");
+            }
+
+            string dateOfTheEndOfTheDuel = duelLogTime.Substring(0, duelLogTime.IndexOf(' '));
+            var date = dateOfTheEndOfTheDuel.Split('-');
+
+            string timeOfTheEndOfTheDuel = duelLogTime.Substring(duelLogTime.IndexOf(' '));
+            var time = timeOfTheEndOfTheDuel.Split('-');
+
+            return DateTime
+                .Parse(
+                    $"{date[0]}/{date[1]}/{date[2]} {time[0]}:{time[1]}:{time[2]}"
+                    , CultureInfo.InvariantCulture);
         }
     }
 }
