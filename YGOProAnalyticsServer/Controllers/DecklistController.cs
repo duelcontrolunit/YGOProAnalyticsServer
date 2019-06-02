@@ -39,36 +39,30 @@ namespace YGOProAnalyticsServer.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FindAll(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int banlistId = -1,
-            [FromQuery] string archetypeName = "",
-            [FromQuery] int minNumberOfGames = 10,
-            [FromQuery] string statisticsFromDate = "",
-            [FromQuery] string statisticsToDate = "")
+        public async Task<IActionResult> FindAll([FromQuery] DecklistBrowserQueryParametersDTO queryParams)
         {
+            //TODO : Validation
             DateTime? statisticsFrom = null;
             DateTime? statisticsTo = null;
-
-            if (!string.IsNullOrEmpty(statisticsFromDate))
+            if (!string.IsNullOrEmpty(queryParams.StatisticsFromDate))
             {
-                statisticsFrom = DateTime.Parse(statisticsFromDate);
+                statisticsFrom = DateTime.Parse(queryParams.StatisticsFromDate);
             }
 
-            if (!string.IsNullOrEmpty(statisticsToDate))
+            if (!string.IsNullOrEmpty(queryParams.StatisticsToDate))
             {
-                statisticsTo = DateTime.Parse(statisticsToDate);
+                statisticsTo = DateTime.Parse(queryParams.StatisticsToDate);
             }
-           
+
             var decklists = await _decklistService.FindAll(
                 howManyTake: _config.DefaultNumberOfResultsPerBrowserPage,
-                howManySkip: _config.DefaultNumberOfResultsPerBrowserPage * (pageNumber - 1),
-                minNumberOfGames: minNumberOfGames,
-                banlistId: banlistId,
-                archetypeName: archetypeName,
+                howManySkip: _config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1),
+                minNumberOfGames: queryParams.MinNumberOfGames,
+                banlistId: queryParams.BanlistId,
+                archetypeName: queryParams.ArchetypeName,
                 statisticsFrom: statisticsFrom,
                 statisticsTo: statisticsTo);
-           
+
             var decklistDtos = _decklistToDtoConverter.Convert(
                 decklists,
                 statisticsFrom,
