@@ -13,6 +13,7 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
+using YGOProAnalyticsServer.Services.Validators.Interfaces;
 using YGOProAnalyticsServerTests.TestingHelpers;
 
 namespace YGOProAnalyticsServerTests.Controllers
@@ -26,6 +27,7 @@ namespace YGOProAnalyticsServerTests.Controllers
         Mock<IDecklistService> _decklistService;
         Mock<IAdminConfig> _adminConfigMock;
         Mock<IMapper> _mapperMock;
+        Mock<IDecklistBrowserQueryParametersDtoValidator> _decklistBrowserQueryParamsValidator;
 
         [SetUp]
         public void SetUp()
@@ -36,6 +38,7 @@ namespace YGOProAnalyticsServerTests.Controllers
             _decklistService = new Mock<IDecklistService>();
             _adminConfigMock = new Mock<IAdminConfig>();
             _mapperMock = new Mock<IMapper>();
+            _decklistBrowserQueryParamsValidator = new Mock<IDecklistBrowserQueryParametersDtoValidator>();
         }
 
         [TearDown]
@@ -81,7 +84,8 @@ namespace YGOProAnalyticsServerTests.Controllers
                 _decklistToDtoConverter.Object,
                 _decklistService.Object,
                 _adminConfigMock.Object,
-                _mapperMock.Object);
+                _mapperMock.Object,
+                _decklistBrowserQueryParamsValidator.Object);
         }
 
         private Decklist _getValidDecklist()
