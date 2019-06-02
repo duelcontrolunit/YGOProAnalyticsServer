@@ -28,7 +28,9 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         [SetUp]
         public void SetUp()
         {
+            var dbSetBanlistMock = new Mock<DbSet<Banlist>>();
             _dbMock = new Mock<YgoProAnalyticsDatabase>(_dbOptions);
+            _dbMock.Setup(x => x.Banlists).Returns(dbSetBanlistMock.Object);
             _adminConfigMock = new Mock<IAdminConfig>();
             _duelLogConverter = new Mock<IDuelLogConverter>();
             _analyzer = new DuelLogNameAnalyzer(_dbMock.Object, _adminConfigMock.Object, _duelLogConverter.Object);
