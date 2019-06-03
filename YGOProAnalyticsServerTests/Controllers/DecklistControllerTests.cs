@@ -77,7 +77,7 @@ namespace YGOProAnalyticsServerTests.Controllers
             Assert.IsTrue(actionResult is JsonResult);
         }
 
-        [TestCase(1, -5, "Blue-eyes", 10, null, null)]
+        [TestCase(1, -5, "Blue-eyes", 10, "2018-12-12", "2018-12-12")]
         public async Task FindAll_InvalidParam_WeGetBadRequestResponse(
             int pageNumber,
             int banlistId,
@@ -95,7 +95,15 @@ namespace YGOProAnalyticsServerTests.Controllers
                 StatisticsToDate = statisticsToDate
             };
 
+            _decklistBrowserQueryParamsValidator
+                .Setup(x => x.IsValid(It.IsAny<DecklistBrowserQueryParametersDTO>()))
+                .Returns(false);
+            _initController();
 
+            var response = await _decklistController.FindAll(queryParamsDto);
+
+            Assert.IsTrue(response is BadRequestObjectResult
+                          || response is BadRequestResult);
         }
 
         private void _initController()
