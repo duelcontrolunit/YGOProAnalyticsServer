@@ -96,7 +96,7 @@ namespace YGOProAnalyticsServerTests.Controllers
             };
 
             _decklistBrowserQueryParamsValidator
-                .Setup(x => x.IsValid(It.IsAny<DecklistBrowserQueryParametersDTO>()))
+                .Setup(x => x.IsValid(queryParamsDto))
                 .Returns(false);            
             _initController();
 

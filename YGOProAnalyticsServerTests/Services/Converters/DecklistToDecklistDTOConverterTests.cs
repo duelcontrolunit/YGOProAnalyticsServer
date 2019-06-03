@@ -65,6 +65,173 @@ namespace YGOProAnalyticsServerTests.Services.Converters
 
         }
 
+        [TestCase(10, 5)]
+        [TestCase(40, 39)]
+        [TestCase(77, 0)]
+        [TestCase(1, 1)]
+        public void Convert_FilterDatesAreNull_WeGetValidDecklistWithNumberOfGamesAndWinsDTOWithSummarizedStatisticsFromAllDays(
+            int numberOfGames,
+            int numberOfWins)
+        {
+            var decklists = new List<Decklist>();
+            var decklist1 = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());
+            decklist1.Name = "Blue-Eyes_2018-12-12";
+            decklist1.WhenDecklistWasFirstPlayed = DateTime.Parse("2018-12-12");
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                1,
+                DateTime.Parse("2018-12-12"),
+                numberOfGames,
+                numberOfWins));
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                1,
+                DateTime.Parse("2018-12-13"),
+                numberOfGames,
+                numberOfWins));
+            decklists.Add(decklist1);
+            _initConverter();
+
+            var dtos = _converter.Convert(decklists, null, null);
+
+            Assert.Multiple(()=> {
+                Assert.AreEqual(numberOfGames * 2, dtos.ToList()[0].NumberOfGames);
+                Assert.AreEqual(numberOfWins * 2, dtos.ToList()[0].NumberOfWins);
+            });
+            
+        }
+
+        [TestCase(10, 5)]
+        [TestCase(40, 39)]
+        [TestCase(77, 0)]
+        [TestCase(1, 1)]
+        public void Convert_DataFiltersAreSetToTheSameDay_WeGetValidDecklistWithNumberOfGamesAndWinsDTOWithSummarizedStatisticsFromOneDay(
+            int numberOfGames,
+            int numberOfWins)
+        {
+            var decklists = new List<Decklist>();
+            var decklist1 = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());
+            decklist1.Name = "Blue-Eyes_2018-12-12";
+            decklist1.WhenDecklistWasFirstPlayed = DateTime.Parse("2018-12-12");
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                1,
+                DateTime.Parse("2018-12-12"),
+                numberOfGames,
+                numberOfWins));
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                1,
+                DateTime.Parse("2018-12-13"),
+                numberOfGames,
+                numberOfWins));
+            decklists.Add(decklist1);
+            _initConverter();
+
+            var dtos = _converter.Convert(decklists, DateTime.Parse("2018-12-12"), DateTime.Parse("2018-12-12"));
+
+            Assert.Multiple(() => {
+                Assert.AreEqual(numberOfGames, dtos.ToList()[0].NumberOfGames);
+                Assert.AreEqual(numberOfWins, dtos.ToList()[0].NumberOfWins);
+            });
+
+        }
+
+        [TestCase(10, 5)]
+        [TestCase(40, 39)]
+        [TestCase(77, 0)]
+        [TestCase(1, 1)]
+        public void Convert_WeWantSumOfAllStatisticsCountingFromSecondDay_WeGetValidDecklistWithNumberOfGamesAndWinsDTO(
+            int numberOfGames,
+            int numberOfWins)
+        {
+            var decklists = new List<Decklist>();
+            var decklist1 = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());
+            decklist1.Name = "Blue-Eyes_2018-12-12";
+            decklist1.WhenDecklistWasFirstPlayed = DateTime.Parse("2018-12-12");
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                1,
+                DateTime.Parse("2018-12-12"),
+                numberOfGames,
+                numberOfWins));
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                2,
+                DateTime.Parse("2018-12-13"),
+                numberOfGames,
+                numberOfWins));
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+               3,
+               DateTime.Parse("2018-12-14"),
+               numberOfGames,
+               numberOfWins));
+            decklists.Add(decklist1);
+            _initConverter();
+
+            var dtos = _converter.Convert(decklists, DateTime.Parse("2018-12-13"), null);
+
+            Assert.Multiple(() => {
+                Assert.AreEqual(numberOfGames * 2, dtos.ToList()[0].NumberOfGames);
+                Assert.AreEqual(numberOfWins * 2, dtos.ToList()[0].NumberOfWins);
+            });
+
+        }
+
+        [TestCase(10, 5)]
+        [TestCase(40, 39)]
+        [TestCase(77, 0)]
+        [TestCase(1, 1)]
+        public void Convert_WeWantSumOfAllStatisticsFromCountingToSecondDay_WeGetValidDecklistWithNumberOfGamesAndWinsDTO(
+           int numberOfGames,
+           int numberOfWins)
+        {
+            var decklists = new List<Decklist>();
+            var decklist1 = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());
+            decklist1.Name = "Blue-Eyes_2018-12-12";
+            decklist1.WhenDecklistWasFirstPlayed = DateTime.Parse("2018-12-12");
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                1,
+                DateTime.Parse("2018-12-12"),
+                numberOfGames,
+                numberOfWins));
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+                2,
+                DateTime.Parse("2018-12-13"),
+                numberOfGames,
+                numberOfWins));
+            decklist1.DecklistStatistics.Add(_generateDecklistStatistics(
+               3,
+               DateTime.Parse("2018-12-14"),
+               numberOfGames,
+               numberOfWins));
+            decklists.Add(decklist1);
+            _initConverter();
+
+            var dtos = _converter.Convert(decklists, null, DateTime.Parse("2018-12-13"));
+
+            Assert.Multiple(() => {
+                Assert.AreEqual(numberOfGames * 2, dtos.ToList()[0].NumberOfGames);
+                Assert.AreEqual(numberOfWins * 2, dtos.ToList()[0].NumberOfWins);
+            });
+
+        }
+
+        private DecklistStatistics _generateDecklistStatistics(
+            int id,
+            DateTime whenWasUsed,
+            int numberOfGames,
+            int numberOfWins)
+        {
+            var statistics = new DecklistStatistics();
+            statistics
+                .GetType()
+                .GetProperty(nameof(DecklistStatistics.Id))
+                .SetValue(statistics, id);
+            statistics
+                .GetType()
+                .GetProperty(nameof(DecklistStatistics.DateWhenDeckWasUsed))
+                .SetValue(statistics, whenWasUsed);
+            statistics.IncrementNumberOfTimesWhenDeckWasUsedByAmount(numberOfGames);
+            statistics.IncrementNumberOfTimesWhenDeckWonByAmount(numberOfWins);
+
+            return statistics;
+        }
+
         private void _initConverter()
         {
             _converter = new DecklistToDecklistDtoConverter(_decksDtosFactoryMock.Object);
