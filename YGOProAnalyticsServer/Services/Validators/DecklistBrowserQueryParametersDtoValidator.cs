@@ -61,14 +61,16 @@ namespace YGOProAnalyticsServer.Services.Validators
         public bool IsValidStatisticsFromDate(DecklistBrowserQueryParametersDTO queryParams)
         {
             return _dateValidator
-                .IsValidFormat(queryParams.StatisticsFromDate, DateFormat.yyyy_mm_dd);
+                .IsValidFormat(queryParams.StatisticsFromDate, DateFormat.yyyy_mm_dd)
+                || queryParams.StatisticsFromDate == "";
         }
 
         /// <inheritdoc />
         public bool IsValidStatisticsToDate(DecklistBrowserQueryParametersDTO queryParams)
         {
             return _dateValidator
-                 .IsValidFormat(queryParams.StatisticsToDate, DateFormat.yyyy_mm_dd);
+                 .IsValidFormat(queryParams.StatisticsToDate, DateFormat.yyyy_mm_dd)
+                 || queryParams.StatisticsToDate == "";
         }
     }
 }

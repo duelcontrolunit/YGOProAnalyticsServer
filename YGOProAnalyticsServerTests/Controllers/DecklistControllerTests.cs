@@ -77,7 +77,7 @@ namespace YGOProAnalyticsServerTests.Controllers
             Assert.IsTrue(actionResult is JsonResult);
         }
 
-        [TestCase(1, -5)]
+        [TestCase(1, -5, "Blue-eyes", 10, null, null)]
         public async Task FindAll_InvalidParam_WeGetBadRequestResponse(
             int pageNumber,
             int banlistId,
