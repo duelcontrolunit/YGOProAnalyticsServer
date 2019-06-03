@@ -77,6 +77,27 @@ namespace YGOProAnalyticsServerTests.Controllers
             Assert.IsTrue(actionResult is JsonResult);
         }
 
+        [TestCase(1, -5)]
+        public async Task FindAll_InvalidParam_WeGetBadRequestResponse(
+            int pageNumber,
+            int banlistId,
+            string archetypeName,
+            int minNumberOfGames,
+            string statisticsFromDate,
+            string statisticsToDate)
+        {
+            var queryParamsDto = new DecklistBrowserQueryParametersDTO() {
+                PageNumber = pageNumber,
+                BanlistId = banlistId,
+                ArchetypeName = archetypeName,
+                MinNumberOfGames = minNumberOfGames,
+                StatisticsFromDate = statisticsFromDate,
+                StatisticsToDate = statisticsToDate
+            };
+
+
+        }
+
         private void _initController()
         {
             _decklistController = new DecklistController(

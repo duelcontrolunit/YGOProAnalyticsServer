@@ -42,7 +42,7 @@ namespace YGOProAnalyticsServer.Services.Validators
         /// <inheritdoc />
         public bool IsValidBanlistId(DecklistBrowserQueryParametersDTO queryParams)
         {
-            return queryParams.BanlistId >= 1;
+            return queryParams.BanlistId >= 1 || queryParams.BanlistId == -1;
         }
 
         /// <inheritdoc />
