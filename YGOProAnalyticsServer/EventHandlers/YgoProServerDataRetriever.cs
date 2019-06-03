@@ -70,7 +70,9 @@ namespace YGOProAnalyticsServer.EventHandlers
             {
                 string pathToDecklistsZip = await _fTPDownloader
                     .DownloadDeckFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/" + decklistZipName);
-                dateOfDecklistsPack = DateTime.ParseExact(_extractDate(decklistZipName, "decks_save_"), "dd MM yy", CultureInfo.InvariantCulture);
+                dateOfDecklistsPack = DateTime.ParseExact(_extractDate(decklistZipName, "decks_save_"),
+                                                          "dd MM yy",
+                                                          CultureInfo.InvariantCulture);
                 if (dateOfDecklistsPack > metaData.LastDecklistsPackDate)
                 {
                     if(dateOfDecklistsPack > dateOfNewestDecklistPack)
@@ -100,7 +102,10 @@ namespace YGOProAnalyticsServer.EventHandlers
 
             foreach (string duelLogName in listOfDuelLogs)
             {
-                dateOfDuelLog = DateTime.ParseExact(_extractDate(duelLogName, "duel_log"),"dd MM yy", CultureInfo.InvariantCulture);
+                dateOfDuelLog = DateTime.ParseExact(
+                    _extractDate(duelLogName, "duel_log"),
+                    "dd MM yy",
+                    CultureInfo.InvariantCulture);
                 if (dateOfDuelLog > metaData.LastDuelLogDateAnalyzed)
                 {
                     if(dateOfDuelLog > dateOfNewestDuelLog)
