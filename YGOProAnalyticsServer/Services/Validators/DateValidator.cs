@@ -14,7 +14,7 @@ namespace YGOProAnalyticsServer.Services.Validators
         {
             switch (format)
             {
-                case DateFormat.yyyy_mm_dd:
+                case DateFormat.yyyy_MM_dd:
                     {
                         return _is_yyyy_mm_dd_Format(dateAsString);
                     }
@@ -41,6 +41,6 @@ namespace YGOProAnalyticsServer.Services.Validators
         /// <summary>
         /// yyyy-MM-dd
         /// </summary>
-        public const string yyyy_mm_dd = "yyyy-MM-dd";
+        public const string yyyy_MM_dd = "yyyy-MM-dd";
     }
 }

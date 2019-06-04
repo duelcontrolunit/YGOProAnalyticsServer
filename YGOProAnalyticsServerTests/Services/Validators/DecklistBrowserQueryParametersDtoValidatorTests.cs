@@ -22,7 +22,7 @@ namespace YGOProAnalyticsServerTests.Services.Validators
             _dateValidatorMock
                 .Setup(x => x.IsValidFormat(
                     It.IsRegex(@"^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"),
-                    DateFormat.yyyy_mm_dd))
+                    DateFormat.yyyy_MM_dd))
                 .Returns(true);
             _validator = new DecklistBrowserQueryParametersDtoValidator(_dateValidatorMock.Object);
         }

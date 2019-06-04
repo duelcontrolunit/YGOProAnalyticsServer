@@ -60,7 +60,7 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsFrom = DateTime
                     .ParseExact(
                     queryParams.StatisticsFromDate,
-                    DateFormat.yyyy_mm_dd,
+                    DateFormat.yyyy_MM_dd,
                     CultureInfo.InvariantCulture);
             }
 
@@ -69,7 +69,7 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsTo = DateTime
                     .ParseExact(
                     queryParams.StatisticsToDate,
-                    DateFormat.yyyy_mm_dd,
+                    DateFormat.yyyy_MM_dd,
                     CultureInfo.InvariantCulture);
             }
 

@@ -61,7 +61,7 @@ namespace YGOProAnalyticsServer.Services.Validators
         public bool IsValidStatisticsFromDate(DecklistBrowserQueryParametersDTO queryParams)
         {
             return _dateValidator
-                .IsValidFormat(queryParams.StatisticsFromDate, DateFormat.yyyy_mm_dd)
+                .IsValidFormat(queryParams.StatisticsFromDate, DateFormat.yyyy_MM_dd)
                 || queryParams.StatisticsFromDate == "";
         }
 
@@ -69,7 +69,7 @@ namespace YGOProAnalyticsServer.Services.Validators
         public bool IsValidStatisticsToDate(DecklistBrowserQueryParametersDTO queryParams)
         {
             return _dateValidator
-                 .IsValidFormat(queryParams.StatisticsToDate, DateFormat.yyyy_mm_dd)
+                 .IsValidFormat(queryParams.StatisticsToDate, DateFormat.yyyy_MM_dd)
                  || queryParams.StatisticsToDate == "";
         }
     }
