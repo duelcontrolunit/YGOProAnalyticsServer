@@ -41,5 +41,11 @@ namespace YGOProAnalyticsServer
 
         ///<inheritdoc />
         public int BanlistAbsoluteCacheExpirationInHours => 23;
+
+        ///<inheritdoc />
+        public int ArchetypeSlidingCacheExpirationInHours => 2;
+
+        ///<inheritdoc />
+        public int ArchetypeAbsoluteCacheExpirationInHours => 23;
     }
 }

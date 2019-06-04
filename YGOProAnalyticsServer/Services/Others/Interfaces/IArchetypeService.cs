@@ -6,6 +6,6 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
 {
     public interface IArchetypeService
     {
-        Task<IEnumerable<ArchetypeIdAndNameDTO>> GetArchetypeListWithIdsAndNamesAsNoTracking();
+        Task<IEnumerable<ArchetypeIdAndNameDTO>> GetArchetypeListWithIdsAndNamesAsNoTrackingFromCache(bool shouldIgnoreCache = false);
     }
 }

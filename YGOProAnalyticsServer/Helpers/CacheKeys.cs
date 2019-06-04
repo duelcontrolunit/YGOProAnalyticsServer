@@ -9,5 +9,6 @@ namespace YGOProAnalyticsServer.Helpers
     {
         public const string OrderedDecklistsWithContentIncluded = "_orderedDecklistsWithContentIncluded";
         public const string BanlistsIdAndNameDtos = "_banlistsIdAndNameDtos";
+        public const string ArchetypeIdAndNameDtos = "_archetypeIdAndNameDtos";
     }
 }

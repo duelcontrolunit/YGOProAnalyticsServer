@@ -90,5 +90,21 @@
         /// The banlist absolute cache expiration in hours.
         /// </value>
         int BanlistAbsoluteCacheExpirationInHours { get; }
+
+        /// <summary>
+        /// Gets the archetype sliding cache expiration in hours.
+        /// </summary>
+        /// <value>
+        /// The archetype sliding cache expiration in hours.
+        /// </value>
+        int ArchetypeSlidingCacheExpirationInHours { get; }
+
+        /// <summary>
+        /// Gets the archetype absolute cache expiration in hours.
+        /// </summary>
+        /// <value>
+        /// The archetype absolute cache expiration in hours.
+        /// </value>
+        int ArchetypeAbsoluteCacheExpirationInHours { get; }
     }
 }

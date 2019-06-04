@@ -41,7 +41,7 @@ namespace YGOProAnalyticsServer.Services.Others
                 return await _getBanlistsIdAndNameDtosAsNoTracking();
             }
             else
-            if (_cache.TryGetValue(CacheKeys.BanlistsIdAndNameDtos, out dtos))
+            if (!_cache.TryGetValue(CacheKeys.BanlistsIdAndNameDtos, out dtos))
             {
                 dtos = await _getBanlistsIdAndNameDtosAsNoTracking();
                 var cacheOptions = new MemoryCacheEntryOptions()
@@ -59,11 +59,12 @@ namespace YGOProAnalyticsServer.Services.Others
 
         private async Task<IEnumerable<BanlistIdAndNameDTO>> _getBanlistsIdAndNameDtosAsNoTracking()
         {
-            return await _db
+             var z = await _db
                 .Banlists
                 .AsNoTracking()
                 .Select(x => new BanlistIdAndNameDTO(x.Id, x.Name))
                 .ToListAsync();
+            return z;
         }
 
         /// <inheritdoc />

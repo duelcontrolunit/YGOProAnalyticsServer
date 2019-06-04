@@ -22,7 +22,7 @@ namespace YGOProAnalyticsServer.Controllers
         [HttpGet("ArchetypeListWithIdsAndNames")]
         public async Task<IActionResult> GetArchetypeListWithIdsAndNames()
         {
-            return Ok(await _archetypeService.GetArchetypeListWithIdsAndNamesAsNoTracking());
+            return Ok(await _archetypeService.GetArchetypeListWithIdsAndNamesAsNoTrackingFromCache());
         }
     }
 }
