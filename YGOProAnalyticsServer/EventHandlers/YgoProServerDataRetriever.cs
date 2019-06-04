@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -62,15 +63,22 @@ namespace YGOProAnalyticsServer.EventHandlers
             var listOfDecklists = _fTPDownloader
                 .DownloadListOfFilesFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/");
             AnalysisMetadata metaData = _getMetaData();
-            DateTime dateOfDecklistsPack = new DateTime();
+            
+            DateTime dateOfNewestDecklistPack = metaData.LastDecklistsPackDate;
 
             foreach (string decklistZipName in listOfDecklists)
             {
-                string pathToDecklistsZip = await _fTPDownloader
-                    .DownloadDeckFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/" + decklistZipName);
-                dateOfDecklistsPack = DateTime.Parse(_extractDate(decklistZipName, "decks_save_"));
+                DateTime dateOfDecklistsPack = DateTime.ParseExact(_extractDate(decklistZipName, "decks_save_"),
+                                                          "dd MM yy",
+                                                          CultureInfo.InvariantCulture);
                 if (dateOfDecklistsPack > metaData.LastDecklistsPackDate)
                 {
+                    string pathToDecklistsZip = await _fTPDownloader
+    .DownloadDeckFromFTP(_adminConfig.ServerDataEndpointURL + "/decks_saves/" + decklistZipName);
+                    if (dateOfDecklistsPack > dateOfNewestDecklistPack)
+                    {
+                        dateOfNewestDecklistPack = dateOfDecklistsPack;
+                    }
                     unzippedDecklists.Add(
                         dateOfDecklistsPack,
                        _unzipper.GetDecksFromZip(pathToDecklistsZip)
@@ -78,7 +86,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                 }   
             }
 
-            metaData.LastDecklistsPackDate = dateOfDecklistsPack;
+            metaData.LastDecklistsPackDate = dateOfNewestDecklistPack;
             await _db.SaveChangesAsync();
 
             return unzippedDecklists;
@@ -89,13 +97,20 @@ namespace YGOProAnalyticsServer.EventHandlers
             var convertedDuelLogs = new Dictionary<DateTime, List<DuelLog>>();
             var listOfDuelLogs = _fTPDownloader.DownloadListOfFilesFromFTP(_adminConfig.ServerDataEndpointURL + "/duel_logs/");
             AnalysisMetadata metaData = _getMetaData();
-            DateTime dateOfDuelLog = new DateTime();
+            DateTime dateOfNewestDuelLog = metaData.LastDuelLogDateAnalyzed;
 
             foreach (string duelLogName in listOfDuelLogs)
             {
-                dateOfDuelLog = DateTime.Parse(_extractDate(duelLogName, "duel_log"));
+                DateTime dateOfDuelLog = DateTime.ParseExact(
+                    _extractDate(duelLogName, "duel_log"),
+                    "dd MM yy",
+                    CultureInfo.InvariantCulture);
                 if (dateOfDuelLog > metaData.LastDuelLogDateAnalyzed)
                 {
+                    if(dateOfDuelLog > dateOfNewestDuelLog)
+                    {
+                        dateOfNewestDuelLog = dateOfDuelLog;
+                    }
                     convertedDuelLogs.Add(
                     dateOfDuelLog,
                     await _getDuelLogs(duelLogName)
@@ -103,7 +118,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                 }
             }
 
-            metaData.LastDuelLogDateAnalyzed = dateOfDuelLog;
+            metaData.LastDuelLogDateAnalyzed = dateOfNewestDuelLog;
             await _db.SaveChangesAsync();
 
             return convertedDuelLogs;

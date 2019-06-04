@@ -27,6 +27,8 @@ using YGOProAnalyticsServer.Services.Factories.Interfaces;
 using YGOProAnalyticsServer.Services.Factories;
 using AutoMapper;
 using System.Reflection;
+using YGOProAnalyticsServer.Services.Validators.Interfaces;
+using YGOProAnalyticsServer.Services.Validators;
 
 namespace YGOProAnalyticsServer
 {
@@ -43,6 +45,7 @@ namespace YGOProAnalyticsServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMemoryCache();
             services.AddMediatR();
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
             _addAutomapper(services);
@@ -64,6 +67,9 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
             services.AddScoped<IDecklistService, DecklistService>();
             services.AddScoped<IServerActivityStatisticsService, ServerActivityStatisticsService>();
+            services.AddScoped<IBanlistService, BanlistService>();
+            services.AddScoped<IDateValidator, DateValidator>();
+            services.AddScoped<IDecklistBrowserQueryParametersDtoValidator, DecklistBrowserQueryParametersDtoValidator>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 

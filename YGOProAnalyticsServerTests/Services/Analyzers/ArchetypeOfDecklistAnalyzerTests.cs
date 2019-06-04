@@ -19,68 +19,6 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
     {
         IArchetypeAndDecklistAnalyzer _analyzer;
 
-
-        [Test]
-        public async Task SetDecklistArchetypeFromArchetypeCardsUsedInIt_ProperDecklistWithDominantArchetype_GetDecklistWithArchetypeAsync()
-        {
-            using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
-            {
-                dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
-                var nekrozArchetype = new Archetype("Nekroz", true);
-                var heraldArchetype = new Archetype("Herald", true);
-                await dbInMemory.SaveChangesAsync();
-                var decklist = new Decklist(new List<Card> { _NekrozofBrionac(nekrozArchetype), _NekrozMirror(nekrozArchetype) }, new List<Card> { _Herald(heraldArchetype) }, new List<Card>());
-                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist,DateTime.Now.Date,true);
-                Assert.AreEqual("Nekroz", resultDecklist.Archetype.Name);
-            }
-        }
-        [Test]
-        public async Task SetDecklistArchetypeFromArchetypeCardsUsedInIt_ProperDecklistWithMultiArchetype_GetDecklistWithArchetypeAsync()
-        {
-            using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
-            {
-                dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
-                var nekrozArchetype = new Archetype("Nekroz", true);
-                var heraldArchetype = new Archetype("Herald", true);
-                await dbInMemory.SaveChangesAsync();
-                var decklist = new Decklist(new List<Card> { _NekrozofBrionac(nekrozArchetype), _NekrozMirror(new Archetype(Archetype.Default,true)) }, new List<Card> { _Herald(heraldArchetype) }, new List<Card>());
-                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist, DateTime.Now.Date, true);
-                Assert.AreEqual("Nekroz Herald", resultDecklist.Archetype.Name);
-            }
-        }
-
-        [Test]
-        public async Task SetDecklistArchetypeFromArchetypeCardsUsedInIt_ProperDecklistWithNeutralArchetype_GetDecklistWithDefaultArchetypeAsync()
-        {
-            using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
-            {
-                dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
-
-                await dbInMemory.SaveChangesAsync();
-                var decklist = new Decklist(new List<Card> { _NekrozofBrionac(new Archetype(Archetype.Default, true)), _NekrozMirror(new Archetype(Archetype.Default, true)) }, new List<Card> { _Herald(new Archetype(Archetype.Default, true)) }, new List<Card>());
-                var resultDecklist = await _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist, DateTime.Now.Date, true);
-                Assert.AreEqual(Archetype.Default, resultDecklist.Archetype.Name);
-            }
-        }
-
-        [Test]
-        public async Task SetDecklistArchetypeFromArchetypeCardsUsedInIt_DecklistWithNoCards_ThrowsEmptyDecklistException()
-        {
-            using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
-            {
-                dbInMemory.Database.EnsureCreated();
-                _analyzer = new ArchetypeAndDecklistAnalyzer(dbInMemory);
-
-                await dbInMemory.SaveChangesAsync();
-                var decklist = new Decklist(new List<Card>(), new List<Card>(), new List<Card>());
-
-                Assert.ThrowsAsync<EmptyDecklistException>(() => _analyzer.SetDecklistArchetypeFromArchetypeCardsUsedInIt(decklist, DateTime.Now.Date, true));
-            }
-        }
-
         private DbContextOptions<T> _getOptionsForSqlInMemoryTesting<T>() where T : DbContext
         {
             var connection = new SqliteConnection("DataSource=:memory:");

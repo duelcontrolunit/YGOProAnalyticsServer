@@ -95,6 +95,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     if (_archetypeAndDecklistAnalyzer.CheckIfDecklistsAreDuplicate(decklist, decklistFromDb))
                     {
                         isDuplicate = true;
+                        if(decklist.WhenDecklistWasFirstPlayed < decklistFromDb.WhenDecklistWasFirstPlayed)
+                        {
+                            decklistFromDb.WhenDecklistWasFirstPlayed = decklist.WhenDecklistWasFirstPlayed;
+                        }
                         _updateDecklistStatistics(decklist, decklistFromDb);
                         break;
                     }
@@ -218,7 +222,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                                 stats.IncrementNumberOfTimesWhenDeckWonByAmount(decklistStatistics.NumberOfTimesWhenDeckWon);
                             }
                         }
-                        allDecklists.Remove(decklistInDecklists2); //It work?
+                        allDecklists.Remove(decklistInDecklists2);
                     }
                 }
             }
