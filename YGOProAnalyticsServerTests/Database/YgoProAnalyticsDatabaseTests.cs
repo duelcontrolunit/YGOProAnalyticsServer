@@ -28,12 +28,5 @@ namespace YGOProAnalyticsServerTests.Database
                 Assert.IsTrue((db.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists());
             }
         }
-
-        [Test]
-        public async Task Dtest()
-        {
-            //var x = new CardsDataToCardsAndArchetypesUpdater(new CardsDataDownloader(), new CardBuilder(), db);
-            //await x.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v3/cardinfo.php");
-        }
     }
 }

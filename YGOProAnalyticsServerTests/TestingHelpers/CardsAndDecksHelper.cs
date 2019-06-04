@@ -9,7 +9,11 @@ namespace YGOProAnalyticsServerTests.TestingHelpers
     {
         public Decklist GetValidDecklistWithStatistics(Archetype archetype)
         {
-            var decklist = new Decklist("Valid decklist", archetype, new DateTime(1997, 4, 29));
+            var decklist = new Decklist(new List<Card>(), new List<Card>(), new List<Card>()) {
+                Name = "Valid decklist",
+                Archetype = archetype,
+                WhenDecklistWasFirstPlayed = new DateTime(1997, 4, 29)
+            };
             decklist.DecklistStatistics.Add(GetValidStatisticsForValidDeck());
 
             return decklist;
@@ -22,7 +26,17 @@ namespace YGOProAnalyticsServerTests.TestingHelpers
 
         public LinkMonsterCard GetLinkMonsterCard(MonsterCard monster)
         {
-            return LinkMonsterCard.Create(1, topLeftLinkMarker: true, false, false, false, false, false, false, false, monster);
+            return LinkMonsterCard.Create(
+                1,
+                topLeftLinkMarker: true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                monster);
         }
 
         public Card GetCard(Archetype archetype, string type = "default type")

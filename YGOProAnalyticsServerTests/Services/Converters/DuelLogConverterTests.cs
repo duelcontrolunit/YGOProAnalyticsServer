@@ -38,8 +38,8 @@ namespace YGOProAnalyticsServerTests.Services.Converters
         {
             var duelLogs = _converter.Convert(_getValidDuelLogJSON());
 
-            Assert.AreEqual("2019-03-19 16-22-26 15374 1 Ghost Player.ydk", duelLogs[0].DecksWhichWonFileNames[0]);
-            Assert.AreEqual("2019-03-19 16-22-00 16028 1 Art.ydk", duelLogs[1].DecksWhichWonFileNames[0]);
+            Assert.AreEqual("2019-06-02 16-42-28 10346 0 CMK", duelLogs[0].DecksWhichWonFileNames[0]);
+            Assert.AreEqual("2019-06-02 16-41-18 10180 1 Soulindo", duelLogs[1].DecksWhichWonFileNames[0]);
         }
 
         [Test]
@@ -47,8 +47,8 @@ namespace YGOProAnalyticsServerTests.Services.Converters
         {
             var duelLogs = _converter.Convert(_getValidDuelLogJSON());
 
-            Assert.AreEqual("2019-03-19 16-22-26 15374 0 abdulaziz.ydk", duelLogs[0].DecksWhichLostFileNames[0]);
-            Assert.AreEqual("2019-03-19 16-22-00 16028 0 GutsuVenom.ydk", duelLogs[1].DecksWhichLostFileNames[0]);
+            Assert.AreEqual("2019-06-02 16-42-28 10346 1 TheTricky92", duelLogs[0].DecksWhichLostFileNames[0]);
+            Assert.AreEqual("2019-06-02 16-41-18 10180 0 Ninja47", duelLogs[1].DecksWhichLostFileNames[0]);
         }
 
         [TestCase("2019-03-19 16-22-26", 2019, 3, 19, 16, 22, 26)]
@@ -85,7 +85,7 @@ namespace YGOProAnalyticsServerTests.Services.Converters
 
         private string _getValidDuelLogJSON()
         {
-            return "{\r\n  \"file\": \"NotImportantData\",\r\n  \"duel_log\": [\r\n    {\r\n      \"time\": \"2019-03-19 16-22-26\",\r\n      \"name\": \"S,RANDOM#39848 (Duel:1)\",\r\n      \"roomid\": \"15374\",\r\n      \"cloud_replay_id\": \"R#51303942\",\r\n      \"replay_filename\": \"2019-03-19 16-22-26 abdulaziz VS Ghost Player.yrp\",\r\n      \"roommode\": 0,\r\n      \"players\": [\r\n        {\r\n          \"name\": \"abdulaziz (Score:0 LP:6100 Cards:3)\",\r\n          \"winner\": false\r\n        },\r\n        {\r\n          \"name\": \"Ghost Player (Score:1 LP:8000 Cards:4)\",\r\n          \"winner\": true\r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"time\": \"2019-03-19 16-22-00\",\r\n      \"name\": \"S,RANDOM#97062 (Duel:1)\",\r\n      \"roomid\": \"16028\",\r\n      \"cloud_replay_id\": \"R#33858198\",\r\n      \"replay_filename\": \"2019-03-19 16-22-00 Art VS GutsuVenom.yrp\",\r\n      \"roommode\": 0,\r\n      \"players\": [\r\n        {\r\n          \"name\": \"Art (Score:1 LP:8000 Cards:8)\",\r\n          \"winner\": true\r\n        },\r\n        {\r\n          \"name\": \"GutsuVenom (Score:0 LP:8000 Cards:5)\",\r\n          \"winner\": false\r\n        }\r\n      ]\r\n    },]}";
+            return "{'file':'./ config / duel_log.json','duel_log':[{'starttime':'2019-06-02 16-42-28','endtime':'2019-06-02 16-51-43','name':'S,RANDOM#81209 (Duel:1)','roomid':'10346','cloud_replay_id':'R#70319758','replay_filename':'2019-06-02 16-42-28 CMK VS TheTricky92.yrp','roommode':0,'players':[{'name':'CMK (Score:1 LP:7000 Cards:4)','winner':true,'deckname':'2019-06-02 16-42-28 10346 0 CMK'},{'name':'TheTricky92 (Score:0 LP:0 Cards:2)','winner':false,'deckname':'2019-06-02 16-42-28 10346 1 TheTricky92'}]},{'starttime':'2019-06-02 16-41-18','endtime':'2019-06-02 16-51-06','name':'S,RANDOM#78799 (Duel:1)','roomid':'10180','cloud_replay_id':'R#99569846','replay_filename':'2019-06-02 16-41-18 Ninja47 VS Soulindo.yrp','roommode':0,'players':[{'name':'Ninja47 (Score:0 LP:7200 Cards:2)','winner':false,'deckname':'2019-06-02 16-41-18 10180 0 Ninja47'},{'name':'Soulindo (Score:1 LP:9000 Cards:5)','winner':true,'deckname':'2019-06-02 16-41-18 10180 1 Soulindo'}]}]";
         }
     }
 }

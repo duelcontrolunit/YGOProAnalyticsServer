@@ -66,5 +66,13 @@
         /// The server data endpoint URL.
         /// </value>
         string ServerDataEndpointURL { get; }
+
+        /// <summary>
+        /// Gets the default number of results per browser page.
+        /// </summary>
+        /// <value>
+        /// The default number of results per browser page.
+        /// </value>
+        int DefaultNumberOfResultsPerBrowserPage { get; }
     }
 }
