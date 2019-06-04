@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
@@ -25,6 +27,15 @@ namespace YGOProAnalyticsServer.Services.Others
         public BanlistService(YgoProAnalyticsDatabase db)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
+        }
+
+        public async Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTracking()
+        {
+            return await _db
+                .Banlists
+                .AsNoTracking()
+                .Select(x => new BanlistIdAndNameDTO(x.Id, x.Name))
+                .ToListAsync();
         }
 
         /// <inheritdoc />

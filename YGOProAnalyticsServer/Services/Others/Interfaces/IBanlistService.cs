@@ -1,4 +1,7 @@
-﻿using YGOProAnalyticsServer.DbModels;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.DTOs;
 
 namespace YGOProAnalyticsServer.Services.Others.Interfaces
 {
@@ -22,6 +25,7 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// </summary>
         /// <param name="banlistId">The banlist identifier.</param>
         /// <returns>Banlist with all cards included.</returns>
-        System.Threading.Tasks.Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId);
+        Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId);
+        Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTracking();
     }
 }
