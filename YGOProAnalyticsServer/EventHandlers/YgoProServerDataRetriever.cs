@@ -97,7 +97,6 @@ namespace YGOProAnalyticsServer.EventHandlers
             var convertedDuelLogs = new Dictionary<DateTime, List<DuelLog>>();
             var listOfDuelLogs = _fTPDownloader.DownloadListOfFilesFromFTP(_adminConfig.ServerDataEndpointURL + "/duel_logs/");
             AnalysisMetadata metaData = _getMetaData();
-            
             DateTime dateOfNewestDuelLog = metaData.LastDuelLogDateAnalyzed;
 
             foreach (string duelLogName in listOfDuelLogs)
