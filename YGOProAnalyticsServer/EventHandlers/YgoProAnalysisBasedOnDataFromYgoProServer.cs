@@ -222,7 +222,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                                 stats.IncrementNumberOfTimesWhenDeckWonByAmount(decklistStatistics.NumberOfTimesWhenDeckWon);
                             }
                         }
-                        allDecklists.Remove(decklistInDecklists2); //It work?
+                        allDecklists.Remove(decklistInDecklists2);
                     }
                 }
             }
