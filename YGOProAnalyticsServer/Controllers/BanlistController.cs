@@ -22,7 +22,7 @@ namespace YGOProAnalyticsServer.Controllers
         [HttpGet("ListOfBanlistsWithIdAndNames")]
         public async Task<IActionResult> GetListOfBanlistsWithIdAndNames()
         {
-            return Ok(await _banlistService.GetListOfBanlistsNamesAndIdsAsNoTracking());
+            return Ok(await _banlistService.GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache());
         }
     }
 }

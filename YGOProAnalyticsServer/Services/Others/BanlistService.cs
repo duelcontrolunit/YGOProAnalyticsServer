@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
+using YGOProAnalyticsServer.Helpers;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
@@ -18,18 +20,44 @@ namespace YGOProAnalyticsServer.Services.Others
     public class BanlistService : IBanlistService
     {
         readonly YgoProAnalyticsDatabase _db;
+        readonly IMemoryCache _cache;
+        readonly IAdminConfig _config;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BanlistService"/> class.
-        /// </summary>
-        /// <param name="db">The database.</param>
-        /// <exception cref="ArgumentNullException">db</exception>
-        public BanlistService(YgoProAnalyticsDatabase db)
+        public BanlistService(
+            YgoProAnalyticsDatabase db,
+            IMemoryCache cache,
+            IAdminConfig config)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
-        public async Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTracking()
+        public async Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache(bool shouldIgnoreCache = false)
+        {
+            IEnumerable<BanlistIdAndNameDTO> dtos;
+            if (shouldIgnoreCache)
+            {
+                return await _getBanlistsIdAndNameDtosAsNoTracking();
+            }
+            else
+            if (_cache.TryGetValue(CacheKeys.BanlistsIdAndNameDtos, out dtos))
+            {
+                dtos = await _getBanlistsIdAndNameDtosAsNoTracking();
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetPriority(CacheItemPriority.Normal)
+                    .SetSlidingExpiration(
+                        TimeSpan.FromHours(_config.BanlistSlidingCacheExpirationInHours))
+                    .SetAbsoluteExpiration(
+                        TimeSpan.FromHours(_config.BanlistAbsoluteCacheExpirationInHours));
+
+                _cache.Set(CacheKeys.BanlistsIdAndNameDtos, dtos, cacheOptions);
+            }
+
+            return dtos;
+        }
+
+        private async Task<IEnumerable<BanlistIdAndNameDTO>> _getBanlistsIdAndNameDtosAsNoTracking()
         {
             return await _db
                 .Banlists

@@ -74,5 +74,21 @@
         /// The default number of results per browser page.
         /// </value>
         int DefaultNumberOfResultsPerBrowserPage { get; }
+
+        /// <summary>
+        /// Gets the banlist sliding cache expiration in hours.
+        /// </summary>
+        /// <value>
+        /// The banlist sliding cache expiration in hours.
+        /// </value>
+        int BanlistSlidingCacheExpirationInHours { get; }
+
+        /// <summary>
+        /// Gets the banlist absolute cache expiration in hours.
+        /// </summary>
+        /// <value>
+        /// The banlist absolute cache expiration in hours.
+        /// </value>
+        int BanlistAbsoluteCacheExpirationInHours { get; }
     }
 }
