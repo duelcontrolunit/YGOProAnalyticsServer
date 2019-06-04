@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,6 +12,7 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
+using YGOProAnalyticsServer.Services.Validators;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
 
 namespace YGOProAnalyticsServer.Controllers
@@ -55,12 +57,20 @@ namespace YGOProAnalyticsServer.Controllers
             DateTime? statisticsTo = null;
             if (!string.IsNullOrEmpty(queryParams.StatisticsFromDate))
             {
-                statisticsFrom = DateTime.Parse(queryParams.StatisticsFromDate);
+                statisticsFrom = DateTime
+                    .ParseExact(
+                    queryParams.StatisticsFromDate,
+                    DateFormat.yyyy_mm_dd,
+                    CultureInfo.InvariantCulture);
             }
 
             if (!string.IsNullOrEmpty(queryParams.StatisticsToDate))
             {
-                statisticsTo = DateTime.Parse(queryParams.StatisticsToDate);
+                statisticsTo = DateTime
+                    .ParseExact(
+                    queryParams.StatisticsToDate,
+                    DateFormat.yyyy_mm_dd,
+                    CultureInfo.InvariantCulture);
             }
 
             var decklists = await _decklistService.FindAll(

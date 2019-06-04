@@ -21,6 +21,19 @@ namespace YGOProAnalyticsServer.Services.Others
         readonly IBanlistService _banlistService;
         readonly IMemoryCache _cache;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DecklistService"/> class.
+        /// </summary>
+        /// <param name="db">The database.</param>
+        /// <param name="banlistService">The banlist service.</param>
+        /// <param name="cache">The cache.</param>
+        /// <exception cref="ArgumentNullException">
+        /// db
+        /// or
+        /// banlistService
+        /// or
+        /// cache
+        /// </exception>
         public DecklistService(
             YgoProAnalyticsDatabase db,
             IBanlistService banlistService,

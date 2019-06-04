@@ -17,6 +17,11 @@ namespace YGOProAnalyticsServer.Services.Others
     {
         readonly YgoProAnalyticsDatabase _db;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BanlistService"/> class.
+        /// </summary>
+        /// <param name="db">The database.</param>
+        /// <exception cref="ArgumentNullException">db</exception>
         public BanlistService(YgoProAnalyticsDatabase db)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
@@ -122,6 +127,10 @@ namespace YGOProAnalyticsServer.Services.Others
         /// </summary>
         public class CardWithInfoAboutNumberOfCopiesInDeck
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="CardWithInfoAboutNumberOfCopiesInDeck"/> class.
+            /// </summary>
+            /// <param name="cardId">The card identifier.</param>
             public CardWithInfoAboutNumberOfCopiesInDeck(int cardId)
             {
                 CardId = cardId;

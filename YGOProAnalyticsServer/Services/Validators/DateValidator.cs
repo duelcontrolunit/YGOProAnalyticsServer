@@ -39,8 +39,8 @@ namespace YGOProAnalyticsServer.Services.Validators
     public static class DateFormat
     {
         /// <summary>
-        /// yyyy-mm-dd
+        /// yyyy-MM-dd
         /// </summary>
-        public const string yyyy_mm_dd = "yyyy-mm-dd";
+        public const string yyyy_mm_dd = "yyyy-MM-dd";
     }
 }
