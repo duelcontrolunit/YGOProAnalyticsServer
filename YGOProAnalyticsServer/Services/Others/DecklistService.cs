@@ -93,7 +93,7 @@ namespace YGOProAnalyticsServer.Services.Others
             DateTime? statisticsTo = null,
             bool shouldGetDecksFromCache = true)
         {
-            IEnumerable<Decklist> localDecklistsQuery = _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
+            IEnumerable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
             if (statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
