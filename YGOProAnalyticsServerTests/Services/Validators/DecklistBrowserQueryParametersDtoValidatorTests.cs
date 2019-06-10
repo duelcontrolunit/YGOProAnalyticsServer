@@ -199,7 +199,7 @@ namespace YGOProAnalyticsServerTests.Services.Validators
         [TestCase(0)]
         [TestCase(-100)]
         [TestCase(-150)]
-        public void IsValidNumberOfResults_IsInValid_ReturnsFalse(int numberOfResults)
+        public void IsValidNumberOfResults_IsInvalid_ReturnsFalse(int numberOfResults)
         {
             Assert.IsFalse(_validator.IsValidNumberOfResults(new DecklistBrowserQueryParametersDTO()
             {
