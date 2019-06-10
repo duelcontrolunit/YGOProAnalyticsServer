@@ -55,7 +55,7 @@ namespace YGOProAnalyticsServer.Services.Others
             DateTime? statisticsTo = null,
             bool shouldGetDecksFromCache = true)
         {
-            IEnumerable<Decklist> localDecklistsQuery = _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
+            IEnumerable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
             if(statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
@@ -236,18 +236,18 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
-        public void UpdateCache()
+        public async Task UpdateCache()
         {
             _cache.Remove(CacheKeys.OrderedDecklistsWithContentIncluded);
-            _getOrCreateAndGetOrderedDecklistFromCache(true);
+            await _getOrCreateAndGetOrderedDecklistFromCache(true);
         }
 
-        private IEnumerable<Decklist> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
+        private async Task<IEnumerable<Decklist>> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
         {
             IEnumerable<Decklist> localDecklistsQuery;
             if (!shouldGetDecksFromCache)
             {
-                localDecklistsQuery = _getOrderedNoTrackedDecklists();
+                localDecklistsQuery = await _getOrderedNoTrackedDecklists();
             }
             else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
             {
@@ -259,21 +259,20 @@ namespace YGOProAnalyticsServer.Services.Others
                     //UpdateCache() method directly after analysis process (When entire API is still blocked).
                     .SetPriority(CacheItemPriority.NeverRemove);
 
-                localDecklistsQuery = _getOrderedNoTrackedDecklists();
+                localDecklistsQuery = await _getOrderedNoTrackedDecklists();
                 _cache.Set(CacheKeys.OrderedDecklistsWithContentIncluded, localDecklistsQuery, cacheOptions);
             }
 
             return localDecklistsQuery;
         }
 
-        private List<Decklist> _getOrderedNoTrackedDecklists()
+        private async Task<List<Decklist>> _getOrderedNoTrackedDecklists()
         {
             _db.Database.SetCommandTimeout(3600);
-            return _getDecklistsQuery(false)
+            return await _getDecklistsQuery(false)
                 .OrderByDescending(
                     x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
-                 )
-                 .ToList();
+                 ).ToListAsync();
         }
 
         /// <inheritdoc />

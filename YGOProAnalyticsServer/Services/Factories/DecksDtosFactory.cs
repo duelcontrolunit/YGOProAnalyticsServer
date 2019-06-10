@@ -62,7 +62,7 @@ namespace YGOProAnalyticsServer.Services.Factories
         public DeckDTO CreateDeckDto(Decklist decklist)
         {
             var deck = new DeckDTO();
-            foreach (var card in decklist.ExtraDeck)
+            foreach (var card in decklist.SideDeck)
             {
                 var lowerCardType = card.Type.ToLower();
                 handleMonsterFor(deck, card, lowerCardType);
@@ -212,7 +212,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             string lowerCardType)
             where TEffectMonstersContainer : IEffectMonsterContainer
         {
-            if (lowerCardType.Contains("effect") 
+            if ((!lowerCardType.Contains("normal"))
                 && isNotAnyExtraMonsterType(lowerCardType)
                 && !lowerCardType.Contains("pendulum"))
             {
@@ -222,20 +222,16 @@ namespace YGOProAnalyticsServer.Services.Factories
             }
         }
 
-        /// <summary>
-        /// Be careful. Should be called at the end, 
-        /// because by design it should handle all cards not classified anywhere.
-        /// </summary>
         protected virtual void handleNormalMonster<TNormalMonstersContainer>(
             TNormalMonstersContainer container,
             Card card,
             string lowerCardType)
             where TNormalMonstersContainer : INormalMonstersContainer
         {
-            if (!isNotAnyExtraMonsterType(lowerCardType)
-                || lowerCardType.Contains("pendulum")
-                || lowerCardType.Contains("ritual")
-                || lowerCardType.Contains("effect")) return;
+            if (!lowerCardType.Contains("normal") || lowerCardType.Contains("pendulum"))
+            {
+                return;
+            }
 
             container.NormalMonsters.Add(
                 _cardDtosFactory.CreateMonsterCardDto(card)
@@ -261,7 +257,7 @@ namespace YGOProAnalyticsServer.Services.Factories
         protected virtual void handleNonExtraPendulumNormalMonster<T>(T container, Card card, string lowerCardType)
             where T : INonExtraPendulumNormalMonster
         {
-            if (lowerCardType.Contains("pendulum") && isNotAnyExtraMonsterType(lowerCardType) && !lowerCardType.Contains("effect"))
+            if (lowerCardType.Contains("pendulum") && isNotAnyExtraMonsterType(lowerCardType) && lowerCardType.Contains("normal"))
             {
                 container.PendulumNormalMonsters.Add(
                     _cardDtosFactory.CreatePendulumMonsterCardDto(card)
@@ -272,7 +268,7 @@ namespace YGOProAnalyticsServer.Services.Factories
         protected virtual void handleNonExtraPendulumEffectMonster<T>(T container, Card card, string lowerCardType)
             where T : INonExtraPendulumEffectMonster
         {
-            if (lowerCardType.Contains("pendulum") && isNotAnyExtraMonsterType(lowerCardType) && lowerCardType.Contains("effect"))
+            if (lowerCardType.Contains("pendulum") && isNotAnyExtraMonsterType(lowerCardType) && !lowerCardType.Contains("normal"))
             {
                 container.PendulumEffectMonsters.Add(
                     _cardDtosFactory.CreatePendulumMonsterCardDto(card)
