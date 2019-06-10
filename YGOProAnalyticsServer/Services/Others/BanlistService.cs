@@ -122,6 +122,66 @@ namespace YGOProAnalyticsServer.Services.Others
                    && !isMoreThanTwoCopiesOfSemiLimitedCardInDeck;
         }
 
+        /// <inheritdoc />
+        public async Task<IQueryable<Banlist>> FindAllQuery(
+            int minNumberOfGames,
+            DateTime? statisticsFromDate,
+            DateTime? statisticsToDate)
+        {
+            var banlistQuery = _db.Banlists;
+            if(statisticsFromDate != null && statisticsToDate == null)
+            {
+                return banlistQuery
+                    .Where(x => x.
+                        Statistics
+                            .Where(y => y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                            .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
+                    )
+                    .OrderBy(x => x.Statistics
+                        .Where(y => y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                        .Sum(y => y.HowManyTimesWasUsed)
+                     );
+            }
+            else
+            if (statisticsFromDate == null && statisticsToDate != null)
+            {
+                return banlistQuery
+                    .Where(x => x.
+                        Statistics
+                            .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate)
+                            .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
+                    )
+                     .OrderBy(x => x.Statistics
+                        .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate)
+                        .Sum(y => y.HowManyTimesWasUsed)
+                     );
+            }
+            else
+            if (statisticsFromDate != null && statisticsToDate != null)
+            {
+                return banlistQuery
+                    .Where(x => x.
+                        Statistics
+                            .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate 
+                                        && y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                            .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
+                    )
+                    .OrderBy(x => x.Statistics
+                        .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate
+                                        && y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                       .Sum(y => y.HowManyTimesWasUsed)
+                    );
+            }
+            else
+            {
+                return banlistQuery
+                    .Where(x => x.Statistics.Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames)
+                     .OrderBy(x => x.Statistics
+                       .Sum(y => y.HowManyTimesWasUsed)
+                    );
+            }   
+        }
+
         private bool _deckContainsNotAllowedCards(
             ICollection<Card> cardsOnBanlist,
             IEnumerable<CardWithInfoAboutNumberOfCopiesInDeck> countedCards,
@@ -173,7 +233,7 @@ namespace YGOProAnalyticsServer.Services.Others
                 }
             }
         }
-
+  
         /// <summary>
         /// CardId with info about how many copies this card is in deck.
         /// </summary>
