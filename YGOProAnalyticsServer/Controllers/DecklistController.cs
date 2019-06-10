@@ -80,7 +80,7 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsFrom: statisticsFrom,
                 statisticsTo: statisticsTo);
 
-            var numberOfPages = decklists.Count();
+            var numberOfPages = decklists.Count() / _config.DefaultNumberOfResultsPerBrowserPage;
             var decklistsToActualPage = decklists
                     .Skip(_config.DefaultNumberOfResultsPerBrowserPage)
                     .Take(_config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1))
