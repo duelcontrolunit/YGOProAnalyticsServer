@@ -3,6 +3,9 @@ using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
 {
+    /// <summary>
+    /// Provide support for calculation number of results per page.
+    /// </summary>
     public class NumberOfResultsHelper : INumberOfResultsHelper
     {
         readonly IAdminConfig _config;
