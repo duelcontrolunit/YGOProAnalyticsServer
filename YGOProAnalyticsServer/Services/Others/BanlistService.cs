@@ -73,12 +73,11 @@ namespace YGOProAnalyticsServer.Services.Others
 
         private async Task<IEnumerable<BanlistIdAndNameDTO>> _getBanlistsIdAndNameDtosAsNoTracking()
         {
-             var z = await _db
+            return await _db
                 .Banlists
                 .AsNoTracking()
                 .Select(x => new BanlistIdAndNameDTO(x.Id, x.Name))
                 .ToListAsync();
-            return z;
         }
 
         /// <inheritdoc />
