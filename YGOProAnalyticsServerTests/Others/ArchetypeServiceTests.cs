@@ -36,5 +36,26 @@ namespace YGOProAnalyticsServerTests.Others
                 Assert.IsTrue(resultDto.Name == Archetype.Default);
             }
         }
+
+        [Test]
+        public async Task GetPureArchetypeListWithIdsAndNamesAsNoTrackingFromCache_WeHaveOnePureArchetypeInDbAndTwoNonPure_WeGetOneDto()
+        {
+            var cacheMock = new Mock<IMemoryCache>();
+            var configMock = new Mock<IAdminConfig>();
+            using (var db = new YgoProAnalyticsDatabase(SqlInMemoryHelper.SqlLiteOptions<YgoProAnalyticsDatabase>()))
+            {
+                await db.Database.EnsureCreatedAsync();
+                db.Archetypes.Add(new Archetype(Archetype.Default, true));
+                db.Archetypes.Add(new Archetype("NotPure", false));
+                db.Archetypes.Add(new Archetype("NotPure2", false));
+                await db.SaveChangesAsync();
+                var archetypeService = new ArchetypeService(db, cacheMock.Object, configMock.Object);
+
+                var numberOfDtos = (await archetypeService.GetPureArchetypeListWithIdsAndNamesAsNoTrackingFromCache(true))
+                    .Count();
+
+                Assert.AreEqual(1, numberOfDtos);
+            }
+        }
     }
 }
