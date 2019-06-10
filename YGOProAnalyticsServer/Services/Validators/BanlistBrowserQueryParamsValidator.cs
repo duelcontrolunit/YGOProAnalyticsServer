@@ -34,7 +34,7 @@ namespace YGOProAnalyticsServer.Services.Validators
 
         private bool _isValisStatisticsToDate(BanlistBrowserQueryParams queryParams)
         {
-            return queryParams.StatisticsFromDate == ""
+            return queryParams.StatisticsToDate == ""
                    || _dateValidator.IsValidFormat(queryParams.StatisticsToDate, DateFormat.yyyy_MM_dd);
         }
 
