@@ -1,7 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Moq;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using YGOProAnalyticsServer;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Others;
@@ -15,13 +18,17 @@ namespace YGOProAnalyticsServerTests.Others
     {
         IBanlistService _banlistService;
         YgoProAnalyticsDatabase _db;
+        Mock<IMemoryCache> _cacheMock;
+        Mock<IAdminConfig> _configMock;
 
         [SetUp]
         public void SetUp()
         {
             _db = new YgoProAnalyticsDatabase(SqlInMemoryHelper.SqlLiteOptions<YgoProAnalyticsDatabase>());
             _db.Database.EnsureCreated();
-            _banlistService = new BanlistService(_db);
+            _cacheMock = new Mock<IMemoryCache>();
+            _configMock = new Mock<IAdminConfig>();
+            _banlistService = new BanlistService(_db, _cacheMock.Object, _configMock.Object);
         }
 
         [TearDown]

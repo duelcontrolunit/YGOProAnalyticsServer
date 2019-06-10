@@ -35,5 +35,17 @@ namespace YGOProAnalyticsServer
 
         ///<inheritdoc />
         public int DefaultNumberOfResultsPerBrowserPage => 100;
+
+        ///<inheritdoc />
+        public int BanlistSlidingCacheExpirationInHours => 2;
+
+        ///<inheritdoc />
+        public int BanlistAbsoluteCacheExpirationInHours => 23;
+
+        ///<inheritdoc />
+        public int ArchetypeSlidingCacheExpirationInHours => 2;
+
+        ///<inheritdoc />
+        public int ArchetypeAbsoluteCacheExpirationInHours => 23;
     }
 }

@@ -84,6 +84,41 @@ namespace YGOProAnalyticsServer.Services.Others
                     .ToList();
         }
 
+        /// <inheritdoc />
+        public async Task<IEnumerable<Decklist>> FindAll(
+            int minNumberOfGames = 10,
+            int banlistId = -1,
+            string archetypeName = "",
+            DateTime? statisticsFrom = null,
+            DateTime? statisticsTo = null,
+            bool shouldGetDecksFromCache = true)
+        {
+            IEnumerable<Decklist> localDecklistsQuery = _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
+            if (statisticsTo == null && statisticsFrom == null)
+            {
+                localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
+            }
+            else
+            {
+                localDecklistsQuery = _addStatisticsDateLimitIfRequiredAndThenMinNumberOfGamesFilter(
+                  statisticsFrom,
+                  statisticsTo,
+                  minNumberOfGames,
+                  localDecklistsQuery);
+
+                localDecklistsQuery = _orderUsingDateLimitAndMinNumberOfGamesCriteria(
+                  statisticsFrom,
+                  statisticsTo,
+                  minNumberOfGames,
+                  localDecklistsQuery);
+            }
+
+            localDecklistsQuery = _addArchetypeNameFilterToLocalDecklistQueryIfRequired(archetypeName, localDecklistsQuery);
+            localDecklistsQuery = await _addBanlistFilterToLocalDecklistQueryIfRequired(banlistId, localDecklistsQuery);
+
+            return localDecklistsQuery;
+        }
+
         private IEnumerable<Decklist> _orderUsingDateLimitAndMinNumberOfGamesCriteria(
             DateTime? statisticsFrom,
             DateTime? statisticsTo,
