@@ -82,7 +82,7 @@ namespace YGOProAnalyticsServer.Controllers
 
             var numberOfPages = Convert.ToInt32(
                     Math.Ceiling(
-                        (double)(decklists.Count() / _config.DefaultNumberOfResultsPerBrowserPage)
+                        ((double)(decklists.Count()) / (double)(_config.DefaultNumberOfResultsPerBrowserPage))
                     )
                 );
             var decklistsToActualPage = decklists
