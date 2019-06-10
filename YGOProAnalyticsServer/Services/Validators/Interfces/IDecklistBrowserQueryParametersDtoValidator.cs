@@ -44,6 +44,15 @@ namespace YGOProAnalyticsServer.Services.Validators.Interfaces
         bool IsValidMinNumberOfGames(DecklistBrowserQueryParametersDTO queryParams);
 
         /// <summary>
+        /// Returns true if <see cref="DecklistBrowserQueryParametersDTO.NumberOfResults"/> query parameter is valid.
+        /// </summary>
+        /// <param name="queryParams">The query parameters.</param>
+        /// <returns>
+        ///   True if <see cref="DecklistBrowserQueryParametersDTO.NumberOfResults"/> query parameter is valid.
+        /// </returns>
+        bool IsValidNumberOfResults(DecklistBrowserQueryParametersDTO queryParams);
+
+        /// <summary>
         /// Returns true if <see cref="DecklistBrowserQueryParametersDTO.PageNumber"/> query parameter is valid.
         /// </summary>
         /// <param name="queryParams">The query parameters.</param>

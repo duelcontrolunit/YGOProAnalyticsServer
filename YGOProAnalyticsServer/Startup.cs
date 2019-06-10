@@ -71,6 +71,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDateValidator, DateValidator>();
             services.AddScoped<IDecklistBrowserQueryParametersDtoValidator, DecklistBrowserQueryParametersDtoValidator>();
             services.AddScoped<IArchetypeService, ArchetypeService>();
+            services.AddScoped<INumberOfResultsHelper, NumberOfResultsHelper>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 
