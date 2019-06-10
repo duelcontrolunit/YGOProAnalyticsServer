@@ -184,5 +184,27 @@ namespace YGOProAnalyticsServerTests.Services.Validators
               new DecklistBrowserQueryParametersDTO() { StatisticsToDate = dateAsString })
            );
         }
+
+        [TestCase(1)]
+        [TestCase(100)]
+        [TestCase(150)]
+        [TestCase(-1)]
+        public void IsValidNumberOfResults_IsValid_ReturnsTrue(int numberOfResults)
+        {
+            Assert.IsTrue(_validator.IsValidNumberOfResults(new DecklistBrowserQueryParametersDTO() {
+                NumberOfResults = numberOfResults
+            }));
+        }
+
+        [TestCase(0)]
+        [TestCase(-100)]
+        [TestCase(-150)]
+        public void IsValidNumberOfResults_IsInValid_ReturnsFalse(int numberOfResults)
+        {
+            Assert.IsFalse(_validator.IsValidNumberOfResults(new DecklistBrowserQueryParametersDTO()
+            {
+                NumberOfResults = numberOfResults
+            }));
+        }
     }
 }

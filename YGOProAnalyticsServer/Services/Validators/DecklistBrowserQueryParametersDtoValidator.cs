@@ -34,6 +34,7 @@ namespace YGOProAnalyticsServer.Services.Validators
                    && IsValidNumberOfResults(queryParams);
         }
 
+        /// <inheritdoc />
         public bool IsValidNumberOfResults(DecklistBrowserQueryParametersDTO queryParams)
         {
             return queryParams.NumberOfResults > 0 || queryParams.NumberOfResults == -1;
