@@ -150,6 +150,7 @@ namespace YGOProAnalyticsServerTests.Controllers
                 .Setup(x => x.Convert(emptyListOfDecklists, dateTimeFrom, dateTimeTo))
                 .Returns(new List<DecklistWithNumberOfGamesAndWinsDTO>());
             _adminConfigMock.Setup(x => x.DefaultNumberOfResultsPerBrowserPage).Returns(100);
+            _numberOfResultsHelper.Setup(x => x.GetNumberOfResultsPerPage(-1)).Returns(100);
             _initController();
             var result = await _decklistController.FindAll(queryParamsDto);
 
