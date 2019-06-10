@@ -27,6 +27,7 @@ namespace YGOProAnalyticsServer.Controllers
         readonly IAdminConfig _config;
         readonly IMapper _mapper;
         readonly IDecklistBrowserQueryParametersDtoValidator _decklistBrowserQueryParamsValidator;
+        readonly INumberOfResultsHelper _numberOfResultsHelper;
 
         public DecklistController(
             YgoProAnalyticsDatabase db,
@@ -34,7 +35,8 @@ namespace YGOProAnalyticsServer.Controllers
             IDecklistService decklistService,
             IAdminConfig config,
             IMapper mapper,
-            IDecklistBrowserQueryParametersDtoValidator decklistBrowserQueryParamsValidator)
+            IDecklistBrowserQueryParametersDtoValidator decklistBrowserQueryParamsValidator,
+            INumberOfResultsHelper numberOfResultsHelper)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _decklistToDtoConverter = decklistToDtoConverter ?? throw new ArgumentNullException(nameof(decklistToDtoConverter));
@@ -43,6 +45,7 @@ namespace YGOProAnalyticsServer.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _decklistBrowserQueryParamsValidator = decklistBrowserQueryParamsValidator 
                 ?? throw new ArgumentNullException(nameof(decklistBrowserQueryParamsValidator));
+            _numberOfResultsHelper = numberOfResultsHelper ?? throw new ArgumentNullException(nameof(numberOfResultsHelper));
         }
 
         [HttpGet]
@@ -86,9 +89,9 @@ namespace YGOProAnalyticsServer.Controllers
                     )
                 );
 
-            int numberOfResultsPerPage = _getNumberOfResultsPerPage(queryParams);
+            int numberOfResultsPerPage = _numberOfResultsHelper.GetNumberOfResultsPerPage(queryParams.NumberOfResults);
             var decklistsToActualPage = decklists
-                    .Skip(_config.DefaultNumberOfResultsPerBrowserPage)
+                    .Skip(_config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1))
                     .Take(numberOfResultsPerPage)
                     .ToList();
 
@@ -98,24 +101,6 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsTo);
 
             return new JsonResult(new DecklistBrowserResultsDTO(numberOfPages, decklistDtos));
-        }
-
-        private int _getNumberOfResultsPerPage(DecklistBrowserQueryParametersDTO queryParams)
-        {
-            int numberOfResultsPerPage = _config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1);
-            if (queryParams.NumberOfResults != -1)
-            {
-                if (queryParams.NumberOfResults <= _config.MaxNumberOfResultsPerBrowserPage)
-                {
-                    numberOfResultsPerPage = queryParams.NumberOfResults;
-                }
-                else
-                {
-                    numberOfResultsPerPage = _config.MaxNumberOfResultsPerBrowserPage;
-                }
-            }
-
-            return numberOfResultsPerPage;
         }
 
         [HttpGet("{id}")]
