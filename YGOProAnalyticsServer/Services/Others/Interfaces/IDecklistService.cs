@@ -44,6 +44,6 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <summary>
         /// Renew cache by key. CacheKey: <see cref="CacheKeys.OrderedDecklistsWithContentIncluded"/>
         /// </summary>
-        void UpdateCache();
+        Task UpdateCache();
     }
 }
