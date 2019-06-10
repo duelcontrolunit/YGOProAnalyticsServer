@@ -83,15 +83,15 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsFrom: statisticsFrom,
                 statisticsTo: statisticsTo);
 
+            int numberOfResultsPerPage = _numberOfResultsHelper.GetNumberOfResultsPerPage(queryParams.NumberOfResults);
             var numberOfPages = Convert.ToInt32(
                     Math.Ceiling(
-                        ((double)(decklists.Count()) / (double)(_config.DefaultNumberOfResultsPerBrowserPage))
+                        ((double)(decklists.Count()) / (double)(numberOfResultsPerPage))
                     )
                 );
-
-            int numberOfResultsPerPage = _numberOfResultsHelper.GetNumberOfResultsPerPage(queryParams.NumberOfResults);
+            
             var decklistsToActualPage = decklists
-                    .Skip(_config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1))
+                    .Skip(numberOfResultsPerPage * (queryParams.PageNumber - 1))
                     .Take(numberOfResultsPerPage)
                     .ToList();
 
