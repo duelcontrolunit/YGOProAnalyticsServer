@@ -28,6 +28,7 @@ namespace YGOProAnalyticsServerTests.Controllers
         Mock<IAdminConfig> _adminConfigMock;
         Mock<IMapper> _mapperMock;
         Mock<IDecklistBrowserQueryParametersDtoValidator> _decklistBrowserQueryParamsValidator;
+        Mock<INumberOfResultsHelper> _numberOfResultsHelper;
 
         [SetUp]
         public void SetUp()
@@ -39,6 +40,7 @@ namespace YGOProAnalyticsServerTests.Controllers
             _adminConfigMock = new Mock<IAdminConfig>();
             _mapperMock = new Mock<IMapper>();
             _decklistBrowserQueryParamsValidator = new Mock<IDecklistBrowserQueryParametersDtoValidator>();
+            _numberOfResultsHelper = new Mock<INumberOfResultsHelper>();
         }
 
         [TearDown]
@@ -148,6 +150,7 @@ namespace YGOProAnalyticsServerTests.Controllers
                 .Setup(x => x.Convert(emptyListOfDecklists, dateTimeFrom, dateTimeTo))
                 .Returns(new List<DecklistWithNumberOfGamesAndWinsDTO>());
             _adminConfigMock.Setup(x => x.DefaultNumberOfResultsPerBrowserPage).Returns(100);
+            _numberOfResultsHelper.Setup(x => x.GetNumberOfResultsPerPage(-1)).Returns(100);
             _initController();
             var result = await _decklistController.FindAll(queryParamsDto);
 
@@ -162,7 +165,8 @@ namespace YGOProAnalyticsServerTests.Controllers
                 _decklistService.Object,
                 _adminConfigMock.Object,
                 _mapperMock.Object,
-                _decklistBrowserQueryParamsValidator.Object);
+                _decklistBrowserQueryParamsValidator.Object,
+                _numberOfResultsHelper.Object);
         }
 
         private Decklist _getValidDecklist()

@@ -6,6 +6,14 @@
     public interface IAdminConfig
     {
         /// <summary>
+        /// Gets the maximum number of results per browser page.
+        /// </summary>
+        /// <value>
+        /// The maximum number of results per browser page.
+        /// </value>
+        int MaxNumberOfResultsPerBrowserPage { get; }
+
+        /// <summary>
         /// Gets the name of default banlist.
         /// </summary>
         /// <value>
