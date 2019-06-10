@@ -228,7 +228,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             string lowerCardType)
             where TNormalMonstersContainer : INormalMonstersContainer
         {
-            if (!lowerCardType.Contains("normal"))
+            if (!lowerCardType.Contains("normal") || lowerCardType.Contains("pendulum"))
             {
                 return;
             }
