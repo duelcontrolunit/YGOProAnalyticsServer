@@ -11,12 +11,28 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace YGOProAnalyticsServer.Services.Others
 {
+    /// <summary>
+    /// Provide features related with archetypes.
+    /// </summary>
     public class ArchetypeService : IArchetypeService
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IMemoryCache _cache;
         readonly IAdminConfig _config;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArchetypeService"/> class.
+        /// </summary>
+        /// <param name="db">The database.</param>
+        /// <param name="cache">The cache.</param>
+        /// <param name="config">The configuration.</param>
+        /// <exception cref="ArgumentNullException">
+        /// db
+        /// or
+        /// cache
+        /// or
+        /// config
+        /// </exception>
         public ArchetypeService(YgoProAnalyticsDatabase db, IMemoryCache cache, IAdminConfig config)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
@@ -24,6 +40,7 @@ namespace YGOProAnalyticsServer.Services.Others
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<ArchetypeIdAndNameDTO>> GetArchetypeListWithIdsAndNamesAsNoTrackingFromCache(bool shouldIgnoreCache)
         {
             IEnumerable<ArchetypeIdAndNameDTO> dtos;

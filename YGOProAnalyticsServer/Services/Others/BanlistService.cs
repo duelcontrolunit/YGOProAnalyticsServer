@@ -23,6 +23,19 @@ namespace YGOProAnalyticsServer.Services.Others
         readonly IMemoryCache _cache;
         readonly IAdminConfig _config;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BanlistService"/> class.
+        /// </summary>
+        /// <param name="db">The database.</param>
+        /// <param name="cache">The cache.</param>
+        /// <param name="config">The configuration.</param>
+        /// <exception cref="ArgumentNullException">
+        /// db
+        /// or
+        /// cache
+        /// or
+        /// config
+        /// </exception>
         public BanlistService(
             YgoProAnalyticsDatabase db,
             IMemoryCache cache,
@@ -33,6 +46,7 @@ namespace YGOProAnalyticsServer.Services.Others
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache(bool shouldIgnoreCache = false)
         {
             IEnumerable<BanlistIdAndNameDTO> dtos;
