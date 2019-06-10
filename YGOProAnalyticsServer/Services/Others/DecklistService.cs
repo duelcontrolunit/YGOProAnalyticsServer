@@ -237,8 +237,7 @@ namespace YGOProAnalyticsServer.Services.Others
             return await _getDecklistsQuery(false)
                 .OrderByDescending(
                     x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
-                 ).AsNoTracking()
-                 .ToListAsync();
+                 ).ToListAsync();
         }
 
         /// <inheritdoc />
