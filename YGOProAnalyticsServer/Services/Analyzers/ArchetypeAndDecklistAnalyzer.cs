@@ -70,7 +70,9 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             List<Archetype> archetypes = fullDeck.ConvertAll<Archetype>(x => x.Archetype);
             if (archetypes.Where(x => x.Name == Archetype.Default).Count() / fullDeck.Count() >= 0.8)
             {
-                return new Archetype(Archetype.Default, true);
+                return _archetypes
+                    .FirstOrDefault(x => x.Name == Archetype.Default)
+                    ?? new Archetype(Archetype.Default, true);
             }
 
             archetypes.RemoveAll(x => x.Name == Archetype.Default);
@@ -96,11 +98,13 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 {
                     _archetypes.Add(archetype);
                 }
-                
+
                 return archetype;
             }
 
-            return new Archetype(Archetype.Default, true);
+            return _archetypes
+                .FirstOrDefault(x => x.Name == Archetype.Default)
+                ?? new Archetype(Archetype.Default, true);
         }
 
         /// <summary>Removes the duplicate decklists from list of decklists.</summary>
@@ -108,7 +112,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         /// <param name="listOfDecks">The list of decks.</param>
         /// <returns>Amount of duplicates removed.</returns>
         public NumberOfDuplicatesWithListOfDecklists RemoveDuplicateDecklistsFromListOfDecklists(
-            Decklist decklist, 
+            Decklist decklist,
             IEnumerable<Decklist> listOfDecks)
         {
             int duplicateCount = 0;
