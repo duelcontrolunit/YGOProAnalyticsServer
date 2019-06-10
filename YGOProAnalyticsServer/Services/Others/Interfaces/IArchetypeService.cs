@@ -14,6 +14,6 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// </summary>
         /// <param name="shouldIgnoreCache">Set true to ignore cache.</param>
         /// <returns>Archetype list with ids and names as no tracking from cache.</returns>
-        Task<IEnumerable<ArchetypeIdAndNameDTO>> GetArchetypeListWithIdsAndNamesAsNoTrackingFromCache(bool shouldIgnoreCache = false);
+        Task<IEnumerable<ArchetypeIdAndNameDTO>> GetPureArchetypeListWithIdsAndNamesAsNoTrackingFromCache(bool shouldIgnoreCache = false);
     }
 }

@@ -41,7 +41,7 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<ArchetypeIdAndNameDTO>> GetArchetypeListWithIdsAndNamesAsNoTrackingFromCache(bool shouldIgnoreCache)
+        public async Task<IEnumerable<ArchetypeIdAndNameDTO>> GetPureArchetypeListWithIdsAndNamesAsNoTrackingFromCache(bool shouldIgnoreCache)
         {
             IEnumerable<ArchetypeIdAndNameDTO> dtos;
             if (shouldIgnoreCache)
@@ -70,6 +70,7 @@ namespace YGOProAnalyticsServer.Services.Others
             return await _db
                .Archetypes
                .AsNoTracking()
+               .Where(x => x.IsPureArchetype == true)
                .Select(x => new ArchetypeIdAndNameDTO(x.Id, x.Name))
                .ToListAsync();
         }
