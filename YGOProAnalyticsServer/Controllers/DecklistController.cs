@@ -74,20 +74,24 @@ namespace YGOProAnalyticsServer.Controllers
             }
 
             var decklists = await _decklistService.FindAll(
-                howManyTake: _config.DefaultNumberOfResultsPerBrowserPage,
-                howManySkip: _config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1),
                 minNumberOfGames: queryParams.MinNumberOfGames,
                 banlistId: queryParams.BanlistId,
                 archetypeName: queryParams.ArchetypeName,
                 statisticsFrom: statisticsFrom,
                 statisticsTo: statisticsTo);
 
+            var numberOfPages = decklists.Count();
+            var decklistsToActualPage = decklists
+                    .Skip(_config.DefaultNumberOfResultsPerBrowserPage)
+                    .Take(_config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1))
+                    .ToList();
+
             var decklistDtos = _decklistToDtoConverter.Convert(
-                decklists,
+                decklistsToActualPage,
                 statisticsFrom,
                 statisticsTo);
 
-            return new JsonResult(decklistDtos);
+            return new JsonResult(new DecklistBrowserResultsDTO(numberOfPages, decklistDtos));
         }
 
         [HttpGet("{id}")]

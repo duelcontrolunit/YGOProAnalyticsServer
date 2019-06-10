@@ -35,6 +35,27 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
             bool shouldGetDecksFromCache = true);
 
         /// <summary>
+        /// Finds all by criteria.
+        /// </summary>
+        /// <param name="minNumberOfGames">The minimum number of games.</param>
+        /// <param name="banlistId">The banlist identifier.</param>
+        /// <param name="archetypeName">Name of the archetype.</param>
+        /// <param name="statisticsFrom">
+        ///     Exclude that decks which have less than minNumberOfGames games from that date.
+        /// </param>
+        /// <param name="statisticsTo">
+        ///     Exclude that decks which have less than minNumberOfGames games to that date.
+        /// </param>
+        /// <param name="shouldGetDecksFromCache">Should take decks from cache?</param>
+        Task<System.Collections.Generic.IEnumerable<Decklist>> FindAll(
+            int minNumberOfGames = 10,
+            int banlistId = -1,
+            string archetypeName = "",
+            System.DateTime? statisticsFrom = null,
+            System.DateTime? statisticsTo = null,
+            bool shouldGetDecksFromCache = true);
+
+        /// <summary>
         /// Decklist with all data included.
         /// </summary>
         /// <param name="id">The identifier.</param>
