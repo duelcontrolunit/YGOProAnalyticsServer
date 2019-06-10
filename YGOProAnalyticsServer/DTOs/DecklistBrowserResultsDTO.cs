@@ -5,10 +5,13 @@ namespace YGOProAnalyticsServer.DTOs
 {
     public class DecklistBrowserResultsDTO
     {
-        public DecklistBrowserResultsDTO(int totalNumberOfPages, IEnumerable<DecklistWithNumberOfGamesAndWinsDTO> decklistWithNumberOfGamesAndWins)
+        public DecklistBrowserResultsDTO(
+            int totalNumberOfPages,
+            IEnumerable<DecklistWithNumberOfGamesAndWinsDTO> decklistWithNumberOfGamesAndWins)
         {
             TotalNumberOfPages = totalNumberOfPages;
-            DecklistWithNumberOfGamesAndWins = decklistWithNumberOfGamesAndWins ?? throw new ArgumentNullException(nameof(decklistWithNumberOfGamesAndWins));
+            DecklistWithNumberOfGamesAndWins = decklistWithNumberOfGamesAndWins 
+                ?? throw new ArgumentNullException(nameof(decklistWithNumberOfGamesAndWins));
         }
 
         public int TotalNumberOfPages { get; set; }

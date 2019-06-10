@@ -10,6 +10,8 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Others;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 using YGOProAnalyticsServerTests.TestingHelpers;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServerTests.Others
 {
@@ -148,6 +150,20 @@ namespace YGOProAnalyticsServerTests.Others
             var canBeUsed = _banlistService.CanDeckBeUsedOnGivenBanlist(decklist, banlist);
 
             Assert.IsFalse(canBeUsed);
+        }
+
+        [Test]
+        public async Task GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache_ThereIsOneBanlistInDb_WeGetOneDto()
+        {
+            string banlistName = "2019.01 TCG";
+            _db.Banlists.Add(new Banlist(banlistName, 1));
+            _db.SaveChanges();
+            var _banlistService = new BanlistService(_db, _cacheMock.Object, _configMock.Object);
+
+            var dto = (await _banlistService.GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache(shouldIgnoreCache: true))
+                .First();
+
+            Assert.IsTrue(dto.Name == banlistName);
         }
 
         private static Decklist _genereateDecklistWithAllRequiredData(
