@@ -37,5 +37,13 @@ namespace YGOProAnalyticsServer.DTOs
         /// Format: yyyy-mm-dd
         /// </summary>
         public string StatisticsToDate { get; set; } = "";
+
+        /// <summary>
+        /// Gets or sets the number of results.
+        /// </summary>
+        /// <value>
+        /// The number of results.
+        /// </value>
+        public int NumberOfResults { get; set; } = -1;
     }
 }

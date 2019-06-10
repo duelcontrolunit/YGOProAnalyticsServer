@@ -85,9 +85,11 @@ namespace YGOProAnalyticsServer.Controllers
                         ((double)(decklists.Count()) / (double)(_config.DefaultNumberOfResultsPerBrowserPage))
                     )
                 );
+
+            int numberOfResultsPerPage = _getNumberOfResultsPerPage(queryParams);
             var decklistsToActualPage = decklists
                     .Skip(_config.DefaultNumberOfResultsPerBrowserPage)
-                    .Take(_config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1))
+                    .Take(numberOfResultsPerPage)
                     .ToList();
 
             var decklistDtos = _decklistToDtoConverter.Convert(
@@ -96,6 +98,24 @@ namespace YGOProAnalyticsServer.Controllers
                 statisticsTo);
 
             return new JsonResult(new DecklistBrowserResultsDTO(numberOfPages, decklistDtos));
+        }
+
+        private int _getNumberOfResultsPerPage(DecklistBrowserQueryParametersDTO queryParams)
+        {
+            int numberOfResultsPerPage = _config.DefaultNumberOfResultsPerBrowserPage * (queryParams.PageNumber - 1);
+            if (queryParams.NumberOfResults != -1)
+            {
+                if (queryParams.NumberOfResults <= _config.MaxNumberOfResultsPerBrowserPage)
+                {
+                    numberOfResultsPerPage = queryParams.NumberOfResults;
+                }
+                else
+                {
+                    numberOfResultsPerPage = _config.MaxNumberOfResultsPerBrowserPage;
+                }
+            }
+
+            return numberOfResultsPerPage;
         }
 
         [HttpGet("{id}")]

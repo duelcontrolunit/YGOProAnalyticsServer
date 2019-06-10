@@ -30,7 +30,13 @@ namespace YGOProAnalyticsServer.Services.Validators
                    && IsValidArchetypeName(queryParams)
                    && IsValidMinNumberOfGames(queryParams)
                    && IsValidStatisticsFromDate(queryParams)
-                   && IsValidStatisticsToDate(queryParams);
+                   && IsValidStatisticsToDate(queryParams)
+                   && IsValidNumberOfResults(queryParams);
+        }
+
+        public bool IsValidNumberOfResults(DecklistBrowserQueryParametersDTO queryParams)
+        {
+            return queryParams.NumberOfResults > 0 || queryParams.NumberOfResults == -1;
         }
 
         /// <inheritdoc />
