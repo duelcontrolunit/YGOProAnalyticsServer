@@ -38,13 +38,16 @@ namespace YGOProAnalyticsServerTests.Services.Validators
         [TestCase("", 5, 1, 0, null, null)]
         [TestCase("", 5, 1, -1, "29/05/2019", "29/05/2019")]
         [TestCase("", 5, 1, -10, null, null)]
+        [TestCase("", 5, 1, -1, "2019-12-12", "2019-12-12", -5)]
+        [TestCase("", 5, 1, -1, "2019-12-12", "2019-12-12", 0)]
         public void IsValid_InvalidParamOrParams_ReturnsFalse(
             string archetypeName,
             int banlistId,
             int minNumberOfGames,
             int pageNumber,
             string statisticsFromDate,
-            string statisticsToDate)
+            string statisticsToDate,
+            int numberOfResults = -1)
         {
             var dto = new DecklistBrowserQueryParametersDTO() {
                 ArchetypeName = archetypeName,
@@ -63,13 +66,17 @@ namespace YGOProAnalyticsServerTests.Services.Validators
         [TestCase("", 1, 10, 1, "2019-12-12", "")]
         [TestCase("", 100, 2, 1, "", "2019-12-12")]
         [TestCase("", 100, 2, 1, "2019-12-11", "2019-12-12")]
+        [TestCase("", 100, 2, 1, "2019-12-11", "2019-12-12", -1)]
+        [TestCase("", 100, 2, 1, "2019-12-11", "2019-12-12", 100)]
+        [TestCase("", 100, 2, 1, "2019-12-11", "2019-12-12", 1)]
         public void IsValid_ValidParams_ReturnsTrue(
           string archetypeName,
           int banlistId,
           int minNumberOfGames,
           int pageNumber,
           string statisticsFromDate,
-          string statisticsToDate)
+          string statisticsToDate,
+          int numberOfResults = -1)
         {
             var dto = new DecklistBrowserQueryParametersDTO()
             {
