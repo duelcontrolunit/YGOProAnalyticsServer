@@ -31,9 +31,9 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache(bool shouldIgnoreCache = false);
 
         /// <summary>
-        /// Finds all.
+        /// Finds all query.
         /// </summary>
-        /// <param name="minNumberOfGames">The minimum number of games.</param>
+        /// <param name="minNumberOfGames">The minimum number of games. Banlists which have no at least that number of games will be ignored.</param>
         /// <param name="statisticsFromDate">The statistics from date.</param>
         /// <param name="statisticsToDate">The statistics to date.</param>
         Task<IQueryable<Banlist>> FindAllQuery(int minNumberOfGames, DateTime? statisticsFromDate, DateTime? statisticsToDate);

@@ -4,15 +4,25 @@ using YGOProAnalyticsServer.Services.Validators.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Validators
 {
+    /// <summary>
+    /// Provide validation for <see cref=BanlistBrowserQueryParams""/>.
+    /// </summary>
+    /// <seealso cref="YGOProAnalyticsServer.Services.Validators.Interfaces.IBanlistBrowserQueryParamsValidator" />
     public class BanlistBrowserQueryParamsValidator : IBanlistBrowserQueryParamsValidator
     {
         readonly IDateValidator _dateValidator;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BanlistBrowserQueryParamsValidator"/> class.
+        /// </summary>
+        /// <param name="dateValidator">The date validator.</param>
+        /// <exception cref="ArgumentNullException">dateValidator</exception>
         public BanlistBrowserQueryParamsValidator(IDateValidator dateValidator)
         {
             _dateValidator = dateValidator ?? throw new ArgumentNullException(nameof(dateValidator));
         }
 
+        /// <inheritdoc />
         public bool IsValid(BanlistBrowserQueryParams queryParams)
         {
             return _isValidPageNumber(queryParams)
