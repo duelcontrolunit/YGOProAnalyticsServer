@@ -79,6 +79,7 @@ namespace YGOProAnalyticsServer.Services.Factories
             return deck;
         }
 
+        /// <inheritdoc />
         public DeckDTO CreateDeckDto(IEnumerable<Card> cards)
         {
             var deck = new DeckDTO();
