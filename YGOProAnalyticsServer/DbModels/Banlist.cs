@@ -47,7 +47,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// <summary>
         /// Initialize banlist.
         /// </summary>
-        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010 TCG". </param>
+        /// <param name="name">Valid name should look like: "YYYY.MM Format" for example "2010.11 TCG". </param>
         /// /// <param name="banlistNumberInLfList">Order number in lflist.</param>
         public Banlist(string name, int banlistNumberInLfList)
         {
