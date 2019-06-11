@@ -49,6 +49,7 @@ namespace YGOProAnalyticsServer
             services.AddMediatR();
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
             _addAutomapper(services);
+            _addCors(services);
             services.AddScoped<ICardBuilder, CardBuilder>();
             services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
             services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
@@ -95,6 +96,7 @@ namespace YGOProAnalyticsServer
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseMvc();
         }
@@ -108,6 +110,20 @@ namespace YGOProAnalyticsServer
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+        }
+
+        private void _addCors(IServiceCollection services)
+        {
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+               builder =>
+               {
+                   builder
+                        .AllowAnyOrigin()
+                        //.WithOrigins("http://localhost:4200")
+                        .AllowCredentials()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+               }));
         }
     }
 }
