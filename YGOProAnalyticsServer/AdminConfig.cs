@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace YGOProAnalyticsServer
 {
-    [Serializable]
     /// <inheritdoc />
     public class AdminConfig : IAdminConfig
     {
