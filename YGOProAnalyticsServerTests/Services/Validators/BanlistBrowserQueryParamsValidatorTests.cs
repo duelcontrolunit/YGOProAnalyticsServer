@@ -22,14 +22,14 @@ namespace YGOProAnalyticsServerTests.Services.Validators
             _validator = new BanlistBrowserQueryParamsValidator(_dateValidatorMock.Object);
         }
 
-        [TestCase(1, 1, 10, "", "")]
-        [TestCase(1, 1, 10, "2019-12-11", "2019-12-12")]
-        [TestCase(1, 1, -1, "2019-12-11", "2019-12-12")]
-        [TestCase(1, 1, -1, "", "2019-12-12")]
-        [TestCase(1, 1, -1, "2019-12-11", "")]
-        [TestCase(100, 100, 100, "", "")]
+        [TestCase(1, 1, 10, "", "", "")]
+        [TestCase(1, 1, 10, "2019-12-11", "2019-12-12", "abc")]
+        [TestCase(1, 1, -1, "2019-12-11", "2019-12-12", "def")]
+        [TestCase(1, 1, -1, "", "2019-12-12", "")]
+        [TestCase(1, 1, -1, "2019-12-11", "", "")]
+        [TestCase(100, 100, 100, "", "", "")]
         public void IsValid_ParamsValidValid_ReturnsTrue(int pageNumber, int minNumberOfGames, int numberOfResults,
-            string statisticsFromDate, string statisticsToDate)
+            string statisticsFromDate, string statisticsToDate, string formatOrName)
         {
             _dateValidatorMock
                 .Setup(x => x.IsValidFormat(It.IsAny<string>(), DateFormat.yyyy_MM_dd))
@@ -39,21 +39,23 @@ namespace YGOProAnalyticsServerTests.Services.Validators
                 MinNumberOfGames = minNumberOfGames,
                 NumberOfResults = numberOfResults,
                 StatisticsFromDate = statisticsFromDate,
-                StatisticsToDate = statisticsToDate
+                StatisticsToDate = statisticsToDate,
+                FormatOrName = formatOrName
             };
 
             Assert.IsTrue(_validator.IsValid(dto));
         }
 
-        [TestCase(-1, 1, 10, "", "")]
-        [TestCase(0, 0, -2, null, null)]
-        [TestCase(0, 1, 10, "", "")]
-        [TestCase(1, 0, 10, "", "")]
-        [TestCase(1, 1, -2, "", "")]
-        [TestCase(1, 1, 10, null, "")]
-        [TestCase(1, 1, 10, "", null)]
+        [TestCase(-1, 1, 10, "", "", "")]
+        [TestCase(0, 0, -2, null, null, "")]
+        [TestCase(0, 1, 10, "", "", "")]
+        [TestCase(1, 0, 10, "", "", "")]
+        [TestCase(1, 1, -2, "", "", "")]
+        [TestCase(1, 1, 10, null, "", "")]
+        [TestCase(1, 1, 10, "", null, "")]
+        [TestCase(1, 1, 10, "", "", null)]
         public void IsValid_InvaldParams_ReturnsFalse(int pageNumber, int minNumberOfGames, int numberOfResults,
-            string statisticsFromDate, string statisticsToDate)
+            string statisticsFromDate, string statisticsToDate, string formatOrName)
         {
             _dateValidatorMock
                .Setup(x => x.IsValidFormat(It.IsAny<string>(), DateFormat.yyyy_MM_dd))
@@ -64,7 +66,8 @@ namespace YGOProAnalyticsServerTests.Services.Validators
                 MinNumberOfGames = minNumberOfGames,
                 NumberOfResults = numberOfResults,
                 StatisticsFromDate = statisticsFromDate,
-                StatisticsToDate = statisticsToDate
+                StatisticsToDate = statisticsToDate,
+                FormatOrName = formatOrName
             };
             Assert.IsFalse(_validator.IsValid(dto));
         }
