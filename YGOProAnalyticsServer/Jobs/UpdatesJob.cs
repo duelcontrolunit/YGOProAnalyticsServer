@@ -19,10 +19,12 @@ namespace YGOProAnalyticsServer.Jobs
         public bool RunImmediately { get; } = false;
 
         readonly IServiceScopeFactory _scopeFactory;
+        readonly IAdminConfig _adminConfig;
 
-        public UpdatesJob(IServiceScopeFactory scopeFactory)
+        public UpdatesJob(IServiceScopeFactory scopeFactory, IAdminConfig adminConfig)
         {
             _scopeFactory = scopeFactory;
+            _adminConfig = adminConfig;
         }
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -31,6 +33,7 @@ namespace YGOProAnalyticsServer.Jobs
             {
                 try
                 {
+                    await _adminConfig.LoadConfigFromFile(AdminConfig.Path);
                     var banlistUpdater = scope.ServiceProvider.GetRequiredService<IBanlistDataToBanlistUpdater>();
                     var cardsAndArchetypesUpdater = scope.ServiceProvider.GetRequiredService<ICardsDataToCardsAndArchetypesUpdater>();
                     var adminConfig = scope.ServiceProvider.GetRequiredService<IAdminConfig>();
