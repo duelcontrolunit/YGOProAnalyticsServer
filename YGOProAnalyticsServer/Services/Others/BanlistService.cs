@@ -158,6 +158,7 @@ namespace YGOProAnalyticsServer.Services.Others
         {
             var banlistQuery = _db
                 .Banlists
+                .Include(x => x.Statistics)
                 .Where(x => x.Name.ToLower().Contains(formatOrName.ToLower()));
 
             if(statisticsFromDate != null && statisticsToDate == null)
@@ -168,7 +169,7 @@ namespace YGOProAnalyticsServer.Services.Others
                             .Where(y => y.DateWhenBanlistWasUsed >= statisticsFromDate)
                             .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
                     )
-                    .OrderBy(x => x.Statistics
+                    .OrderByDescending(x => x.Statistics
                         .Where(y => y.DateWhenBanlistWasUsed >= statisticsFromDate)
                         .Sum(y => y.HowManyTimesWasUsed)
                      );
@@ -182,7 +183,7 @@ namespace YGOProAnalyticsServer.Services.Others
                             .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate)
                             .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
                     )
-                     .OrderBy(x => x.Statistics
+                     .OrderByDescending(x => x.Statistics
                         .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate)
                         .Sum(y => y.HowManyTimesWasUsed)
                      );
@@ -197,7 +198,7 @@ namespace YGOProAnalyticsServer.Services.Others
                                         && y.DateWhenBanlistWasUsed >= statisticsFromDate)
                             .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
                     )
-                    .OrderBy(x => x.Statistics
+                    .OrderByDescending(x => x.Statistics
                         .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate
                                         && y.DateWhenBanlistWasUsed >= statisticsFromDate)
                        .Sum(y => y.HowManyTimesWasUsed)
@@ -207,7 +208,7 @@ namespace YGOProAnalyticsServer.Services.Others
             {
                 return banlistQuery
                     .Where(x => x.Statistics.Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames)
-                     .OrderBy(x => x.Statistics
+                     .OrderByDescending(x => x.Statistics
                        .Sum(y => y.HowManyTimesWasUsed)
                     );
             }   
