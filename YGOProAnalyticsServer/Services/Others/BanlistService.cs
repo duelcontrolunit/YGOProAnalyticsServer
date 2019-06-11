@@ -100,12 +100,19 @@ namespace YGOProAnalyticsServer.Services.Others
 
                    .Include(Banlist.IncludeWithForbiddenCards)
                    .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.Archetype)}")
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.MonsterCard)}")
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.LinkMonsterCard)}")
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.PendulumMonsterCard)}")
 
                    .Include(Banlist.IncludeWithLimitedCards)
                    .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.Archetype)}")
+                   .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.LinkMonsterCard)}")
+                   .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.PendulumMonsterCard)}")
 
                    .Include(Banlist.IncludeWithSemiLimitedCards)
                    .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.Archetype)}")
+                   .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.LinkMonsterCard)}")
+                   .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.PendulumMonsterCard)}")
 
                    .Include(x => x.Statistics)
                    .FirstOrDefaultAsync();

@@ -6,6 +6,8 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Converters;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using System.Linq;
+using Moq;
+using YGOProAnalyticsServer.Services.Factories.Interfaces;
 
 namespace YGOProAnalyticsServerTests.Services.Converters
 {
@@ -14,11 +16,13 @@ namespace YGOProAnalyticsServerTests.Services.Converters
     {
         IBanlistToBanlistDTOConverter _converter;
         Banlist _banlist;
+        Mock<IDecksDtosFactory> _decksDtosFactory;
 
         [SetUp]
         public void SetUp()
         {
-            _converter = new BanlistToBanlistDTOConverter();
+            _decksDtosFactory = new Mock<IDecksDtosFactory>();
+            _converter = new BanlistToBanlistDTOConverter(_decksDtosFactory.Object);
             _banlist = new Banlist("2019.11 TCG", 1);
             var statistics1 = BanlistStatistics.Create(new DateTime(2020, 4, 29), _banlist);
             statistics1.IncrementHowManyTimesWasUsed();

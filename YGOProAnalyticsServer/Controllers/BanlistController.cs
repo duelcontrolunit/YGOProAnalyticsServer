@@ -43,7 +43,8 @@ namespace YGOProAnalyticsServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var banlist  = await _banlistService.GetBanlistWithAllCardsIncludedAsync(id);
+            var banlist  = await _banlistService
+                .GetBanlistWithAllCardsAndAllCardsDataAsync(id);
             if(banlist == null)
             {
                 return NotFound("There is no decklist with given id.");
