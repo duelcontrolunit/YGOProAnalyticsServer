@@ -4,14 +4,23 @@ using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
 using System;
+using YGOProAnalyticsServer.Services.Factories.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Converters
 {
+
     /// <summary>
     /// Provide convert from banlist to dto feature.
     /// </summary>
     public class BanlistToBanlistDTOConverter : IBanlistToBanlistDTOConverter
     {
+        readonly IDecksDtosFactory _decksDtosFactory;
+
+        public BanlistToBanlistDTOConverter(IDecksDtosFactory decksDtosFactory)
+        {
+            _decksDtosFactory = decksDtosFactory ?? throw new ArgumentNullException(nameof(decksDtosFactory));
+        }
+
         /// <inheritdoc />
         public IEnumerable<BanlistWithHowManyWasUsed> Convert(
             IEnumerable<Banlist> banlistToConvert,
@@ -32,6 +41,33 @@ namespace YGOProAnalyticsServer.Services.Converters
             }
 
             return dtos;
+        }
+
+        /// <inheritdoc />
+        public BanlistWithStatisticsDTO Convert(Banlist banlistToConvert)
+        {
+            return new BanlistWithStatisticsDTO(
+                    name: banlistToConvert.Name,
+                    format: banlistToConvert.Format,
+                    releaseDate: banlistToConvert.ReleaseDate,
+                    bannedCards: _decksDtosFactory.CreateDeckDto(banlistToConvert.ForbiddenCards),
+                    limitedCards: _decksDtosFactory.CreateDeckDto(banlistToConvert.LimitedCards),
+                    semiLimitedCards: _decksDtosFactory.CreateDeckDto(banlistToConvert.SemiLimitedCards),
+                    statistics: _getBanlistStatisticsDtos(banlistToConvert)
+                );
+        }
+
+        private List<BanlistStatisticsDTO> _getBanlistStatisticsDtos(Banlist banlistToConvert)
+        {
+            var statistics = new List<BanlistStatisticsDTO>();
+            foreach (var statistic in banlistToConvert.Statistics)
+            {
+                statistics.Add(new BanlistStatisticsDTO(
+                    statistic.DateWhenBanlistWasUsed,
+                    statistic.HowManyTimesWasUsed));
+            }
+
+            return statistics;
         }
 
         private int _howManyTimesWasUsedInRange(Banlist banlist, DateTime? statisticsFrom, DateTime? statisticsTo)

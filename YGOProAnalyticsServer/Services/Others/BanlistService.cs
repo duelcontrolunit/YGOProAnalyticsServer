@@ -92,6 +92,26 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
+        public async Task<Banlist> GetBanlistWithAllCardsAndAllCardsDataAsync(int banlistId)
+        {
+            return await _db
+                   .Banlists
+                   .Where(x => x.Id == banlistId)
+
+                   .Include(Banlist.IncludeWithForbiddenCards)
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.Archetype)}")
+
+                   .Include(Banlist.IncludeWithLimitedCards)
+                   .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.Archetype)}")
+
+                   .Include(Banlist.IncludeWithSemiLimitedCards)
+                   .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.Archetype)}")
+
+                   .Include(x => x.Statistics)
+                   .FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc />
         public bool CanDeckBeUsedOnGivenBanlist(Decklist decklist, Banlist banlist)
         {
             var countedCards = _countCards(decklist);

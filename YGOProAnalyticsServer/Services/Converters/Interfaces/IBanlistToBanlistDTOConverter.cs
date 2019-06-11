@@ -20,5 +20,11 @@ namespace YGOProAnalyticsServer.Services.Converters.Interfaces
             IEnumerable<Banlist> banlistToConvert,
             DateTime? statisticsFrom = null,
             DateTime? statisticsTo = null);
+
+        /// <summary>
+        /// Converts the specified banlist to requested type.
+        /// </summary>
+        /// <param name="banlistToConvert">The banlist to convert.</param>
+        BanlistWithStatisticsDTO Convert(Banlist banlistToConvert);
     }
 }

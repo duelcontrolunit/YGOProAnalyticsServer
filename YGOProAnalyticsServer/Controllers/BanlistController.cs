@@ -40,6 +40,20 @@ namespace YGOProAnalyticsServer.Controllers
             return Ok(await _banlistService.GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache());
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var banlist  = await _banlistService.GetBanlistWithAllCardsIncludedAsync(id);
+            if(banlist == null)
+            {
+                return NotFound("There is no decklist with given id.");
+            }
+
+            var dto = _banlistToDtoConverter.Convert(banlist);
+
+            return Ok(dto);
+        }
+
         [HttpGet]
         public async Task<IActionResult> FindAll([FromQuery] BanlistBrowserQueryParams queryParams)
         {

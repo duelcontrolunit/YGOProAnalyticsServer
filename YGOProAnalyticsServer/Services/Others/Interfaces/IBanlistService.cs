@@ -39,5 +39,11 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <param name="statisticsToDate">The statistics to date.</param>
         /// <returns></returns>
         Task<IQueryable<Banlist>> FindAllQuery(int minNumberOfGames, string formatOrName, DateTime? statisticsFromDate, DateTime? statisticsToDate);
+
+        /// <summary>
+        /// Gets the banlist with all cards and all cards data asynchronous.
+        /// </summary>
+        /// <param name="banlistId">The banlist identifier.</param>
+        Task<Banlist> GetBanlistWithAllCardsAndAllCardsDataAsync(int banlistId);
     }
 }
