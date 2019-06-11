@@ -1,4 +1,6 @@
-﻿namespace YGOProAnalyticsServer
+﻿using System.Threading.Tasks;
+
+namespace YGOProAnalyticsServer
 {
     /// <summary>
     /// It provide options which should be set up by server Admin.
@@ -114,5 +116,12 @@
         /// The archetype absolute cache expiration in hours.
         /// </value>
         int ArchetypeAbsoluteCacheExpirationInHours { get; }
+
+        /// <summary>
+        /// Loads the configuration of the config from json file.
+        /// </summary>
+        /// <param name="configPath">The path to config.json file.</param>
+        /// <returns></returns>
+        Task LoadConfigFromFile(string configPath);
     }
 }
