@@ -31,5 +31,10 @@ namespace YGOProAnalyticsServer.DTOs
         /// Empty string is special value which mean "there is no statistics from date filter"
         /// </summary>
         public string StatisticsToDate { get; set; } = "";
+
+        /// <summary>
+        /// For example TCG, OCG, Traditional or 2019.05 TCG
+        /// </summary>
+        public string FormatOrName { get; set; } = "";
     }
 }

@@ -29,7 +29,13 @@ namespace YGOProAnalyticsServer.Services.Validators
                    && _isValidNumberOfResults(queryParams)
                    && _isValidMinNumberOfGames(queryParams)
                    && _isValidStatisticsDateFrom(queryParams)
-                   && _isValisStatisticsToDate(queryParams);
+                   && _isValisStatisticsToDate(queryParams)
+                   && _isValidFormatOrName(queryParams);
+        }
+
+        private bool _isValidFormatOrName(BanlistBrowserQueryParams queryParams)
+        {
+            return queryParams.FormatOrName != null;
         }
 
         private bool _isValisStatisticsToDate(BanlistBrowserQueryParams queryParams)

@@ -125,10 +125,14 @@ namespace YGOProAnalyticsServer.Services.Others
         /// <inheritdoc />
         public async Task<IQueryable<Banlist>> FindAllQuery(
             int minNumberOfGames,
-            DateTime? statisticsFromDate,
-            DateTime? statisticsToDate)
+            string formatOrName = "",
+            DateTime? statisticsFromDate = null,
+            DateTime? statisticsToDate = null)
         {
-            var banlistQuery = _db.Banlists;
+            var banlistQuery = _db
+                .Banlists
+                .Where(x => x.Name.ToLower().Contains(formatOrName.ToLower()));
+
             if(statisticsFromDate != null && statisticsToDate == null)
             {
                 return banlistQuery

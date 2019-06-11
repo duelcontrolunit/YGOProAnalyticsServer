@@ -33,9 +33,11 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <summary>
         /// Finds all query.
         /// </summary>
-        /// <param name="minNumberOfGames">The minimum number of games. Banlists which have no at least that number of games will be ignored.</param>
+        /// <param name="minNumberOfGames">The minimum number of games.</param>
+        /// <param name="formatOrName">Name of the format or.</param>
         /// <param name="statisticsFromDate">The statistics from date.</param>
         /// <param name="statisticsToDate">The statistics to date.</param>
-        Task<IQueryable<Banlist>> FindAllQuery(int minNumberOfGames, DateTime? statisticsFromDate, DateTime? statisticsToDate);
+        /// <returns></returns>
+        Task<IQueryable<Banlist>> FindAllQuery(int minNumberOfGames, string formatOrName, DateTime? statisticsFromDate, DateTime? statisticsToDate);
     }
 }

@@ -66,7 +66,7 @@ namespace YGOProAnalyticsServer.DbModels
         public int Id { get; protected set; }
 
         /// <summary>
-        /// Valid name should look like: "YYYY.MM Format" for example "2010 TCG".
+        /// Valid name should look like: "YYYY.MM Format" for example "2010.01 TCG".
         /// </summary>
         public string Name { get; protected set; }
 

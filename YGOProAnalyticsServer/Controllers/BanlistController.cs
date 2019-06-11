@@ -71,6 +71,7 @@ namespace YGOProAnalyticsServer.Controllers
             var banlists = await _banlistService
                 .FindAllQuery(
                     minNumberOfGames: queryParams.MinNumberOfGames,
+                    formatOrName: queryParams.FormatOrName,
                     statisticsFromDate: statisticsFrom,
                     statisticsToDate: statisticsTo
                 );
