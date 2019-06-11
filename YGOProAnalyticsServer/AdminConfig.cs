@@ -12,59 +12,59 @@ namespace YGOProAnalyticsServer
     {
         [JsonProperty(nameof(CardApiURL))]
         ///<inheritdoc />
-        public string CardApiURL {get; protected set; } = "https://db.ygoprodeck.com/api/v3/cardinfo.php";
+        public string CardApiURL { get; protected set; } = "https://db.ygoprodeck.com/api/v3/cardinfo.php";
 
         [JsonProperty(nameof(DefaultBanlistName))]
         ///<inheritdoc />
-        public string DefaultBanlistName {get; protected set; } = "2019.04 TCG";
+        public string DefaultBanlistName { get; protected set; } = "2019.04 TCG";
 
         [JsonProperty(nameof(FTPUser))]
         ///<inheritdoc />
-        public string FTPUser {get; protected set; } = "";
+        public string FTPUser { get; protected set; } = "";
 
         [JsonProperty(nameof(FTPPassword))]
         ///<inheritdoc />
-        public string FTPPassword {get; protected set; } = "";
+        public string FTPPassword { get; protected set; } = "";
 
         [JsonProperty(nameof(YgoProListOfRoomsUrl))]
         ///<inheritdoc />
-        public string YgoProListOfRoomsUrl {get; protected set; } = "http://szefoserver.ddns.net:7211/api/getrooms?&pass=";
+        public string YgoProListOfRoomsUrl { get; protected set; } = "http://szefoserver.ddns.net:7211/api/getrooms?&pass=";
 
         [JsonProperty(nameof(DataFolderLocation))]
         ///<inheritdoc />
-        public string DataFolderLocation {get; protected set; } = "DataFromServer";
+        public string DataFolderLocation { get; protected set; } = "DataFromServer";
 
         [JsonProperty(nameof(BanlistApiURL))]
         ///<inheritdoc />
-        public string BanlistApiURL {get; protected set; } = "https://raw.githubusercontent.com/szefo09/updateYGOPro2/master/lflist.conf";
+        public string BanlistApiURL { get; protected set; } = "https://raw.githubusercontent.com/szefo09/updateYGOPro2/master/lflist.conf";
 
         [JsonProperty(nameof(ServerDataEndpointURL))]
         ///<inheritdoc />
-        public string ServerDataEndpointURL {get; protected set; } = "";
+        public string ServerDataEndpointURL { get; protected set; } = "";
 
         [JsonProperty(nameof(DefaultNumberOfResultsPerBrowserPage))]
         ///<inheritdoc />
-        public int DefaultNumberOfResultsPerBrowserPage {get; protected set; } = 100;
+        public int DefaultNumberOfResultsPerBrowserPage { get; protected set; } = 100;
 
         [JsonProperty(nameof(BanlistSlidingCacheExpirationInHours))]
         ///<inheritdoc />
-        public int BanlistSlidingCacheExpirationInHours {get; protected set; } = 2;
+        public int BanlistSlidingCacheExpirationInHours { get; protected set; } = 2;
 
         [JsonProperty(nameof(BanlistAbsoluteCacheExpirationInHours))]
         ///<inheritdoc />
-        public int BanlistAbsoluteCacheExpirationInHours {get; protected set; } = 23;
+        public int BanlistAbsoluteCacheExpirationInHours { get; protected set; } = 23;
 
         [JsonProperty(nameof(ArchetypeSlidingCacheExpirationInHours))]
         ///<inheritdoc />
-        public int ArchetypeSlidingCacheExpirationInHours {get; protected set; } = 2;
+        public int ArchetypeSlidingCacheExpirationInHours { get; protected set; } = 2;
 
         [JsonProperty(nameof(ArchetypeAbsoluteCacheExpirationInHours))]
         ///<inheritdoc />
-        public int ArchetypeAbsoluteCacheExpirationInHours {get; protected set; } = 23;
+        public int ArchetypeAbsoluteCacheExpirationInHours { get; protected set; } = 23;
 
         [JsonProperty(nameof(MaxNumberOfResultsPerBrowserPage))]
         ///<inheritdoc />
-        public int MaxNumberOfResultsPerBrowserPage {get; protected set; } = 100;
+        public int MaxNumberOfResultsPerBrowserPage { get; protected set; } = 100;
 
         /// <summary>
         /// Path to the config file.
