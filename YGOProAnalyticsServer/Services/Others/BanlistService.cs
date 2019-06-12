@@ -92,6 +92,33 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
+        public async Task<Banlist> GetBanlistWithAllCardsAndAllCardsDataAsync(int banlistId)
+        {
+            return await _db
+                   .Banlists
+                   .Where(x => x.Id == banlistId)
+
+                   .Include(Banlist.IncludeWithForbiddenCards)
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.Archetype)}")
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.MonsterCard)}")
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.LinkMonsterCard)}")
+                   .Include($"{Banlist.IncludeWithForbiddenCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.PendulumMonsterCard)}")
+
+                   .Include(Banlist.IncludeWithLimitedCards)
+                   .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.Archetype)}")
+                   .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.LinkMonsterCard)}")
+                   .Include($"{Banlist.IncludeWithLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.PendulumMonsterCard)}")
+
+                   .Include(Banlist.IncludeWithSemiLimitedCards)
+                   .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.Archetype)}")
+                   .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.LinkMonsterCard)}")
+                   .Include($"{Banlist.IncludeWithSemiLimitedCards}.{nameof(Card.MonsterCard)}.{nameof(MonsterCard.PendulumMonsterCard)}")
+
+                   .Include(x => x.Statistics)
+                   .FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc />
         public bool CanDeckBeUsedOnGivenBanlist(Decklist decklist, Banlist banlist)
         {
             var countedCards = _countCards(decklist);
@@ -120,6 +147,71 @@ namespace YGOProAnalyticsServer.Services.Others
             return !isForbiddenCardInDecklist
                    && !isMoreThanOneCopyOfLimitedCardInDeck
                    && !isMoreThanTwoCopiesOfSemiLimitedCardInDeck;
+        }
+
+        /// <inheritdoc />
+        public async Task<IQueryable<Banlist>> FindAllQuery(
+            int minNumberOfGames,
+            string formatOrName = "",
+            DateTime? statisticsFromDate = null,
+            DateTime? statisticsToDate = null)
+        {
+            var banlistQuery = _db
+                .Banlists
+                .Include(x => x.Statistics)
+                .Where(x => x.Name.ToLower().Contains(formatOrName.ToLower()));
+
+            if(statisticsFromDate != null && statisticsToDate == null)
+            {
+                return banlistQuery
+                    .Where(x => x.
+                        Statistics
+                            .Where(y => y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                            .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
+                    )
+                    .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                        .Sum(y => y.HowManyTimesWasUsed)
+                     );
+            }
+            else
+            if (statisticsFromDate == null && statisticsToDate != null)
+            {
+                return banlistQuery
+                    .Where(x => x.
+                        Statistics
+                            .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate)
+                            .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
+                    )
+                     .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate)
+                        .Sum(y => y.HowManyTimesWasUsed)
+                     );
+            }
+            else
+            if (statisticsFromDate != null && statisticsToDate != null)
+            {
+                return banlistQuery
+                    .Where(x => x.
+                        Statistics
+                            .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate 
+                                        && y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                            .Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames
+                    )
+                    .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenBanlistWasUsed <= statisticsToDate
+                                        && y.DateWhenBanlistWasUsed >= statisticsFromDate)
+                       .Sum(y => y.HowManyTimesWasUsed)
+                    );
+            }
+            else
+            {
+                return banlistQuery
+                    .Where(x => x.Statistics.Sum(y => y.HowManyTimesWasUsed) >= minNumberOfGames)
+                     .OrderByDescending(x => x.Statistics
+                       .Sum(y => y.HowManyTimesWasUsed)
+                    );
+            }   
         }
 
         private bool _deckContainsNotAllowedCards(
@@ -173,7 +265,7 @@ namespace YGOProAnalyticsServer.Services.Others
                 }
             }
         }
-
+  
         /// <summary>
         /// CardId with info about how many copies this card is in deck.
         /// </summary>

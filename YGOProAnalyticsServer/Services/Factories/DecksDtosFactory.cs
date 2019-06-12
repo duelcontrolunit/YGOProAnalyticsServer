@@ -65,7 +65,36 @@ namespace YGOProAnalyticsServer.Services.Factories
             foreach (var card in decklist.SideDeck)
             {
                 var lowerCardType = card.Type.ToLower();
-                handleMonsterFor(deck, card, lowerCardType);
+                if (lowerCardType.Contains("monster"))
+                {
+                    handleMonsterFor(deck, card, lowerCardType);
+                }
+                else
+                {
+                    handleTraps(deck, card, lowerCardType);
+                    handleSpells(deck, card, lowerCardType);
+                }
+            }
+
+            return deck;
+        }
+
+        /// <inheritdoc />
+        public DeckDTO CreateDeckDto(IEnumerable<Card> cards)
+        {
+            var deck = new DeckDTO();
+            foreach (var card in cards)
+            {
+                var lowerCardType = card.Type.ToLower();
+                if (lowerCardType.Contains("monster"))
+                {
+                    handleMonsterFor(deck, card, lowerCardType);
+                }
+                else
+                {
+                    handleTraps(deck, card, lowerCardType);
+                    handleSpells(deck, card, lowerCardType);
+                }
             }
 
             return deck;

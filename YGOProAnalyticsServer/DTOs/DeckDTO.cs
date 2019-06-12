@@ -11,7 +11,7 @@ namespace YGOProAnalyticsServer.DTOs
         IFusionPendulumMonsterContainer, ILinkMonstersContainer, IXYZMonstersContainer,
         INonExtraPendulumEffectMonster, INonExtraPendulumNormalMonster, IXYZPendulumContainer,
         ISynchroPendulumMonsterContainer, ISynchroMonstersContainer, IRitualMonstersContainer,
-        INormalMonstersContainer
+        INormalMonstersContainer, ISpellCardsContainer, ITrapCardsContainer
     {
         public List<MonsterCardDTO> NormalMonsters { get; set; } = new List<MonsterCardDTO>();
         public List<MonsterCardDTO> EffectMonsters { get; set; } = new List<MonsterCardDTO>();
