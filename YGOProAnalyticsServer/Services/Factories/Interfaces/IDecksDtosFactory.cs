@@ -1,4 +1,5 @@
-﻿using YGOProAnalyticsServer.DbModels;
+﻿using System.Collections.Generic;
+using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 
 namespace YGOProAnalyticsServer.Services.Factories.Interfaces
@@ -28,5 +29,12 @@ namespace YGOProAnalyticsServer.Services.Factories.Interfaces
         /// <param name="decklist">The decklist.</param>
         /// <returns><see cref="DeckDTO"/></returns>
         DeckDTO CreateDeckDto(Decklist decklist);
+
+        /// <summary>
+        /// Creates the <see cref="DeckDTO"/>.
+        /// </summary>
+        /// <param name="decklist">The decklist.</param>
+        /// <returns><see cref="DeckDTO"/></returns>
+        DeckDTO CreateDeckDto(IEnumerable<Card> cards);
     }
 }

@@ -73,6 +73,8 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IDecklistBrowserQueryParametersDtoValidator, DecklistBrowserQueryParametersDtoValidator>();
             services.AddScoped<IArchetypeService, ArchetypeService>();
             services.AddScoped<INumberOfResultsHelper, NumberOfResultsHelper>();
+            services.AddScoped<IBanlistBrowserQueryParamsValidator, BanlistBrowserQueryParamsValidator>();
+            services.AddScoped<IBanlistToBanlistDTOConverter, BanlistToBanlistDTOConverter>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 

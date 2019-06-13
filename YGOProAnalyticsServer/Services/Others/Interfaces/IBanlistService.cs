@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
@@ -27,5 +29,21 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <returns>Banlist with all cards included.</returns>
         Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId);
         Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache(bool shouldIgnoreCache = false);
+
+        /// <summary>
+        /// Finds all query.
+        /// </summary>
+        /// <param name="minNumberOfGames">The minimum number of games.</param>
+        /// <param name="formatOrName">Name of the format or.</param>
+        /// <param name="statisticsFromDate">The statistics from date.</param>
+        /// <param name="statisticsToDate">The statistics to date.</param>
+        /// <returns></returns>
+        Task<IQueryable<Banlist>> FindAllQuery(int minNumberOfGames, string formatOrName, DateTime? statisticsFromDate, DateTime? statisticsToDate);
+
+        /// <summary>
+        /// Gets the banlist with all cards and all cards data asynchronous.
+        /// </summary>
+        /// <param name="banlistId">The banlist identifier.</param>
+        Task<Banlist> GetBanlistWithAllCardsAndAllCardsDataAsync(int banlistId);
     }
 }
