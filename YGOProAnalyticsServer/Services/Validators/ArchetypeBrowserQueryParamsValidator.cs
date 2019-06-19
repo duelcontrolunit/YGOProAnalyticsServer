@@ -25,11 +25,11 @@ namespace YGOProAnalyticsServer.Services.Validators
         public bool IsValid(ArchetypeBrowserQueryParams queryParams)
         {
             return _isValidPageNumber(queryParams)
-                   || _isValidMinNumberOfGames(queryParams)
-                   || _isValidNumberOfResults(queryParams)
-                   || _isValidStatisticsFromDate(queryParams)
-                   || _isValidStatisticsToDate(queryParams)
-                   || _isValidArchetypeName(queryParams);
+                   && _isValidMinNumberOfGames(queryParams)
+                   && _isValidNumberOfResults(queryParams)
+                   && _isValidStatisticsFromDate(queryParams)
+                   && _isValidStatisticsToDate(queryParams)
+                   && _isValidArchetypeName(queryParams);
         }
 
         private bool _isValidArchetypeName(ArchetypeBrowserQueryParams queryParams)

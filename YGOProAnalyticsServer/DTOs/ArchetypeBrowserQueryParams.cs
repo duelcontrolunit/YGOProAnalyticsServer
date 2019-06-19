@@ -18,11 +18,13 @@
         public int NumberOfResults { get; set; } = -1;
 
         /// <summary>
+        /// Format: yyyy-mm-dd .
         /// Empty string is special value which mean "there is no statistics from date filter"
         /// </summary>
         public string StatisticsFromDate { get; set; } = "";
 
         /// <summary>
+        /// Format: yyyy-mm-dd . 
         /// Empty string is special value which mean "there is no statistics from date filter"
         /// </summary>
         public string StatisticsToDate { get; set; } = "";
