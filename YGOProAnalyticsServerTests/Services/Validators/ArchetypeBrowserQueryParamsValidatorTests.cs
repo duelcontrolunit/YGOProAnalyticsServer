@@ -19,6 +19,10 @@ namespace YGOProAnalyticsServerTests.Services.Validators
         public void SetUp()
         {
             _dateValidatorMock = new Mock<IDateValidator>();
+            // because I dont want test IDateValidator twice
+            _dateValidatorMock
+                .Setup(x => x.IsValidFormat(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(true);
             _validator = new ArchetypeBrowserQueryParamsValidator(_dateValidatorMock.Object);
         }
 
@@ -63,9 +67,6 @@ namespace YGOProAnalyticsServerTests.Services.Validators
                string statisticsToDate
            )
         {
-            _dateValidatorMock
-                .Setup(x => x.IsValidFormat(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(true);
             var dto = new ArchetypeBrowserQueryParams()
             {
                 PageNumber = pageNumber,
