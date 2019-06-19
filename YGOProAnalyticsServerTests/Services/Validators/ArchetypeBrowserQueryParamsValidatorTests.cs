@@ -63,6 +63,9 @@ namespace YGOProAnalyticsServerTests.Services.Validators
                string statisticsToDate
            )
         {
+            _dateValidatorMock
+                .Setup(x => x.IsValidFormat(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(true);
             var dto = new ArchetypeBrowserQueryParams()
             {
                 PageNumber = pageNumber,
