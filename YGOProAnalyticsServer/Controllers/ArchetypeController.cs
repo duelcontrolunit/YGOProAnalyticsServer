@@ -48,6 +48,9 @@ namespace YGOProAnalyticsServer.Controllers
             _archetypeToDtoConverter = archetypeToDtoConverter ?? throw new ArgumentNullException(nameof(archetypeToDtoConverter));
         }
 
+        /// <summary>
+        /// Warning! It returns only pure archetypes.
+        /// </summary>
         [HttpGet("ArchetypeListWithIdsAndNames")]
         public async Task<IActionResult> GetArchetypeListWithIdsAndNames()
         {
