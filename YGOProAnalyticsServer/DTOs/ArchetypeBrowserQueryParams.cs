@@ -25,7 +25,7 @@
 
         /// <summary>
         /// Format: yyyy-mm-dd . 
-        /// Empty string is special value which mean "there is no statistics from date filter"
+        /// Empty string is special value which mean "there is no statistics from to filter"
         /// </summary>
         public string StatisticsToDate { get; set; } = "";
 
