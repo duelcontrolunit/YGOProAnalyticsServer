@@ -75,6 +75,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<INumberOfResultsHelper, NumberOfResultsHelper>();
             services.AddScoped<IBanlistBrowserQueryParamsValidator, BanlistBrowserQueryParamsValidator>();
             services.AddScoped<IBanlistToBanlistDTOConverter, BanlistToBanlistDTOConverter>();
+            services.AddScoped<IServerActivityUpdater, ServerActivityUpdater>();
 
             services.AddSingleton<IAdminConfig, AdminConfig>();
 
