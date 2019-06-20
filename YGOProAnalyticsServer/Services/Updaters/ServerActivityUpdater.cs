@@ -17,7 +17,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
     public class ServerActivityUpdater : IServerActivityUpdater
     {
         //Not DI dependencies
-        IEnumerable<ServerActivityStatistics> _serverActivityStatistics;
+        ICollection<ServerActivityStatistics> _serverActivityStatistics;
 
         //DI dependencies
         readonly YgoProAnalyticsDatabase _db;
@@ -50,6 +50,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                     serverActivityStatistics = new ServerActivityStatistics(fromDate.Date);
                     serverActivityStatistics.NumberOfGames += duelLogs.Count();
                     _db.ServerActivityStatistics.Add(serverActivityStatistics);
+                    _serverActivityStatistics.Add(serverActivityStatistics);
                 }
                 else
                 {
