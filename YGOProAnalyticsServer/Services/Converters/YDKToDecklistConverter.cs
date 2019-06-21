@@ -17,7 +17,7 @@ namespace YGOProAnalyticsServer.Services.Converters
         /// <param name="db">The database.</param>
         public YDKToDecklistConverter(YgoProAnalyticsDatabase db)
         {
-            cards = db.Cards.AsNoTracking().ToList();
+            cards = db.Cards.ToList();
         }
 
         /// <inheritdoc />
