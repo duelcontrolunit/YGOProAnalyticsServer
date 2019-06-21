@@ -98,6 +98,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                         if(decklist.WhenDecklistWasFirstPlayed < decklistFromDb.WhenDecklistWasFirstPlayed)
                         {
                             decklistFromDb.WhenDecklistWasFirstPlayed = decklist.WhenDecklistWasFirstPlayed;
+                            decklistFromDb.Name = $"{decklist.Archetype.Name}_{decklist.WhenDecklistWasFirstPlayed}";
                         }
                         _updateDecklistStatistics(decklist, decklistFromDb);
                         break;
