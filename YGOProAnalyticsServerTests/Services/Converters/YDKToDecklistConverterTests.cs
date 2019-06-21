@@ -30,11 +30,21 @@ namespace YGOProAnalyticsServerTests.Services.Converters
                 _addMokeyMokeyKing(dbInMemory, archetype);
                 _addPankratops(dbInMemory, archetype);
                 await dbInMemory.SaveChangesAsync();
+
                 _converter = new YDKToDecklistConverter(dbInMemory);
                 var decklist = _converter.Convert(GetProperYDKString());
-                Assert.Greater(decklist.MainDeck.Count, 0);
-                Assert.Greater(decklist.ExtraDeck.Count, 0);
-                Assert.Greater(decklist.SideDeck.Count, 1);
+                decklist.Name = "Test";
+                decklist.Archetype = new Archetype(Archetype.Default, true);
+                dbInMemory.Decklists.Add(decklist);
+                await dbInMemory.SaveChangesAsync();
+                var decklistFromDb = dbInMemory.Decklists.First();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.AreEqual(decklistFromDb.MainDeck, decklist.MainDeck);
+                    Assert.AreEqual(decklistFromDb.ExtraDeck, decklist.ExtraDeck);
+                    Assert.AreEqual(decklistFromDb.SideDeck, decklist.SideDeck);
+                });
             }
         }
         private string GetProperYDKString()

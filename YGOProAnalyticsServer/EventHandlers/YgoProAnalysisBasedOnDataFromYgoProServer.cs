@@ -95,7 +95,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                     if (_archetypeAndDecklistAnalyzer.CheckIfDecklistsAreDuplicate(decklist, decklistFromDb))
                     {
                         isDuplicate = true;
-                        if(decklist.WhenDecklistWasFirstPlayed < decklistFromDb.WhenDecklistWasFirstPlayed)
+                        if (decklist.WhenDecklistWasFirstPlayed < decklistFromDb.WhenDecklistWasFirstPlayed)
                         {
                             decklistFromDb.WhenDecklistWasFirstPlayed = decklist.WhenDecklistWasFirstPlayed;
                             decklistFromDb.Name = $"{decklist.Archetype.Name}_{decklist.WhenDecklistWasFirstPlayed}";
@@ -234,8 +234,6 @@ namespace YGOProAnalyticsServer.EventHandlers
         private bool isBanlistOk(DuelLog duelLog)
         {
             return _duelLogNameAnalyzer.IsAnyBanlist(duelLog.Name)
-                   && !_duelLogNameAnalyzer.IsDuelVersusAI(duelLog.Name)
-                   && !_duelLogNameAnalyzer.IsNoDeckCheckEnabled(duelLog.Name)
                    && !_duelLogNameAnalyzer.IsNoDeckShuffleEnabled(duelLog.Name);
         }
 
