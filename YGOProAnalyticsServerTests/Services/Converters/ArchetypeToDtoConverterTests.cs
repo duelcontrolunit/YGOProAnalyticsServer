@@ -16,12 +16,13 @@ namespace YGOProAnalyticsServerTests.Services.Converters
     class ArchetypeToDtoConverterTests
     {
         IArchetypeToDtoConverter _converter;
-        Mock<IDecksDtosFactory> _deckDtosFactory;
+        Mock<IDecksDtosFactory> _deckDtosFactoryMock;
 
         [SetUp]
         public void SetUp()
         {
-            _converter = new ArchetypeToDtoConverter(_deckDtosFactory.Object);
+            _deckDtosFactoryMock = new Mock<IDecksDtosFactory>();
+            _converter = new ArchetypeToDtoConverter(_deckDtosFactoryMock.Object);
         }
 
         [Test]
