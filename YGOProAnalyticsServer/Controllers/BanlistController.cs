@@ -103,7 +103,8 @@ namespace YGOProAnalyticsServer.Controllers
                     .Take(numberOfResultsPerPage)
                     .ToList();
 
-            var dtos = _banlistToDtoConverter.Convert(banlistsToActualPage);
+            var dtos = _banlistToDtoConverter
+                .Convert(banlistsToActualPage, statisticsFrom, statisticsTo);
 
             return Ok(new BanlistBrowserResultsDTO(numberOfPages, dtos));
         }
