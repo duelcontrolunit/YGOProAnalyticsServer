@@ -78,11 +78,11 @@ namespace YGOProAnalyticsServer.EventHandlers
                 decklistsWhichWonWithoutDuplicatesFromThePack,
                 decklistsWhichLostWithoutDuplicatesFromThePack);
 
-            await _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromThePack);
+            _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromThePack);
             await _db.SaveChangesAsync();
         }
 
-        private async Task _updateDecklistsStatisticsAndAddNewDecksToDatabase(
+        private void _updateDecklistsStatisticsAndAddNewDecksToDatabase(
             List<Decklist> allDecklistsFromThePack)
         {
             var newDecks = new List<Decklist>();
@@ -114,7 +114,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                 newDecks.Add(decklist);
             }
 
-            await _db.AddRangeAsync(newDecks);
+            _db.AddRange(newDecks);
         }
 
         private void _updateDecklistStatistics(Decklist decklist, Decklist decklistFromDb)
