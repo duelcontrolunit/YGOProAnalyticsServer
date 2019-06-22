@@ -1,10 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using YGOProAnalyticsServer.Services.Converters;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
-using Moq;
 using YGOProAnalyticsServer.Database;
 using System.Linq;
 using YGOProAnalyticsServer.DbModels;
