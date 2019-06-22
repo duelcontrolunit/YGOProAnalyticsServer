@@ -10,6 +10,13 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
     public interface IArchetypeService
     {
         /// <summary>
+        /// Warning! This data are not tracked by EF.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        Task<DbModels.Archetype> GetDataForConcreteArchetypePage(int id);
+
+        /// <summary>
         /// Gets the archetype list with ids and names as no tracking from cache.
         /// </summary>
         /// <param name="shouldIgnoreCache">Set true to ignore cache.</param>

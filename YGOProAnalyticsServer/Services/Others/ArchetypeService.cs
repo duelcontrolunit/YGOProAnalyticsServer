@@ -8,6 +8,7 @@ using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 using YGOProAnalyticsServer.Helpers;
 using Microsoft.Extensions.Caching.Memory;
+using YGOProAnalyticsServer.DbModels;
 
 namespace YGOProAnalyticsServer.Services.Others
 {
@@ -63,6 +64,25 @@ namespace YGOProAnalyticsServer.Services.Others
             }
 
             return dtos;
+        }
+
+        /// <inheritdoc />
+        public async Task<Archetype> GetDataForConcreteArchetypePage(int id)
+        {
+            return await _db
+                .Archetypes
+                .Include(x => x.Statistics)
+                .Include(x => x.Cards)
+                    .ThenInclude(x => x.MonsterCard)
+                .Include(x => x.Cards)
+                    .ThenInclude(x => x.MonsterCard)
+                        .ThenInclude(x => x.LinkMonsterCard)
+                .Include(x => x.Cards)
+                    .ThenInclude(x => x.MonsterCard)
+                        .ThenInclude(x => x.PendulumMonsterCard)
+                .Where(x => x.Id == id)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
 
         private async Task<IEnumerable<ArchetypeIdAndNameDTO>> _getArchetypeIdAndNameDtosAsNoTracking()
