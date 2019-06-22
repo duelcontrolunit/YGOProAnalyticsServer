@@ -91,7 +91,8 @@ namespace YGOProAnalyticsServer.Controllers
                     statisticsFromDate: statisticsFrom,
                     statisticsToDate: statisticsTo,
                     includeCards: false,
-                    includeDecks: false
+                    includeDecks: false,
+                    OrderByDescendingByNumberOfGames: queryParams.OrderByDescendingByNumberOfGames
                 );
 
             int numberOfResultsPerPage = _numberOfResultsHelper.GetNumberOfResultsPerPage(queryParams.NumberOfResults);

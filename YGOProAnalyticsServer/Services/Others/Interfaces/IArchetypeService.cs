@@ -21,13 +21,15 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <param name="statisticsToDate">Use statistics to date.</param>
         /// <param name="includeCards">Include cards?</param>
         /// <param name="includeDecks">Include decklists?</param>
+        /// <param name="OrderByDescendingByNumberOfGames">If is set to false, results are sorted by number of wins.</param>
         Task<IQueryable<Archetype>> FindAllQuery(
             int minNumberOfGames,
             string archetypeName = "",
             DateTime? statisticsFromDate = null,
             DateTime? statisticsToDate = null,
             bool includeCards = false,
-            bool includeDecks = false);
+            bool includeDecks = false,
+            bool OrderByDescendingByNumberOfGames = false);
 
         /// <summary>
         /// Gets the archetype list with ids and names as no tracking from cache.
