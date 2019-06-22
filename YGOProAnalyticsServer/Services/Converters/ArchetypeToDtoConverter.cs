@@ -38,6 +38,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                 );
         }
 
+        /// <inheritdoc />
         public IEnumerable<ArchetypeStatisticsDTO> Convert(IEnumerable<ArchetypeStatistics> statistics)
         {
             var dtos = new List<ArchetypeStatisticsDTO>(statistics.Count());
