@@ -178,17 +178,17 @@ namespace YGOProAnalyticsServer.Services.Others
                 .Where(x => x.
                     Statistics
                         .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
-                                    && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                                 && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
                         .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
                 );
             if (orderByDescendingByNumberOfGames)
             {
                 archetypesQuery = archetypesQuery
-                     .OrderByDescending(x => x.Statistics
-                    .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
-                             && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
-                    .Sum(y => y.NumberOfDecksWhereWasUsed)
-                );
+                    .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
+                                 && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed)
+                    );
             }
             else
             {
@@ -197,7 +197,7 @@ namespace YGOProAnalyticsServer.Services.Others
                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
                                 && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
                        .Sum(y => y.NumberOfTimesWhenArchetypeWon)
-               );
+                    );
             }
 
             return archetypesQuery;
@@ -219,17 +219,17 @@ namespace YGOProAnalyticsServer.Services.Others
             {
                 archetypesQuery = archetypesQuery
                     .OrderByDescending(x => x.Statistics
-                    .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
-                    .Sum(y => y.NumberOfDecksWhereWasUsed)
-                 );
+                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed)
+                    );
             }
             else
             {
                 archetypesQuery = archetypesQuery
                    .OrderByDescending(x => x.Statistics
-                   .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
-                   .Sum(y => y.NumberOfTimesWhenArchetypeWon)
-                );
+                       .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
+                       .Sum(y => y.NumberOfTimesWhenArchetypeWon)
+                    );
             }
 
             return archetypesQuery;
@@ -251,17 +251,17 @@ namespace YGOProAnalyticsServer.Services.Others
             {
                 archetypesQuery = archetypesQuery
                     .OrderByDescending(x => x.Statistics
-                    .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
-                    .Sum(y => y.NumberOfDecksWhereWasUsed)
-                 );
+                        .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed)
+                     );
             }
             else
             {
                 archetypesQuery = archetypesQuery
                     .OrderByDescending(x => x.Statistics
-                    .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
-                    .Sum(y => y.NumberOfTimesWhenArchetypeWon)
-                 );
+                        .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfTimesWhenArchetypeWon)
+                     );
             }
 
             return archetypesQuery;
