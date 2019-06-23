@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
@@ -11,7 +10,7 @@ namespace YGOProAnalyticsServer.Services.Converters
     /// <summary>Service used to convert ydk string to a new deck containing cards.</summary>
     public class YDKToDecklistConverter : IYDKToDecklistConverter
     {
-        private readonly List<Card> cards;
+        private readonly IEnumerable<Card> cards;
 
         /// <summary>Initializes a new instance of the <see cref="YDKToDecklistConverter"/> class.</summary>
         /// <param name="db">The database.</param>
@@ -36,6 +35,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                 if (line.Contains("#main"))
                 {
                     decklistStarted = true;
+                    continue;
                 }
 
                 if (!decklistStarted)
@@ -46,6 +46,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                 if (line == "!side")
                 {
                     isSide = true;
+                    continue;
                 }
                 else
                 {
@@ -80,7 +81,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                     }
                 }
             }
-            return new Decklist(mainDeck.OrderBy(x => x.PassCode).ToList(), extraDeck.OrderBy(x => x.PassCode).ToList(), sideDeck.OrderBy(x => x.PassCode).ToList());
+            return new Decklist(mainDeck.OrderBy(x => x.PassCode), extraDeck.OrderBy(x => x.PassCode), sideDeck.OrderBy(x => x.PassCode));
         }
 
         /// <summary>
