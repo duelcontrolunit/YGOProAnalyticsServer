@@ -234,6 +234,8 @@ namespace YGOProAnalyticsServer.EventHandlers
         private bool isBanlistOk(DuelLog duelLog)
         {
             return _duelLogNameAnalyzer.IsAnyBanlist(duelLog.Name)
+                   && !_duelLogNameAnalyzer.IsDuelVersusAI(duelLog.Name)	
+                   && !_duelLogNameAnalyzer.IsNoDeckCheckEnabled(duelLog.Name)
                    && !_duelLogNameAnalyzer.IsNoDeckShuffleEnabled(duelLog.Name);
         }
 
