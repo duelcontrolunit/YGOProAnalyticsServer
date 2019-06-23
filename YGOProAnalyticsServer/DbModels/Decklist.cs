@@ -23,7 +23,7 @@ namespace YGOProAnalyticsServer.DbModels
             SideDeck = new JoinCollectionFacade<Card, Decklist, CardInSideDeckDecklistJoin>(this, CardsInSideDeckJoin);
         }
 
-        public Decklist(IList<Card> mainDeck, IList<Card> extraDeck, IList<Card> sideDeck)
+        public Decklist(IEnumerable<Card> mainDeck, IEnumerable<Card> extraDeck, IEnumerable<Card> sideDeck)
         {
             MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);
             ExtraDeck = new JoinCollectionFacade<Card, Decklist, CardInExtraDeckDecklistJoin>(this, CardsInExtraDeckJoin);

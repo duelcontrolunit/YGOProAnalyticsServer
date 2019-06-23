@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
+using YGOProAnalyticsServer.Services.Factories.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Converters
 {
@@ -13,6 +14,18 @@ namespace YGOProAnalyticsServer.Services.Converters
     /// </summary>
     public class ArchetypeToDtoConverter : IArchetypeToDtoConverter
     {
+        IDecksDtosFactory _decksFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArchetypeToDtoConverter"/> class.
+        /// </summary>
+        /// <param name="decksFactory">The decks factory.</param>
+        /// <exception cref="ArgumentNullException">decksFactory</exception>
+        public ArchetypeToDtoConverter(IDecksDtosFactory decksFactory)
+        {
+            _decksFactory = decksFactory ?? throw new ArgumentNullException(nameof(decksFactory));
+        }
+
         /// <inheritdoc />
         public IEnumerable<ArchetypeWithHowManyWinsAndHowManyWasUsed> Convert(
             IEnumerable<Archetype> archetypes,
@@ -28,6 +41,35 @@ namespace YGOProAnalyticsServer.Services.Converters
                         howManyWasUsed: _howManyWasUsedInDateTimeRange(statisticsFrom, statisticsTo, archetype),
                         howManyWon: _howManyTimesWonInDateTimeRange(statisticsFrom, statisticsTo, archetype)
                     );
+                dtos.Add(dto);
+            }
+
+            return dtos;
+        }
+
+        /// <inheritdoc />
+        public ConcreteArchetypeDTO Convert(Archetype archetype)
+        {
+            return new ConcreteArchetypeDTO(
+                    id: archetype.Id,
+                    name: archetype.Name,
+                    isPureArchetype: archetype.IsPureArchetype,
+                    cardsInArchetype: _decksFactory.CreateDeckDto(archetype.Cards),
+                    statistics: Convert(archetype.Statistics)
+                );
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<ArchetypeStatisticsDTO> Convert(IEnumerable<ArchetypeStatistics> statistics)
+        {
+            var dtos = new List<ArchetypeStatisticsDTO>(statistics.Count());
+            foreach (var statistic in statistics)
+            {
+                var dto = new ArchetypeStatisticsDTO(
+                    statistic.Id,
+                    statistic.DateWhenArchetypeWasUsed,
+                    statistic.NumberOfDecksWhereWasUsed,
+                    statistic.NumberOfTimesWhenArchetypeWon);
                 dtos.Add(dto);
             }
 
