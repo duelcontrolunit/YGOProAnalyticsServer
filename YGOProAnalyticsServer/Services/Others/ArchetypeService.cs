@@ -266,5 +266,24 @@ namespace YGOProAnalyticsServer.Services.Others
 
             return archetypesQuery;
         }
+
+        /// <inheritdoc />
+        public async Task<Archetype> GetDataForConcreteArchetypePage(int id)
+        {
+            return await _db
+                .Archetypes
+                .Include(x => x.Statistics)
+                .Include(x => x.Cards)
+                    .ThenInclude(x => x.MonsterCard)
+                .Include(x => x.Cards)
+                    .ThenInclude(x => x.MonsterCard)
+                        .ThenInclude(x => x.LinkMonsterCard)
+                .Include(x => x.Cards)
+                    .ThenInclude(x => x.MonsterCard)
+                        .ThenInclude(x => x.PendulumMonsterCard)
+                .Where(x => x.Id == id)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
     }
 }

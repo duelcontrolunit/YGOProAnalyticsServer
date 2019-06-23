@@ -111,5 +111,19 @@ namespace YGOProAnalyticsServer.Controllers
 
             return Ok(new ArchetypeBrowserResultsDTO(numberOfPages, dtos));
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var archetype = await _archetypeService.GetDataForConcreteArchetypePage(id);
+            if (archetype == null)
+            {
+                return NotFound($"Archetype with id equal {id} not found.");
+            }
+
+            var dto = _archetypeToDtoConverter.Convert(archetype);
+
+            return Ok(dto);
+        }
     }
 }
