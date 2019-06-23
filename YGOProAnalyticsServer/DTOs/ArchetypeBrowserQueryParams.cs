@@ -33,5 +33,10 @@
         /// Archetype name
         /// </summary>
         public string ArchetypeName { get; set; } = "";
+
+        /// <summary>
+        /// If is set to false, results are sorted by number of wins.
+        /// </summary>
+        public bool OrderByDescendingByNumberOfGames { get; set; } = false;
     }
 }

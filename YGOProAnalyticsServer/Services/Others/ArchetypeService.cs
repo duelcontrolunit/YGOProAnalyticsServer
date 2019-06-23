@@ -83,7 +83,8 @@ namespace YGOProAnalyticsServer.Services.Others
             DateTime? statisticsFromDate = null,
             DateTime? statisticsToDate = null,
             bool includeCards = false,
-            bool includeDecks = false)
+            bool includeDecks = false,
+            bool orderByDescendingByNumberOfGames = false)
         {
             IQueryable<Archetype> archetypesQuery = _db.Archetypes.Include(x => x.Statistics);
             if (includeCards)
@@ -99,55 +100,171 @@ namespace YGOProAnalyticsServer.Services.Others
             archetypesQuery = archetypesQuery.Where(x => x.Name.ToLower().Contains(archetypeName.ToLower()));
             if (statisticsFromDate != null && statisticsToDate == null)
             {
-                return archetypesQuery
-                    .Where(x => x.
-                        Statistics
-                            .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
-                            .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
-                    )
+                archetypesQuery = _handleDateFromFilter(
+                    minNumberOfGames,
+                    statisticsFromDate,
+                    orderByDescendingByNumberOfGames,
+                    archetypesQuery);
+
+                return archetypesQuery;
+            }
+            else
+            if (statisticsFromDate == null && statisticsToDate != null)
+            {
+                archetypesQuery = _handleDateToFilter(
+                    minNumberOfGames,
+                    statisticsToDate,
+                    orderByDescendingByNumberOfGames,
+                    archetypesQuery);
+
+                return archetypesQuery;
+            }
+            else
+            if (statisticsFromDate != null && statisticsToDate != null)
+            {
+                archetypesQuery = _handleDateFromAndToFilter(
+                    minNumberOfGames,
+                    statisticsFromDate,
+                    statisticsToDate,
+                    orderByDescendingByNumberOfGames,
+                    archetypesQuery);
+
+                return archetypesQuery;
+            }
+            else
+            {
+                archetypesQuery = _handleNoDateRestrictionFilter(
+                    minNumberOfGames,
+                    orderByDescendingByNumberOfGames,
+                    archetypesQuery);
+
+                return archetypesQuery;
+            }
+        }
+
+        private static IQueryable<Archetype> _handleNoDateRestrictionFilter(
+            int minNumberOfGames,
+            bool orderByDescendingByNumberOfGames,
+            IQueryable<Archetype> archetypesQuery)
+        {
+            archetypesQuery = archetypesQuery
+                .Where(x => x.Statistics.Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames);
+            if (orderByDescendingByNumberOfGames)
+            {
+                archetypesQuery = archetypesQuery
+                    .OrderByDescending(x => x.Statistics
+                       .Sum(y => y.NumberOfDecksWhereWasUsed)
+                    );
+            }
+            else
+            {
+                archetypesQuery = archetypesQuery
+                   .OrderByDescending(x => x.Statistics
+                      .Sum(y => y.NumberOfTimesWhenArchetypeWon)
+                   );
+            }
+
+            return archetypesQuery;
+        }
+
+        private static IQueryable<Archetype> _handleDateFromAndToFilter(
+            int minNumberOfGames,
+            DateTime? statisticsFromDate,
+            DateTime? statisticsToDate,
+            bool orderByDescendingByNumberOfGames,
+            IQueryable<Archetype> archetypesQuery)
+        {
+            archetypesQuery = archetypesQuery
+                .Where(x => x.
+                    Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
+                                 && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
+                );
+            if (orderByDescendingByNumberOfGames)
+            {
+                archetypesQuery = archetypesQuery
+                    .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
+                                 && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed)
+                    );
+            }
+            else
+            {
+                archetypesQuery = archetypesQuery
+                    .OrderByDescending(x => x.Statistics
+                       .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
+                                && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                       .Sum(y => y.NumberOfTimesWhenArchetypeWon)
+                    );
+            }
+
+            return archetypesQuery;
+        }
+
+        private static IQueryable<Archetype> _handleDateToFilter(
+            int minNumberOfGames,
+            DateTime? statisticsToDate,
+            bool orderByDescendingByNumberOfGames,
+            IQueryable<Archetype> archetypesQuery)
+        {
+            archetypesQuery = archetypesQuery
+                .Where(x => x.
+                    Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
+                );
+            if (orderByDescendingByNumberOfGames)
+            {
+                archetypesQuery = archetypesQuery
+                    .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed)
+                    );
+            }
+            else
+            {
+                archetypesQuery = archetypesQuery
+                   .OrderByDescending(x => x.Statistics
+                       .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
+                       .Sum(y => y.NumberOfTimesWhenArchetypeWon)
+                    );
+            }
+
+            return archetypesQuery;
+        }
+
+        private static IQueryable<Archetype> _handleDateFromFilter(
+            int minNumberOfGames,
+            DateTime? statisticsFromDate,
+            bool orderByDescendingByNumberOfGames,
+            IQueryable<Archetype> archetypesQuery)
+        {
+            archetypesQuery = archetypesQuery
+                .Where(x => x.
+                    Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
+                );
+            if (orderByDescendingByNumberOfGames)
+            {
+                archetypesQuery = archetypesQuery
+                    .OrderByDescending(x => x.Statistics
+                        .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
+                        .Sum(y => y.NumberOfDecksWhereWasUsed)
+                     );
+            }
+            else
+            {
+                archetypesQuery = archetypesQuery
                     .OrderByDescending(x => x.Statistics
                         .Where(y => y.DateWhenArchetypeWasUsed >= statisticsFromDate)
                         .Sum(y => y.NumberOfTimesWhenArchetypeWon)
                      );
             }
-            else
-            if (statisticsFromDate == null && statisticsToDate != null)
-            {
-                return archetypesQuery
-                    .Where(x => x.
-                        Statistics
-                            .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
-                            .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
-                    )
-                     .OrderByDescending(x => x.Statistics
-                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate)
-                        .Sum(y => y.NumberOfTimesWhenArchetypeWon)
-                     );
-            }
-            else
-            if (statisticsFromDate != null && statisticsToDate != null)
-            {
-                return archetypesQuery
-                    .Where(x => x.
-                        Statistics
-                            .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
-                                     && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
-                            .Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames
-                    )
-                    .OrderByDescending(x => x.Statistics
-                        .Where(y => y.DateWhenArchetypeWasUsed <= statisticsToDate
-                                 && y.DateWhenArchetypeWasUsed >= statisticsFromDate)
-                        .Sum(y => y.NumberOfTimesWhenArchetypeWon)
-                    );
-            }
-            else
-            {
-                return archetypesQuery
-                    .Where(x => x.Statistics.Sum(y => y.NumberOfDecksWhereWasUsed) >= minNumberOfGames)
-                     .OrderByDescending(x => x.Statistics
-                       .Sum(y => y.NumberOfTimesWhenArchetypeWon)
-                    );
-            }
+
+            return archetypesQuery;
         }
     }
 }
