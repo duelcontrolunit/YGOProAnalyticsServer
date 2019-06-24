@@ -15,12 +15,14 @@ namespace YGOProAnalyticsServer.DbModels
         public static readonly string IncludeMainDeckCards = $"{nameof(CardsInMainDeckJoin)}.{nameof(CardInMainDeckDecklistJoin.Card)}";
         public static readonly string IncludeExtraDeckCards = $"{nameof(CardsInExtraDeckJoin)}.{nameof(CardInExtraDeckDecklistJoin.Card)}";
         public static readonly string IncludeSideDeckCards = $"{nameof(CardsInSideDeckJoin)}.{nameof(CardInSideDeckDecklistJoin.Card)}";
+        public static readonly string IncludePlayableOnBanlists = $"{nameof(DecklistPlayableOnBanlistsJoin)}.{nameof(DecklistsBanlistsJoin.Banlist)}";
 
         protected Decklist()
         {
             MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);
             ExtraDeck = new JoinCollectionFacade<Card, Decklist, CardInExtraDeckDecklistJoin>(this, CardsInExtraDeckJoin);
             SideDeck = new JoinCollectionFacade<Card, Decklist, CardInSideDeckDecklistJoin>(this, CardsInSideDeckJoin);
+            PlayableOnBanlists = new JoinCollectionFacade<Banlist, Decklist, DecklistsBanlistsJoin>(this, DecklistPlayableOnBanlistsJoin);
         }
 
         public Decklist(IEnumerable<Card> mainDeck, IEnumerable<Card> extraDeck, IEnumerable<Card> sideDeck)
@@ -28,6 +30,7 @@ namespace YGOProAnalyticsServer.DbModels
             MainDeck = new JoinCollectionFacade<Card, Decklist, CardInMainDeckDecklistJoin>(this, CardsInMainDeckJoin);
             ExtraDeck = new JoinCollectionFacade<Card, Decklist, CardInExtraDeckDecklistJoin>(this, CardsInExtraDeckJoin);
             SideDeck = new JoinCollectionFacade<Card, Decklist, CardInSideDeckDecklistJoin>(this, CardsInSideDeckJoin);
+            PlayableOnBanlists = new JoinCollectionFacade<Banlist, Decklist, DecklistsBanlistsJoin>(this, DecklistPlayableOnBanlistsJoin);
 
             foreach (var card in mainDeck)
             {
@@ -90,6 +93,11 @@ namespace YGOProAnalyticsServer.DbModels
         [NotMapped]
         public ICollection<Card> SideDeck { get; protected set; } = new List<Card>();
         public ICollection<CardInSideDeckDecklistJoin> CardsInSideDeckJoin { get; set; } = new List<CardInSideDeckDecklistJoin>();
+
+        [NotMapped]
+        public ICollection<Banlist> PlayableOnBanlists { get; protected set; }
+
+        public ICollection<DecklistsBanlistsJoin> DecklistPlayableOnBanlistsJoin { get; set; } = new List<DecklistsBanlistsJoin>();
 
         /// <summary>
         /// The archetype of the Decklist.
