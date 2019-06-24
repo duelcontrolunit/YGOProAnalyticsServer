@@ -178,7 +178,5 @@ namespace YGOProAnalyticsServer.DbModels
                 throw new FormatException(stringBuilder.ToString());
             }
         }
-
-
     }
 }
