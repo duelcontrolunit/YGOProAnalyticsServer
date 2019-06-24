@@ -259,6 +259,9 @@ namespace YGOProAnalyticsServer.Services.Others
             await _getOrCreateAndGetOrderedDecklistFromCache(true);
         }
 
+        /// <summary>
+        /// Ordered by NumberOfTimesWhenDeckWon.
+        /// </summary>
         private async Task<IEnumerable<Decklist>> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
         {
             IEnumerable<Decklist> localDecklistsQuery;
@@ -283,6 +286,9 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
+        /// <summary>
+        /// Ordered by NumberOfTimesWhenDeckWon.
+        /// </summary>
         private async Task<List<Decklist>> _getOrderedNoTrackedDecklists()
         {
             _db.Database.SetCommandTimeout(3600);
