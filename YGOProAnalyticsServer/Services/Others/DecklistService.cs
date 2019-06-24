@@ -99,20 +99,35 @@ namespace YGOProAnalyticsServer.Services.Others
             if (statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
+                if (orderByDescendingByNumberOfGames)
+                {
+                    localDecklistsQuery = _orderByDescendingByNumberOfGames(localDecklistsQuery);
+                }
             }
             else
             {
                 localDecklistsQuery = _addStatisticsDateLimitIfRequiredAndThenMinNumberOfGamesFilter(
-                  statisticsFrom,
-                  statisticsTo,
-                  minNumberOfGames,
-                  localDecklistsQuery);
+                statisticsFrom,
+                statisticsTo,
+                minNumberOfGames,
+                localDecklistsQuery);
 
-                localDecklistsQuery = _orderUsingDateLimitAndMinNumberOfGamesCriteria(
-                  statisticsFrom,
-                  statisticsTo,
-                  minNumberOfGames,
-                  localDecklistsQuery);
+                if (orderByDescendingByNumberOfGames)
+                {
+                     localDecklistsQuery = _orderDescendingByNumberOfGamesUsingDateLimitAndMinNumberOfGamesCriteria(
+                     statisticsFrom,
+                     statisticsTo,
+                     minNumberOfGames,
+                     localDecklistsQuery);
+                }
+                else
+                {
+                    localDecklistsQuery = _orderUsingDateLimitAndMinNumberOfGamesCriteria(
+                    statisticsFrom,
+                    statisticsTo,
+                    minNumberOfGames,
+                    localDecklistsQuery);
+                }
             }
 
             localDecklistsQuery = _addArchetypeNameFilterToLocalDecklistQueryIfRequired(archetypeName, localDecklistsQuery);
@@ -120,6 +135,59 @@ namespace YGOProAnalyticsServer.Services.Others
             localDecklistsQuery = _addWantedCardsFilter(wantedCardsInDeck, localDecklistsQuery);
 
             return localDecklistsQuery;
+        }
+
+        private IEnumerable<Decklist> _orderDescendingByNumberOfGamesUsingDateLimitAndMinNumberOfGamesCriteria(
+            DateTime? statisticsFrom,
+            DateTime? statisticsTo,
+            int minNumberOfGames,
+            IEnumerable<Decklist> localDecklistsQuery)
+        {
+            if (statisticsFrom != null && statisticsTo == null)
+            {
+                localDecklistsQuery = localDecklistsQuery
+                    .Where(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames)
+                    .OrderByDescending(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed)
+                 );
+            }
+            else
+           if (statisticsTo != null && statisticsFrom == null)
+            {
+                localDecklistsQuery = localDecklistsQuery
+                    .Where(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed <= statisticsTo)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames)
+                    .OrderByDescending(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed <= statisticsTo)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed)
+                );
+            }
+            else
+           if (statisticsFrom != null && statisticsTo != null)
+            {
+                localDecklistsQuery = localDecklistsQuery
+                    .Where(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom
+                               && z.DateWhenDeckWasUsed <= statisticsTo)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames)
+                    .OrderByDescending(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom
+                              && z.DateWhenDeckWasUsed <= statisticsTo)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed)
+                );
+            }
+
+            return localDecklistsQuery;
+        }
+
+        private IEnumerable<Decklist> _orderByDescendingByNumberOfGames(IEnumerable<Decklist> localDecklistsQuery)
+        {
+            return localDecklistsQuery
+                .OrderByDescending(x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed));
         }
 
         private IEnumerable<Decklist> _addWantedCardsFilter(int[] wantedCardsInDeck, IEnumerable<Decklist> localDecklistsQuery)
