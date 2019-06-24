@@ -213,6 +213,9 @@ namespace YGOProAnalyticsServer.Services.Others
            if (statisticsFrom != null && statisticsTo == null)
            {
                 localDecklistsQuery = localDecklistsQuery
+                    .Where(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames)
                     .OrderByDescending(x => x.DecklistStatistics
                         .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom)
                         .Sum(y => y.NumberOfTimesWhenDeckWon)
@@ -222,6 +225,9 @@ namespace YGOProAnalyticsServer.Services.Others
            if (statisticsTo != null && statisticsFrom == null)
            {
                 localDecklistsQuery = localDecklistsQuery
+                    .Where(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed <= statisticsTo)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames)
                     .OrderByDescending(x => x.DecklistStatistics
                         .Where(z => z.DateWhenDeckWasUsed <= statisticsTo)
                         .Sum(y => y.NumberOfTimesWhenDeckWon)
@@ -231,6 +237,10 @@ namespace YGOProAnalyticsServer.Services.Others
            if (statisticsFrom != null && statisticsTo != null)
            {
                 localDecklistsQuery = localDecklistsQuery
+                     .Where(x => x.DecklistStatistics
+                        .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom
+                               && z.DateWhenDeckWasUsed <= statisticsTo)
+                        .Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames)
                      .OrderByDescending(x => x.DecklistStatistics
                         .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom
                                && z.DateWhenDeckWasUsed <= statisticsTo)
