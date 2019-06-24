@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using YGOProAnalyticsServer.DbModels;
 
 namespace YGOProAnalyticsServer.Services.Updaters.Interfaces
 {
@@ -12,6 +14,6 @@ namespace YGOProAnalyticsServer.Services.Updaters.Interfaces
         /// </summary>
         /// <param name="url">URL</param>
         /// <returns></returns>
-        Task UpdateBanlists(string url);
+        Task<List<Banlist>> UpdateBanlists(string url);
     }
 }
