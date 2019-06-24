@@ -1,4 +1,6 @@
-﻿namespace YGOProAnalyticsServer.DTOs
+﻿using System;
+
+namespace YGOProAnalyticsServer.DTOs
 {
     public class DecklistBrowserQueryParametersDTO
     {
@@ -40,5 +42,15 @@
         /// The number of results.
         /// </value>
         public int NumberOfResults { get; set; } = -1;
+
+        /// <summary>
+        /// If is set to false, results are sorted by number of wins.
+        /// </summary>
+        public bool OrderByDescendingByNumberOfGames { get; set; } = false;
+
+        /// <summary>
+        /// Example valid input: 12345678;9876544321
+        /// </summary>
+        public int[] WantedCardsInDeck { get; set; } = Array.Empty<int>();
     }
 }

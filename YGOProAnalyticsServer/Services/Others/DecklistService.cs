@@ -91,7 +91,9 @@ namespace YGOProAnalyticsServer.Services.Others
             string archetypeName = "",
             DateTime? statisticsFrom = null,
             DateTime? statisticsTo = null,
-            bool shouldGetDecksFromCache = true)
+            bool shouldGetDecksFromCache = true,
+            bool orderByDescendingByNumberOfGames = false,
+            int[] wantedCardsInDeck = null)
         {
             IEnumerable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
             if (statisticsTo == null && statisticsFrom == null)
@@ -115,6 +117,21 @@ namespace YGOProAnalyticsServer.Services.Others
 
             localDecklistsQuery = _addArchetypeNameFilterToLocalDecklistQueryIfRequired(archetypeName, localDecklistsQuery);
             localDecklistsQuery = await _addBanlistFilterToLocalDecklistQueryIfRequired(banlistId, localDecklistsQuery);
+            localDecklistsQuery = _addWantedCardsFilter(wantedCardsInDeck, localDecklistsQuery);
+
+            return localDecklistsQuery;
+        }
+
+        private IEnumerable<Decklist> _addWantedCardsFilter(int[] wantedCardsInDeck, IEnumerable<Decklist> localDecklistsQuery)
+        {
+            foreach (var wantedCardPasscode in wantedCardsInDeck)
+            {
+                localDecklistsQuery = localDecklistsQuery
+                    .Where(x =>
+                           x.CardsInMainDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() +
+                           x.CardsInExtraDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() +
+                           x.CardsInSideDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() > 0);
+            }
 
             return localDecklistsQuery;
         }
