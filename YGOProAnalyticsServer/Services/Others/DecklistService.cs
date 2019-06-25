@@ -56,7 +56,7 @@ namespace YGOProAnalyticsServer.Services.Others
             bool shouldGetDecksFromCache = true)
         {
             IEnumerable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
-            if(statisticsTo == null && statisticsFrom == null)
+            if (statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
             }
@@ -74,7 +74,7 @@ namespace YGOProAnalyticsServer.Services.Others
                   minNumberOfGames,
                   localDecklistsQuery);
             }
-          
+
             localDecklistsQuery = _addArchetypeNameFilterToLocalDecklistQueryIfRequired(archetypeName, localDecklistsQuery);
             localDecklistsQuery = await _addBanlistFilterToLocalDecklistQueryIfRequired(banlistId, localDecklistsQuery);
 
@@ -210,8 +210,8 @@ namespace YGOProAnalyticsServer.Services.Others
             int minNumberOfGames,
             IEnumerable<Decklist> localDecklistsQuery)
         {
-           if (statisticsFrom != null && statisticsTo == null)
-           {
+            if (statisticsFrom != null && statisticsTo == null)
+            {
                 localDecklistsQuery = localDecklistsQuery
                     .Where(x => x.DecklistStatistics
                         .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom)
@@ -220,10 +220,10 @@ namespace YGOProAnalyticsServer.Services.Others
                         .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom)
                         .Sum(y => y.NumberOfTimesWhenDeckWon)
                  );
-           }
-           else
-           if (statisticsTo != null && statisticsFrom == null)
-           {
+            }
+            else
+            if (statisticsTo != null && statisticsFrom == null)
+            {
                 localDecklistsQuery = localDecklistsQuery
                     .Where(x => x.DecklistStatistics
                         .Where(z => z.DateWhenDeckWasUsed <= statisticsTo)
@@ -232,10 +232,10 @@ namespace YGOProAnalyticsServer.Services.Others
                         .Where(z => z.DateWhenDeckWasUsed <= statisticsTo)
                         .Sum(y => y.NumberOfTimesWhenDeckWon)
                 );
-           }
-           else
-           if (statisticsFrom != null && statisticsTo != null)
-           {
+            }
+            else
+            if (statisticsFrom != null && statisticsTo != null)
+            {
                 localDecklistsQuery = localDecklistsQuery
                      .Where(x => x.DecklistStatistics
                         .Where(z => z.DateWhenDeckWasUsed >= statisticsFrom
@@ -246,9 +246,9 @@ namespace YGOProAnalyticsServer.Services.Others
                                && z.DateWhenDeckWasUsed <= statisticsTo)
                         .Sum(y => y.NumberOfTimesWhenDeckWon)
                 );
-           }
+            }
 
-           return localDecklistsQuery;
+            return localDecklistsQuery;
         }
 
         private IEnumerable<Decklist> _addStatisticsDateLimitIfRequiredAndThenMinNumberOfGamesFilter(
@@ -258,7 +258,7 @@ namespace YGOProAnalyticsServer.Services.Others
             IEnumerable<Decklist> localDecklistsQuery)
         {
 
-            if(statisticsFrom != null && statisticsTo == null)
+            if (statisticsFrom != null && statisticsTo == null)
             {
                 localDecklistsQuery = localDecklistsQuery
                      .Where(x => x.DecklistStatistics
@@ -267,7 +267,7 @@ namespace YGOProAnalyticsServer.Services.Others
                 );
             }
             else
-            if(statisticsTo != null && statisticsFrom == null)
+            if (statisticsTo != null && statisticsFrom == null)
             {
                 localDecklistsQuery = localDecklistsQuery
                      .Where(x => x.DecklistStatistics
@@ -276,7 +276,7 @@ namespace YGOProAnalyticsServer.Services.Others
                 );
             }
             else
-            if(statisticsFrom != null && statisticsTo != null)
+            if (statisticsFrom != null && statisticsTo != null)
             {
                 localDecklistsQuery = localDecklistsQuery
                      .Where(x => x.DecklistStatistics
@@ -389,10 +389,10 @@ namespace YGOProAnalyticsServer.Services.Others
         /// <summary>
         /// Gets the decklists query with all data explicitly included.
         /// </summary>
-        private IQueryable<Decklist> _getDecklistsQuery(bool shouldBeTrackd = true)
+        private IQueryable<Decklist> _getDecklistsQuery(bool shouldBeTracked = true)
         {
             IQueryable<Decklist> query;
-            if (shouldBeTrackd)
+            if (shouldBeTracked)
             {
                 query = includeMainDeckWithAllData(_db.Decklists);
             }
@@ -400,7 +400,7 @@ namespace YGOProAnalyticsServer.Services.Others
             {
                 query = includeMainDeckWithAllData(_db.Decklists.AsNoTracking());
             }
-           
+
             query = includeExtraDeckWithAllData(query);
             query = includeSideDeckWithAllData(query);
             query = query.Include(x => x.Archetype);
@@ -409,6 +409,10 @@ namespace YGOProAnalyticsServer.Services.Others
             return query;
         }
 
+        /// <summary>
+        /// Includes the main deck with data about all cards and banlists.
+        /// </summary>
+        /// <param name="query">The query.</param>
         protected IQueryable<Decklist> includeMainDeckWithAllData(IQueryable<Decklist> query)
         {
             return query
@@ -430,7 +434,10 @@ namespace YGOProAnalyticsServer.Services.Others
                          $".{Card.IncludeWithSemiLimitedCardsBanlist}")
                ;
         }
-
+        /// <summary>
+        /// Includes the extra deck with data about all cards and banlists.
+        /// </summary>
+        /// <param name="query">The query.</param>
         protected IQueryable<Decklist> includeExtraDeckWithAllData(IQueryable<Decklist> query)
         {
             return query
@@ -457,6 +464,10 @@ namespace YGOProAnalyticsServer.Services.Others
               ;
         }
 
+        /// <summary>
+        /// Includes the side deck with data about all cards and banlists.
+        /// </summary>
+        /// <param name="query">The query.</param>
         protected IQueryable<Decklist> includeSideDeckWithAllData(IQueryable<Decklist> query)
         {
             return query
@@ -468,7 +479,7 @@ namespace YGOProAnalyticsServer.Services.Others
                        $".{nameof(Card.MonsterCard)}" +
                        $".{nameof(MonsterCard.PendulumMonsterCard)}")
 
-                .Include($"{Decklist.IncludeSideDeckCards}" +
+              .Include($"{Decklist.IncludeSideDeckCards}" +
                         $".{nameof(Card.MonsterCard)}" +
                         $".{nameof(MonsterCard.LinkMonsterCard)}")
 
@@ -481,6 +492,37 @@ namespace YGOProAnalyticsServer.Services.Others
               .Include($"{Decklist.IncludeSideDeckCards}" +
                        $".{Card.IncludeWithSemiLimitedCardsBanlist}")
              ;
+        }
+
+        /// <summary>
+        /// Includes PlayableOnBanlists.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        protected IQueryable<Decklist> includePlayableOnBanlists(IQueryable<Decklist> query)
+        {
+            return query
+              .Include($"{Decklist.IncludePlayableOnBanlists}");
+        }
+
+        /// <summary>
+        /// Gets the decklists query with data about cards and banlists explicitly included.
+        /// </summary>
+        public IQueryable<Decklist> GetDecklistsQueryForBanlistAnalysis(bool shouldBeTracked = true)
+        {
+            IQueryable<Decklist> query;
+            if (shouldBeTracked)
+            {
+                query = includePlayableOnBanlists(_db.Decklists);
+            }
+            else
+            {
+                query = includePlayableOnBanlists(_db.Decklists.AsNoTracking());
+            }
+            query = includeMainDeckWithAllData(query);
+            query = includeExtraDeckWithAllData(query);
+            query = includeSideDeckWithAllData(query);
+
+            return query;
         }
     }
 }

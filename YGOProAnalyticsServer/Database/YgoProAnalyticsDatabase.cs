@@ -56,6 +56,9 @@ namespace YGOProAnalyticsServer.Database
             modelBuilder.Entity<SemiLimitedCardBanlistJoin>()
               .HasKey(t => new { t.CardId, t.BanlistId });
 
+            modelBuilder.Entity<DecklistsBanlistsJoin>()
+            .HasKey(t => new { t.DecklistId, t.BanlistId });
+
             modelBuilder.Entity<CardInMainDeckDecklistJoin>()
              .HasKey(t => new { t.Id });
 

@@ -53,7 +53,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
 
             await _mediator.Publish(
-                new DataFromYgoProServerRetrieved(convertedDuelLogs, unzippedDecklistsWithDecklistFileName)
+                new DataFromYgoProServerRetrieved(convertedDuelLogs, unzippedDecklistsWithDecklistFileName, notification.NewBanlists)
             );
         }
 
