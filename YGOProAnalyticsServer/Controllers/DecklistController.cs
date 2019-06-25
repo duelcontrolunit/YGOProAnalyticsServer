@@ -81,7 +81,9 @@ namespace YGOProAnalyticsServer.Controllers
                 banlistId: queryParams.BanlistId,
                 archetypeName: queryParams.ArchetypeName,
                 statisticsFrom: statisticsFrom,
-                statisticsTo: statisticsTo);
+                statisticsTo: statisticsTo,
+                orderByDescendingByNumberOfGames: queryParams.OrderByDescendingByNumberOfGames,
+                wantedCardsInDeck: queryParams.WantedCardsInDeck);
 
             int numberOfResultsPerPage = _numberOfResultsHelper.GetNumberOfResultsPerPage(queryParams.NumberOfResults);
             var numberOfPages = Convert.ToInt32(
