@@ -21,7 +21,6 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <param name="statisticsTo">
         ///     Exclude that decks which have less than minNumberOfGames games to that date.
         /// </param>
-        /// <param name="shouldGetDecksFromCache">Should take decks from cache?</param>
         /// <param name="orderByDescendingByNumberOfGames">False mean orderByDescending by number of wins.</param>
         /// <param name="wantedCardsInDeck">Array of passcodes.</param>
         Task<IQueryable<Decklist>> FindAll(
@@ -30,7 +29,6 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
             string archetypeName = "",
             System.DateTime? statisticsFrom = null,
             System.DateTime? statisticsTo = null,
-            bool shouldGetDecksFromCache = true,
             bool orderByDescendingByNumberOfGames = false,
             int[] wantedCardsInDeck = null);
 
@@ -41,10 +39,5 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <returns>Decklist with all data included.</returns>
         Task<Decklist> GetByIdWithAllDataIncluded(int id);
         IQueryable<Decklist> GetDecklistsQueryForBanlistAnalysis(bool shouldBeTracked = true);
-
-        /// <summary>
-        /// Renew cache by key. CacheKey: <see cref="CacheKeys.OrderedDecklistsWithContentIncluded"/>
-        /// </summary>
-        Task UpdateCache();
     }
 }

@@ -1,13 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
-using YGOProAnalyticsServer.DbModels.DbJoinModels;
-using YGOProAnalyticsServer.Helpers;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Others
@@ -19,29 +15,23 @@ namespace YGOProAnalyticsServer.Services.Others
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IBanlistService _banlistService;
-        readonly IMemoryCache _cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DecklistService"/> class.
         /// </summary>
         /// <param name="db">The database.</param>
         /// <param name="banlistService">The banlist service.</param>
-        /// <param name="cache">The cache.</param>
         /// <exception cref="ArgumentNullException">
         /// db
         /// or
         /// banlistService
-        /// or
-        /// cache
         /// </exception>
         public DecklistService(
             YgoProAnalyticsDatabase db,
-            IBanlistService banlistService,
-            IMemoryCache cache)
+            IBanlistService banlistService)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
             _banlistService = banlistService ?? throw new ArgumentNullException(nameof(banlistService));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         /// <inheritdoc />
@@ -51,11 +41,10 @@ namespace YGOProAnalyticsServer.Services.Others
             string archetypeName = "",
             DateTime? statisticsFrom = null,
             DateTime? statisticsTo = null,
-            bool shouldGetDecksFromCache = false,
             bool orderByDescendingByNumberOfGames = false,
             int[] wantedCardsInDeck = null)
         {
-            IQueryable<Decklist> localDecklistsQuery = _getOrCreateAndGetOrderedDecklistFromCache(false);
+            IQueryable<Decklist> localDecklistsQuery = _getOrderedNoTrackedDecklists();
             if (statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
@@ -286,40 +275,6 @@ namespace YGOProAnalyticsServer.Services.Others
             localDecklistsQuery = localDecklistsQuery.Where(
                 x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
             );
-
-            return localDecklistsQuery;
-        }
-
-        /// <inheritdoc />
-        public async Task UpdateCache()
-        {
-            _cache.Remove(CacheKeys.OrderedDecklistsWithContentIncluded);
-            _getOrCreateAndGetOrderedDecklistFromCache(true);
-        }
-
-        /// <summary>
-        /// Ordered by NumberOfTimesWhenDeckWon.
-        /// </summary>
-        private IQueryable<Decklist> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
-        {
-            IQueryable<Decklist> localDecklistsQuery;
-            if (!shouldGetDecksFromCache)
-            {
-                localDecklistsQuery = _getOrderedNoTrackedDecklists();
-            }
-            else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
-            {
-                var cacheOptions = new MemoryCacheEntryOptions()
-                    //It is really important, because If there is no decklists in cache,
-                    //it is easy to achieve OutOfMemoryException.
-                    //In context of YGOProAnalyticsServer project
-                    //this entry should be updated only by 
-                    //UpdateCache() method directly after analysis process (When entire API is still blocked).
-                    .SetPriority(CacheItemPriority.NeverRemove);
-
-                localDecklistsQuery = _getOrderedNoTrackedDecklists();
-                _cache.Set(CacheKeys.OrderedDecklistsWithContentIncluded, localDecklistsQuery, cacheOptions);
-            }
 
             return localDecklistsQuery;
         }
