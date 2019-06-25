@@ -109,14 +109,12 @@ namespace YGOProAnalyticsServer.Services.Updaters
             return _banlists.Where(x => x.Name == banlistName).FirstOrDefault() != null;
         }
 
-        private bool _ifThereIsAnyBanlistAddItToDbContext(Banlist banlist)
+        private void _ifThereIsAnyBanlistAddItToDbContext(Banlist banlist)
         {
             if (banlist != null)
             {
-                _db.Add(banlist);
-                return true;
+                _db.Banlists.Add(banlist);
             }
-            return false;
         }
 
         private bool _isInformationAboutCardCountLimitations(string line)
