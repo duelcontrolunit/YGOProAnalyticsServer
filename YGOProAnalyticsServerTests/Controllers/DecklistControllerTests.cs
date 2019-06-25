@@ -107,56 +107,6 @@ namespace YGOProAnalyticsServerTests.Controllers
             Assert.IsTrue(response is BadRequestObjectResult
                           || response is BadRequestResult);
         }
-     
-        [TestCase(1, -1, "Blue-eyes", 10, "2018-12-12", "2018-12-12")]
-        public async Task FindAll_AllParamsValid_WeGetJsonResponse(
-            int pageNumber,
-            int banlistId,
-            string archetypeName,
-            int minNumberOfGames,
-            string statisticsFromDate,
-            string statisticsToDate)
-        {
-            var queryParamsDto = new DecklistBrowserQueryParametersDTO()
-            {
-                PageNumber = pageNumber,
-                BanlistId = banlistId,
-                ArchetypeName = archetypeName,
-                MinNumberOfGames = minNumberOfGames,
-                StatisticsFromDate = statisticsFromDate,
-                StatisticsToDate = statisticsToDate
-            };
-
-            _decklistBrowserQueryParamsValidator
-                .Setup(x => x.IsValid(queryParamsDto))
-                .Returns(true);
-
-            var dateTimeFrom = DateTime.Parse(statisticsFromDate);
-            var dateTimeTo = DateTime.Parse(statisticsToDate);
-            var emptyListOfDecklists = new List<Decklist>();
-            _decklistService
-                .Setup(x => x.FindAll(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    minNumberOfGames,
-                    banlistId,
-                    archetypeName,
-                    dateTimeFrom,
-                    dateTimeTo,
-                    true
-                ))
-                .ReturnsAsync(emptyListOfDecklists);
-            _decklistToDtoConverter
-                .Setup(x => x.Convert(emptyListOfDecklists, dateTimeFrom, dateTimeTo))
-                .Returns(new List<DecklistWithNumberOfGamesAndWinsDTO>());
-            _adminConfigMock.Setup(x => x.DefaultNumberOfResultsPerBrowserPage).Returns(100);
-            _numberOfResultsHelper.Setup(x => x.GetNumberOfResultsPerPage(-1)).Returns(100);
-            _initController();
-            var result = await _decklistController.FindAll(queryParamsDto);
-
-            Assert.IsTrue(result is JsonResult);
-        }
-
         private void _initController()
         {
             _decklistController = new DecklistController(
