@@ -85,6 +85,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
             _ifThereIsAnyBanlistAddItToDbContext(banlist);
             await _db.SaveChangesAsync();
+
             return newBanlists;
         }
 
