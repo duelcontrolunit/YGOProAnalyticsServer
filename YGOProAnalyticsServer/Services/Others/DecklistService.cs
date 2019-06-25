@@ -51,11 +51,11 @@ namespace YGOProAnalyticsServer.Services.Others
             string archetypeName = "",
             DateTime? statisticsFrom = null,
             DateTime? statisticsTo = null,
-            bool shouldGetDecksFromCache = true,
+            bool shouldGetDecksFromCache = false,
             bool orderByDescendingByNumberOfGames = false,
             int[] wantedCardsInDeck = null)
         {
-            IQueryable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
+            IQueryable<Decklist> localDecklistsQuery = _getOrCreateAndGetOrderedDecklistFromCache(false);
             if (statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
@@ -260,7 +260,7 @@ namespace YGOProAnalyticsServer.Services.Others
                 if (banlist != null)
                 {
                     localDecklistsQuery = localDecklistsQuery
-                        .Where(x => x.PlayableOnBanlists.Contains(banlist));
+                        .Where(x => x.DecklistPlayableOnBanlistsJoin.Any(y=>y.BanlistId == banlist.Id && x.Id == y.DecklistId));
                 }
             }
 
@@ -294,13 +294,13 @@ namespace YGOProAnalyticsServer.Services.Others
         public async Task UpdateCache()
         {
             _cache.Remove(CacheKeys.OrderedDecklistsWithContentIncluded);
-            await _getOrCreateAndGetOrderedDecklistFromCache(true);
+            _getOrCreateAndGetOrderedDecklistFromCache(true);
         }
 
         /// <summary>
         /// Ordered by NumberOfTimesWhenDeckWon.
         /// </summary>
-        private async Task<IQueryable<Decklist>> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
+        private IQueryable<Decklist> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
         {
             IQueryable<Decklist> localDecklistsQuery;
             if (!shouldGetDecksFromCache)
@@ -329,7 +329,6 @@ namespace YGOProAnalyticsServer.Services.Others
         /// </summary>
         private IQueryable<Decklist> _getOrderedNoTrackedDecklists()
         {
-            _db.Database.SetCommandTimeout(3600);
             return _getDecklistsQuery(false)
                 .OrderByDescending(
                     x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
