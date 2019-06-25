@@ -27,7 +27,7 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// </summary>
         /// <param name="banlistId">The banlist identifier.</param>
         /// <returns>Banlist with all cards included.</returns>
-        Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId);
+        Task<Banlist> GetBanlistWithAllAllowedDecklistsIncludedAsync(int banlistId);
         Task<IEnumerable<BanlistIdAndNameDTO>> GetListOfBanlistsNamesAndIdsAsNoTrackingFromCache(bool shouldIgnoreCache = false);
 
         /// <summary>

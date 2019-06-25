@@ -45,47 +45,7 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<Decklist>> FindAll(
-            int howManyTake,
-            int howManySkip,
-            int minNumberOfGames = 10,
-            int banlistId = -1,
-            string archetypeName = "",
-            DateTime? statisticsFrom = null,
-            DateTime? statisticsTo = null,
-            bool shouldGetDecksFromCache = true)
-        {
-            IEnumerable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
-            if (statisticsTo == null && statisticsFrom == null)
-            {
-                localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
-            }
-            else
-            {
-                localDecklistsQuery = _addStatisticsDateLimitIfRequiredAndThenMinNumberOfGamesFilter(
-                  statisticsFrom,
-                  statisticsTo,
-                  minNumberOfGames,
-                  localDecklistsQuery);
-
-                localDecklistsQuery = _orderUsingDateLimitAndMinNumberOfGamesCriteria(
-                  statisticsFrom,
-                  statisticsTo,
-                  minNumberOfGames,
-                  localDecklistsQuery);
-            }
-
-            localDecklistsQuery = _addArchetypeNameFilterToLocalDecklistQueryIfRequired(archetypeName, localDecklistsQuery);
-            localDecklistsQuery = await _addBanlistFilterToLocalDecklistQueryIfRequired(banlistId, localDecklistsQuery);
-
-            return localDecklistsQuery
-                    .Skip(howManySkip)
-                    .Take(howManyTake)
-                    .ToList();
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<Decklist>> FindAll(
+        public async Task<IQueryable<Decklist>> FindAll(
             int minNumberOfGames = 10,
             int banlistId = -1,
             string archetypeName = "",
@@ -95,7 +55,7 @@ namespace YGOProAnalyticsServer.Services.Others
             bool orderByDescendingByNumberOfGames = false,
             int[] wantedCardsInDeck = null)
         {
-            IEnumerable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
+            IQueryable<Decklist> localDecklistsQuery = await _getOrCreateAndGetOrderedDecklistFromCache(shouldGetDecksFromCache);
             if (statisticsTo == null && statisticsFrom == null)
             {
                 localDecklistsQuery = _addMinNumberOfGamesFilterToLocalDecklistQuery(minNumberOfGames, localDecklistsQuery);
@@ -137,11 +97,11 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
-        private IEnumerable<Decklist> _orderDescendingByNumberOfGamesUsingDateLimitAndMinNumberOfGamesCriteria(
+        private IQueryable<Decklist> _orderDescendingByNumberOfGamesUsingDateLimitAndMinNumberOfGamesCriteria(
             DateTime? statisticsFrom,
             DateTime? statisticsTo,
             int minNumberOfGames,
-            IEnumerable<Decklist> localDecklistsQuery)
+            IQueryable<Decklist> localDecklistsQuery)
         {
             if (statisticsFrom != null && statisticsTo == null)
             {
@@ -184,13 +144,13 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
-        private IEnumerable<Decklist> _orderByDescendingByNumberOfGames(IEnumerable<Decklist> localDecklistsQuery)
+        private IQueryable<Decklist> _orderByDescendingByNumberOfGames(IQueryable<Decklist> localDecklistsQuery)
         {
             return localDecklistsQuery
                 .OrderByDescending(x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed));
         }
 
-        private IEnumerable<Decklist> _addWantedCardsFilter(int[] wantedCardsInDeck, IEnumerable<Decklist> localDecklistsQuery)
+        private IQueryable<Decklist> _addWantedCardsFilter(int[] wantedCardsInDeck, IQueryable<Decklist> localDecklistsQuery)
         {
             foreach (var wantedCardPasscode in wantedCardsInDeck)
             {
@@ -204,11 +164,11 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
-        private IEnumerable<Decklist> _orderUsingDateLimitAndMinNumberOfGamesCriteria(
+        private IQueryable<Decklist> _orderUsingDateLimitAndMinNumberOfGamesCriteria(
             DateTime? statisticsFrom,
             DateTime? statisticsTo,
             int minNumberOfGames,
-            IEnumerable<Decklist> localDecklistsQuery)
+            IQueryable<Decklist> localDecklistsQuery)
         {
             if (statisticsFrom != null && statisticsTo == null)
             {
@@ -251,11 +211,11 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
-        private IEnumerable<Decklist> _addStatisticsDateLimitIfRequiredAndThenMinNumberOfGamesFilter(
+        private IQueryable<Decklist> _addStatisticsDateLimitIfRequiredAndThenMinNumberOfGamesFilter(
             DateTime? statisticsFrom,
             DateTime? statisticsTo,
             int minNumberOfGames,
-            IEnumerable<Decklist> localDecklistsQuery)
+            IQueryable<Decklist> localDecklistsQuery)
         {
 
             if (statisticsFrom != null && statisticsTo == null)
@@ -289,27 +249,27 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
-        private async Task<IEnumerable<Decklist>> _addBanlistFilterToLocalDecklistQueryIfRequired(
+        private async Task<IQueryable<Decklist>> _addBanlistFilterToLocalDecklistQueryIfRequired(
             int banlistId,
-            IEnumerable<Decklist> localDecklistsQuery)
+            IQueryable<Decklist> localDecklistsQuery)
         {
             if (banlistId > 0)
             {
                 var banlist = await _banlistService
-                    .GetBanlistWithAllCardsIncludedAsync(banlistId);
+                    .GetBanlistWithAllAllowedDecklistsIncludedAsync(banlistId);
                 if (banlist != null)
                 {
                     localDecklistsQuery = localDecklistsQuery
-                        .Where(x => _banlistService.CanDeckBeUsedOnGivenBanlist(x, banlist));
+                        .Where(x => x.PlayableOnBanlists.Contains(banlist));
                 }
             }
 
             return localDecklistsQuery;
         }
 
-        private static IEnumerable<Decklist> _addArchetypeNameFilterToLocalDecklistQueryIfRequired(
+        private static IQueryable<Decklist> _addArchetypeNameFilterToLocalDecklistQueryIfRequired(
             string archetypeName,
-            IEnumerable<Decklist> localDecklistsQuery)
+            IQueryable<Decklist> localDecklistsQuery)
         {
             if (!string.IsNullOrEmpty(archetypeName))
             {
@@ -319,9 +279,9 @@ namespace YGOProAnalyticsServer.Services.Others
             return localDecklistsQuery;
         }
 
-        private IEnumerable<Decklist> _addMinNumberOfGamesFilterToLocalDecklistQuery(
+        private IQueryable<Decklist> _addMinNumberOfGamesFilterToLocalDecklistQuery(
             int minNumberOfGames,
-            IEnumerable<Decklist> localDecklistsQuery)
+            IQueryable<Decklist> localDecklistsQuery)
         {
             localDecklistsQuery = localDecklistsQuery.Where(
                 x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWasUsed) >= minNumberOfGames
@@ -340,12 +300,12 @@ namespace YGOProAnalyticsServer.Services.Others
         /// <summary>
         /// Ordered by NumberOfTimesWhenDeckWon.
         /// </summary>
-        private async Task<IEnumerable<Decklist>> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
+        private async Task<IQueryable<Decklist>> _getOrCreateAndGetOrderedDecklistFromCache(bool shouldGetDecksFromCache)
         {
-            IEnumerable<Decklist> localDecklistsQuery;
+            IQueryable<Decklist> localDecklistsQuery;
             if (!shouldGetDecksFromCache)
             {
-                localDecklistsQuery = await _getOrderedNoTrackedDecklists();
+                localDecklistsQuery = _getOrderedNoTrackedDecklists();
             }
             else if (!_cache.TryGetValue(CacheKeys.OrderedDecklistsWithContentIncluded, out localDecklistsQuery))
             {
@@ -357,7 +317,7 @@ namespace YGOProAnalyticsServer.Services.Others
                     //UpdateCache() method directly after analysis process (When entire API is still blocked).
                     .SetPriority(CacheItemPriority.NeverRemove);
 
-                localDecklistsQuery = await _getOrderedNoTrackedDecklists();
+                localDecklistsQuery = _getOrderedNoTrackedDecklists();
                 _cache.Set(CacheKeys.OrderedDecklistsWithContentIncluded, localDecklistsQuery, cacheOptions);
             }
 
@@ -367,13 +327,13 @@ namespace YGOProAnalyticsServer.Services.Others
         /// <summary>
         /// Ordered by NumberOfTimesWhenDeckWon.
         /// </summary>
-        private async Task<List<Decklist>> _getOrderedNoTrackedDecklists()
+        private IQueryable<Decklist> _getOrderedNoTrackedDecklists()
         {
             _db.Database.SetCommandTimeout(3600);
-            return await _getDecklistsQuery(false)
+            return _getDecklistsQuery(false)
                 .OrderByDescending(
                     x => x.DecklistStatistics.Sum(y => y.NumberOfTimesWhenDeckWon)
-                 ).ToListAsync();
+                 );
         }
 
         /// <inheritdoc />
