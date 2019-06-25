@@ -23,7 +23,6 @@ namespace YGOProAnalyticsServer.EventHandlers
         IYDKToDecklistConverter _yDKToDecklistConverter;
         IBanlistService _banlistService;
         IEnumerable<Banlist> _banlists;
-        IEnumerable<Decklist> decklistsFromDb;
 
         public YgoProAnalysisBasedOnDataFromYgoProServer(
             IDuelLogNameAnalyzer duelLogNameAnalyzer,
@@ -43,7 +42,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             var duelLogsFromAllDates = notification.ConvertedDuelLogs;
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
-            _banlists = _db.Banlists.ToList();
+            var banlists = _db.Banlists.ToList();
 
             await _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
             foreach (var duelLogsPack in duelLogsFromAllDates)
@@ -108,7 +107,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             List<Decklist> allDecklistsFromThePack)
         {
             var newDecks = new List<Decklist>();
-            decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
+            var decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
             foreach (var decklist in allDecklistsFromThePack)
             {
                 bool isDuplicate = false;
@@ -343,7 +342,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             if (newBanlists.Count() > 0)
             {
-                decklistsFromDb = _db.Decklists.Include(x=>x.PlayableOnBanlists).ToList();
+                var decklistsFromDb = _db.Decklists.Include(x=>x.PlayableOnBanlists).ToList();
                 var tasks = decklistsFromDb.Select(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
                 await Task.WhenAll(tasks);
             }
