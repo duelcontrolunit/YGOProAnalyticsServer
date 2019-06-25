@@ -80,14 +80,12 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <inheritdoc />
-        public async Task<Banlist> GetBanlistWithAllCardsIncludedAsync(int banlistId)
+        public async Task<Banlist> GetBanlistWithAllAllowedDecklistsIncludedAsync(int banlistId)
         {
             return await _db
                     .Banlists
                     .Where(x => x.Id == banlistId)
-                    .Include(Banlist.IncludeWithForbiddenCards)
-                    .Include(Banlist.IncludeWithLimitedCards)
-                    .Include(Banlist.IncludeWithSemiLimitedCards)
+                    .Include(Banlist.IncludeWithAllowedDecklists)
                     .FirstOrDefaultAsync();
         }
 

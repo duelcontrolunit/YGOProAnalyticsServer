@@ -1,7 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
@@ -10,7 +7,6 @@ using YGOProAnalyticsServer.Services.Others;
 using YGOProAnalyticsServerTests.TestingHelpers;
 using Moq;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace YGOProAnalyticsServerTests.Others
 {
@@ -21,7 +17,6 @@ namespace YGOProAnalyticsServerTests.Others
         YgoProAnalyticsDatabase _db;
         readonly CardsAndDecksHelper _helper = new CardsAndDecksHelper();
         Mock<IBanlistService> _banlistServiceMock;
-        Mock<IMemoryCache> _cacheMock;
 
         [SetUp]
         public void SetUp()
@@ -29,15 +24,13 @@ namespace YGOProAnalyticsServerTests.Others
             _db = new YgoProAnalyticsDatabase(SqlInMemoryHelper.SqlLiteOptions<YgoProAnalyticsDatabase>());
             _db.Database.EnsureCreated();
             _banlistServiceMock = new Mock<IBanlistService>();
-            _cacheMock = new Mock<IMemoryCache>();
         }
 
         private void _initService()
         {
             _decklistService = new DecklistService(
                 _db,
-                _banlistServiceMock.Object,
-                _cacheMock.Object);
+                _banlistServiceMock.Object);
         }
 
         [TearDown]
