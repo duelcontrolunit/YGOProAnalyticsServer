@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using YGOProAnalyticsServer.Database.ManyToManySupport;
+using YGOProAnalyticsServer.DbModels.DbJoinModels;
 
 namespace YGOProAnalyticsServer.DbModels
 {
@@ -29,6 +30,11 @@ namespace YGOProAnalyticsServer.DbModels
         public static readonly string IncludeWithSemiLimitedCards = $"{nameof(SemiLimitedCardsJoin)}.{nameof(SemiLimitedCardBanlistJoin.Card)}";
 
         /// <summary>
+        /// Include string required to include forbidden cards.
+        /// </summary>
+        public static readonly string IncludeWithAllowedDecklists = $"{nameof(AllowedDecklistsBanlistsJoin)}.{nameof(DecklistsBanlistsJoin.Decklist)}";
+
+        /// <summary>
         /// Initialize banlist.
         /// </summary>
         /// <param name="id">Banlist identifier.</param>
@@ -42,6 +48,7 @@ namespace YGOProAnalyticsServer.DbModels
             ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
             LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
             SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
+            AllowedDecklists = new JoinCollectionFacade<Decklist, Banlist, DecklistsBanlistsJoin>(this, AllowedDecklistsBanlistsJoin);
         }
 
         /// <summary>
@@ -58,6 +65,7 @@ namespace YGOProAnalyticsServer.DbModels
             ForbiddenCards = new JoinCollectionFacade<Card, Banlist, ForbiddenCardBanlistJoin>(this, ForbiddenCardsJoin);
             LimitedCards = new JoinCollectionFacade<Card, Banlist, LimitedCardBanlistJoin>(this, LimitedCardsJoin);
             SemiLimitedCards = new JoinCollectionFacade<Card, Banlist, SemiLimitedCardBanlistJoin>(this, SemiLimitedCardsJoin);
+            AllowedDecklists = new JoinCollectionFacade<Decklist, Banlist, DecklistsBanlistsJoin>(this, AllowedDecklistsBanlistsJoin);
         }
 
         /// <summary>
@@ -92,6 +100,17 @@ namespace YGOProAnalyticsServer.DbModels
         /// Join property for <see cref="SemiLimitedCards"/>
         /// </summary>
         public ICollection<SemiLimitedCardBanlistJoin> SemiLimitedCardsJoin { get; set; } = new List<SemiLimitedCardBanlistJoin>();
+
+        /// <summary>
+        /// Join property for <see cref="AllowedDecklists"/>
+        /// </summary>
+        public ICollection<DecklistsBanlistsJoin> AllowedDecklistsBanlistsJoin { get; set; } = new List<DecklistsBanlistsJoin>();
+
+        /// <summary>
+        /// List of decklists that can be played under the banlist.
+        /// </summary>
+        [NotMapped]
+        public ICollection<Decklist> AllowedDecklists { get; protected set; }
 
         /// <summary>
         /// List of forbidden cards.

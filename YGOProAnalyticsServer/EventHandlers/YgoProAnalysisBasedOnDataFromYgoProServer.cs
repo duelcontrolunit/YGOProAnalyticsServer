@@ -11,6 +11,7 @@ using YGOProAnalyticsServer.Events;
 using YGOProAnalyticsServer.Models;
 using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
+using YGOProAnalyticsServer.Services.Others.Interfaces;
 
 namespace YGOProAnalyticsServer.EventHandlers
 {
@@ -20,24 +21,33 @@ namespace YGOProAnalyticsServer.EventHandlers
         YgoProAnalyticsDatabase _db;
         IArchetypeAndDecklistAnalyzer _archetypeAndDecklistAnalyzer;
         IYDKToDecklistConverter _yDKToDecklistConverter;
+        IBanlistService _banlistService;
+        IEnumerable<Banlist> _banlists;
+        IDecklistService _decklistService;
 
         public YgoProAnalysisBasedOnDataFromYgoProServer(
             IDuelLogNameAnalyzer duelLogNameAnalyzer,
             YgoProAnalyticsDatabase db,
             IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer,
-            IYDKToDecklistConverter yDKToDecklistConverter)
+            IYDKToDecklistConverter yDKToDecklistConverter,
+            IBanlistService banlistService,
+            IDecklistService decklistService)
         {
             _duelLogNameAnalyzer = duelLogNameAnalyzer;
             _db = db;
             _archetypeAndDecklistAnalyzer = archetypeAndDecklistAnalyzer;
             _yDKToDecklistConverter = yDKToDecklistConverter;
+            _banlistService = banlistService;
+            _decklistService = decklistService;
         }
 
         public async Task Handle(DataFromYgoProServerRetrieved notification, CancellationToken cancellationToken)
         {
             var duelLogsFromAllDates = notification.ConvertedDuelLogs;
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
+            _banlists = _db.Banlists.ToList();
 
+            _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
             foreach (var duelLogsPack in duelLogsFromAllDates)
             {
                 await _analyze(
@@ -60,12 +70,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                _analyzeBanlist(duelLog);
-                _assignConvertedDecklistToProperCollection(
-                    decklistsAsStringsWithFilenames,
-                    allDecksWhichWonFromThePack,
-                    allDecksWhichLostFromThePack,
-                    duelLog);
+                _handleDuelLogs(decklistsAsStringsWithFilenames,
+                                            allDecksWhichWonFromThePack,
+                                            allDecksWhichLostFromThePack,
+                                            duelLog);
             }
 
             var decklistsWhichWonWithoutDuplicatesFromThePack = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
@@ -80,6 +88,20 @@ namespace YGOProAnalyticsServer.EventHandlers
 
             _updateDecklistsStatisticsAndAddNewDecksToDatabase(allDecklistsFromThePack);
             await _db.SaveChangesAsync();
+        }
+
+        private void _handleDuelLogs(
+            KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames,
+            List<Decklist> allDecksWhichWonFromThePack,
+            List<Decklist> allDecksWhichLostFromThePack,
+            DuelLog duelLog)
+        {
+            _analyzeBanlist(duelLog);
+            _assignConvertedDecklistToProperCollection(
+                decklistsAsStringsWithFilenames,
+                allDecksWhichWonFromThePack,
+                allDecksWhichLostFromThePack,
+                duelLog);
         }
 
         private void _updateDecklistsStatisticsAndAddNewDecksToDatabase(
@@ -152,6 +174,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                     if (_archetypeAndDecklistAnalyzer.CheckIfDecklistsAreDuplicate(decklist, decklistChecked))
                     {
                         decklistAlreadyExisting = true;
+                        break;
                     }
                 }
 
@@ -160,43 +183,55 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                var numberOfDuplicatesWithListOfDecklists = _archetypeAndDecklistAnalyzer.
-                    RemoveDuplicateDecklistsFromListOfDecklists(
-                    decklist,
-                    allDecksFromThePack.OrderBy(x => x.WhenDecklistWasFirstPlayed));
-                decklistsWithoutDuplicates.Add(numberOfDuplicatesWithListOfDecklists.DecklistThatWasChecked);
-                var statistics = decklist.DecklistStatistics
-                    .FirstOrDefault(x => x.DateWhenDeckWasUsed == decklist.WhenDecklistWasFirstPlayed);
-                if (statistics == null)
-                {
-                    statistics = DecklistStatistics.Create(decklist, decklist.WhenDecklistWasFirstPlayed);
-                    decklist.DecklistStatistics.Add(statistics);
-                }
-
-                statistics.
-                    IncrementNumberOfTimesWhenDeckWasUsedByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
-                if (decksWon)
-                {
-                    statistics.
-                        IncrementNumberOfTimesWhenDeckWonByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
-                }
-
-                var archetype = _archetypeAndDecklistAnalyzer.GetArchetypeOfTheDecklistWithStatistics(
-                    decklist,
-                    decklist.WhenDecklistWasFirstPlayed);
-                var archetypeStatisticsFromDay = archetype.Statistics
-                    .First(x => x.DateWhenArchetypeWasUsed == decklist.WhenDecklistWasFirstPlayed);
-
-                archetypeStatisticsFromDay.IncrementNumberOfDecksWhereWasUsedByAmount(
-                    numberOfDuplicatesWithListOfDecklists.DuplicateCount);
-                if (decksWon)
-                {
-                    archetypeStatisticsFromDay.IncrementNumberOfTimesWhenArchetypeWonByAmount(
-                        numberOfDuplicatesWithListOfDecklists.DuplicateCount);
-                }
+                _analyzeNewDeck(allDecksFromThePack,
+                                          decksWon,
+                                          decklistsWithoutDuplicates,
+                                          decklist);
             }
 
             return decklistsWithoutDuplicates;
+        }
+
+        private void _analyzeNewDeck(List<Decklist> allDecksFromThePack,
+                                           bool decksWon,
+                                           List<Decklist> decklistsWithoutDuplicates,
+                                           Decklist decklist)
+        {
+            var numberOfDuplicatesWithListOfDecklists = _archetypeAndDecklistAnalyzer.
+                RemoveDuplicateDecklistsFromListOfDecklists(
+                decklist,
+                allDecksFromThePack.OrderBy(x => x.WhenDecklistWasFirstPlayed));
+            decklistsWithoutDuplicates.Add(numberOfDuplicatesWithListOfDecklists.DecklistThatWasChecked);
+            var statistics = decklist.DecklistStatistics
+                .FirstOrDefault(x => x.DateWhenDeckWasUsed == decklist.WhenDecklistWasFirstPlayed);
+            if (statistics == null)
+            {
+                statistics = DecklistStatistics.Create(decklist, decklist.WhenDecklistWasFirstPlayed);
+                decklist.DecklistStatistics.Add(statistics);
+            }
+
+            statistics.
+                IncrementNumberOfTimesWhenDeckWasUsedByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
+            if (decksWon)
+            {
+                statistics.
+                    IncrementNumberOfTimesWhenDeckWonByAmount(numberOfDuplicatesWithListOfDecklists.DuplicateCount);
+            }
+
+            var archetype = _archetypeAndDecklistAnalyzer.GetArchetypeOfTheDecklistWithStatistics(
+                decklist,
+                decklist.WhenDecklistWasFirstPlayed);
+            var archetypeStatisticsFromDay = archetype.Statistics
+                .First(x => x.DateWhenArchetypeWasUsed == decklist.WhenDecklistWasFirstPlayed);
+
+            archetypeStatisticsFromDay.IncrementNumberOfDecksWhereWasUsedByAmount(
+                numberOfDuplicatesWithListOfDecklists.DuplicateCount);
+            if (decksWon)
+            {
+                archetypeStatisticsFromDay.IncrementNumberOfTimesWhenArchetypeWonByAmount(
+                    numberOfDuplicatesWithListOfDecklists.DuplicateCount);
+            }
+            _addPlayableBanlistsToDecklist(decklist, _banlists);
         }
 
         private List<Decklist> _removeDuplicatesAndMerge(List<Decklist> decklists1, List<Decklist> decklists2)
@@ -290,6 +325,29 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
 
             banlistStatistics.IncrementHowManyTimesWasUsed();
+        }
+
+        private void _addPlayableBanlistsToDecklist(Decklist decklist, IEnumerable<Banlist> banlists)
+        {
+            foreach (var banlist in banlists)
+            {
+                if (!decklist.PlayableOnBanlists.Contains(banlist) && _banlistService.CanDeckBeUsedOnGivenBanlist(decklist, banlist))
+                {
+                    decklist.PlayableOnBanlists.Add(banlist);
+                }
+            }
+        }
+
+        private void _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
+        {
+            if (newBanlists.Count() > 0)
+            {
+                var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis().ToList();
+                foreach (var decklist in decklistsFromDb)
+                {
+                    _addPlayableBanlistsToDecklist(decklist, newBanlists);
+                }
+            }
         }
     }
 }

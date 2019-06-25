@@ -21,8 +21,8 @@ namespace YGOProAnalyticsServer.Services.Updaters
         private readonly ICardsDataDownloader _cardsDataDownloader;
         private readonly ICardBuilder _cardBuilder;
         private readonly YgoProAnalyticsDatabase _db;
-        private readonly List<Archetype> _archetypes;
-        private readonly List<Card> _cards;
+        private List<Archetype> _archetypes;
+        private List<Card> _cards;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CardsDataToCardsAndArchetypesUpdater"/> class.
@@ -38,8 +38,6 @@ namespace YGOProAnalyticsServer.Services.Updaters
             _cardsDataDownloader = cardsDataDownloader;
             _cardBuilder = cardBuilder;
             _db = db;
-            _archetypes = _db.Archetypes.ToList();
-            _cards = _db.Cards.ToList();
         }
 
         /// <summary>
@@ -50,6 +48,8 @@ namespace YGOProAnalyticsServer.Services.Updaters
         /// <exception cref="DbUpdateConcurrencyException"></exception>
         public async Task UpdateCardsAndArchetypes(string URL)
         {
+            _archetypes = _db.Archetypes.ToList();
+            _cards = _db.Cards.ToList();
             string cardsData = await _cardsDataDownloader.DownloadCardsFromWebsite(URL);
             JToken cardsDataList = (JsonConvert.DeserializeObject<JArray>(cardsData)).First;
             foreach (JObject item in cardsDataList.Children<JObject>())

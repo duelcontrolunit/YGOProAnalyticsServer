@@ -65,6 +65,7 @@ namespace YGOProAnalyticsServer.Services.Others.Interfaces
         /// <param name="id">The identifier.</param>
         /// <returns>Decklist with all data included.</returns>
         Task<Decklist> GetByIdWithAllDataIncluded(int id);
+        IQueryable<Decklist> GetDecklistsQueryForBanlistAnalysis(bool shouldBeTracked = true);
 
         /// <summary>
         /// Renew cache by key. CacheKey: <see cref="CacheKeys.OrderedDecklistsWithContentIncluded"/>

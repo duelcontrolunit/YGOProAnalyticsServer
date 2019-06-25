@@ -41,7 +41,8 @@ namespace YGOProAnalyticsServerTests.Services.Updater
 
 
                 var updater = new BanlistDataToBanlistUpdater(db, new BanlistDataDownloader());
-                await updater.UpdateBanlists("https://raw.githubusercontent.com/szefo09/updateYGOPro2/master/lflist.conf");
+                var newBanlists = await updater.UpdateBanlists("https://raw.githubusercontent.com/szefo09/updateYGOPro2/master/lflist.conf");
+                Assert.Greater(newBanlists.Count(), 0);
             }
         }
 

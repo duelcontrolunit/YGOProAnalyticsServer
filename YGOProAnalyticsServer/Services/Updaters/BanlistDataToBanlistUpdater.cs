@@ -18,7 +18,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
     {
         readonly YgoProAnalyticsDatabase _db;
         readonly IBanlistDataDownloader _banlistDataDownloader;
-        readonly List<Banlist> _banlists;
+        List<Banlist> _banlists;
 
         bool _areUpdatedForbiddenCardsNow = false;
         bool _areUpdatedLimitedCardsNow = false;
@@ -34,15 +34,17 @@ namespace YGOProAnalyticsServer.Services.Updaters
         {
             _db = db;
             _banlistDataDownloader = banlistDataDownloader;
-            _banlists = _db.Banlists.ToList();
+           
         }
 
         /// <inheritdoc />
-        public async Task UpdateBanlists(string url)
+        public async Task<IEnumerable<Banlist>> UpdateBanlists(string url)
         {
+            _banlists = _db.Banlists.ToList();
             List<Card> cards = _db.Cards.ToList();
             string banlistDataAsString = await _banlistDataDownloader.DownloadBanlistFromWebsite(url);
             var banlistDatas = banlistDataAsString.Split("\n");
+            List<Banlist> newBanlists = new List<Banlist>();
             Banlist banlist = null;
             for (int i = 1; i < banlistDatas.Length; i++)
             {
@@ -62,6 +64,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                     }
 
                     banlist = new Banlist(banlistName, _banlistNumberInLflist);
+                    newBanlists.Add(banlist);
                     continue;
                 }
 
@@ -82,6 +85,8 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
             _ifThereIsAnyBanlistAddItToDbContext(banlist);
             await _db.SaveChangesAsync();
+
+            return newBanlists;
         }
 
         private void _addCardToAppropriateBanlistSection(Banlist banlist, Card card)
