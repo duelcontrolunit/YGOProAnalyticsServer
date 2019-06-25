@@ -94,9 +94,15 @@ namespace YGOProAnalyticsServer.DbModels
         public ICollection<Card> SideDeck { get; protected set; } = new List<Card>();
         public ICollection<CardInSideDeckDecklistJoin> CardsInSideDeckJoin { get; set; } = new List<CardInSideDeckDecklistJoin>();
 
+        /// <summary>
+        /// ICollection of Banlists on which the decklist is playable
+        /// </summary>
         [NotMapped]
         public ICollection<Banlist> PlayableOnBanlists { get; protected set; }
 
+        /// <summary>
+        /// Join property for <see cref="DecklistPlayableOnBanlistsJoin"/>
+        /// </summary>
         public ICollection<DecklistsBanlistsJoin> DecklistPlayableOnBanlistsJoin { get; set; } = new List<DecklistsBanlistsJoin>();
 
         /// <summary>

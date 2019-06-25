@@ -38,7 +38,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         }
 
         /// <inheritdoc />
-        public async Task<List<Banlist>> UpdateBanlists(string url)
+        public async Task<IEnumerable<Banlist>> UpdateBanlists(string url)
         {
             _banlists = _db.Banlists.ToList();
             List<Card> cards = _db.Cards.ToList();

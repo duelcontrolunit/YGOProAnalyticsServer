@@ -23,12 +23,14 @@ namespace YGOProAnalyticsServer.EventHandlers
         IYDKToDecklistConverter _yDKToDecklistConverter;
         IBanlistService _banlistService;
         IEnumerable<Banlist> _banlists;
+        IEnumerable<Decklist> decklistsFromDb;
 
         public YgoProAnalysisBasedOnDataFromYgoProServer(
             IDuelLogNameAnalyzer duelLogNameAnalyzer,
             YgoProAnalyticsDatabase db,
             IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer,
-            IYDKToDecklistConverter yDKToDecklistConverter, IBanlistService banlistService)
+            IYDKToDecklistConverter yDKToDecklistConverter,
+            IBanlistService banlistService)
         {
             _duelLogNameAnalyzer = duelLogNameAnalyzer;
             _db = db;
@@ -67,7 +69,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                tasks.Add(_analyzeOkDuelLog(decklistsAsStringsWithFilenames, allDecksWhichWonFromThePack, allDecksWhichLostFromThePack, duelLog));
+                tasks.Add(_analyzeOkDuelLog(decklistsAsStringsWithFilenames,
+                                            allDecksWhichWonFromThePack,
+                                            allDecksWhichLostFromThePack,
+                                            duelLog));
             }
             await Task.WhenAll(tasks);
 
@@ -85,7 +90,11 @@ namespace YGOProAnalyticsServer.EventHandlers
             await _db.SaveChangesAsync();
         }
 
-        private async Task _analyzeOkDuelLog(KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames, List<Decklist> allDecksWhichWonFromThePack, List<Decklist> allDecksWhichLostFromThePack, DuelLog duelLog)
+        private async Task _analyzeOkDuelLog(
+            KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames,
+            List<Decklist> allDecksWhichWonFromThePack,
+            List<Decklist> allDecksWhichLostFromThePack,
+            DuelLog duelLog)
         {
             _analyzeBanlist(duelLog);
             _assignConvertedDecklistToProperCollection(
@@ -99,7 +108,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             List<Decklist> allDecklistsFromThePack)
         {
             var newDecks = new List<Decklist>();
-            var decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
+            decklistsFromDb = _db.Decklists.Include(x => x.DecklistStatistics).ToList();
             foreach (var decklist in allDecklistsFromThePack)
             {
                 bool isDuplicate = false;
@@ -175,13 +184,19 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                tasks.Add(_analyzeNewDeck(allDecksFromThePack, decksWon, decklistsWithoutDuplicates, decklist));
+                tasks.Add(_analyzeNewDeck(allDecksFromThePack,
+                                          decksWon,
+                                          decklistsWithoutDuplicates,
+                                          decklist));
             }
             await Task.WhenAll(tasks);
             return decklistsWithoutDuplicates;
         }
 
-        private async Task _analyzeNewDeck(List<Decklist> allDecksFromThePack, bool decksWon, List<Decklist> decklistsWithoutDuplicates, Decklist decklist)
+        private async Task _analyzeNewDeck(List<Decklist> allDecksFromThePack,
+                                           bool decksWon,
+                                           List<Decklist> decklistsWithoutDuplicates,
+                                           Decklist decklist)
         {
             var numberOfDuplicatesWithListOfDecklists = _archetypeAndDecklistAnalyzer.
                 RemoveDuplicateDecklistsFromListOfDecklists(
@@ -329,7 +344,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             if (newBanlists.Count() > 0)
             {
-                var decklistsFromDb = _db.Decklists.ToList();
+                decklistsFromDb = _db.Decklists.ToList();
                 var tasks = decklistsFromDb.Select(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
                 await Task.WhenAll(tasks);
             }

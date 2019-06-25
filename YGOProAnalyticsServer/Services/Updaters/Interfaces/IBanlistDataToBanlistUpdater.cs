@@ -14,6 +14,6 @@ namespace YGOProAnalyticsServer.Services.Updaters.Interfaces
         /// </summary>
         /// <param name="url">URL</param>
         /// <returns></returns>
-        Task<List<Banlist>> UpdateBanlists(string url);
+        Task<IEnumerable<Banlist>> UpdateBanlists(string url);
     }
 }
