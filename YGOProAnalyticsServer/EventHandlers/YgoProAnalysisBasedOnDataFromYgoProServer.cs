@@ -42,7 +42,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             var duelLogsFromAllDates = notification.ConvertedDuelLogs;
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
-            var banlists = _db.Banlists.ToList();
+            _banlists = _db.Banlists.ToList();
 
             await _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
             foreach (var duelLogsPack in duelLogsFromAllDates)
