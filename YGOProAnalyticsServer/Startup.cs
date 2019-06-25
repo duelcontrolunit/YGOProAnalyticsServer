@@ -19,14 +19,12 @@ using YGOProAnalyticsServer.Services.Unzippers;
 using YGOProAnalyticsServer.Services.Unzippers.Interfaces;
 using YGOProAnalyticsServer.Services.Others.Interfaces;
 using YGOProAnalyticsServer.Services.Others;
-using YGOProAnalyticsServer.Extensions;
 using System.Reflection;
 using MediatR;
 using YGOProAnalyticsServer.Jobs;
 using YGOProAnalyticsServer.Services.Factories.Interfaces;
 using YGOProAnalyticsServer.Services.Factories;
 using AutoMapper;
-using System.Reflection;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
 using YGOProAnalyticsServer.Services.Validators;
 
@@ -50,35 +48,8 @@ namespace YGOProAnalyticsServer
             services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
             _addAutomapper(services);
             _addCors(services);
-            services.AddScoped<ICardBuilder, CardBuilder>();
-            services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
-            services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
-            services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
-            services.AddScoped<IDuelLogConverter, DuelLogConverter>();
-            services.AddScoped<IBanlistDataToBanlistUpdater, BanlistDataToBanlistUpdater>();
-            services.AddScoped<IFTPDownloader, FTPDownloader>();
-            services.AddScoped<IFileUnzipper, FileUnzipper>();
-            services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
-            services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
-            services.AddScoped<ICardsDataToCardsAndArchetypesUpdater, CardsDataToCardsAndArchetypesUpdater>();
-            services.AddScoped<IArchetypeAndDecklistAnalyzer, ArchetypeAndDecklistAnalyzer>();
-            services.AddScoped<IYDKToDecklistConverter, YDKToDecklistConverter>();
-            services.AddScoped<ICardDtosFactory, CardDtosFactory>();
-            services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
-            services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
-            services.AddScoped<IDecklistService, DecklistService>();
-            services.AddScoped<IServerActivityStatisticsService, ServerActivityStatisticsService>();
-            services.AddScoped<IBanlistService, BanlistService>();
-            services.AddScoped<IDateValidator, DateValidator>();
-            services.AddScoped<IDecklistBrowserQueryParametersDtoValidator, DecklistBrowserQueryParametersDtoValidator>();
-            services.AddScoped<IArchetypeService, ArchetypeService>();
-            services.AddScoped<INumberOfResultsHelper, NumberOfResultsHelper>();
-            services.AddScoped<IBanlistBrowserQueryParamsValidator, BanlistBrowserQueryParamsValidator>();
-            services.AddScoped<IBanlistToBanlistDTOConverter, BanlistToBanlistDTOConverter>();
-            services.AddScoped<IArchetypeBrowserQueryParamsValidator, ArchetypeBrowserQueryParamsValidator>();
-            services.AddScoped<IArchetypeToDtoConverter, ArchetypeToDtoConverter>();
-            services.AddScoped<IServerActivityUpdater, ServerActivityUpdater>();
-
+            _registerScopedServices(services);
+            
             services.AddSingleton<IAdminConfig, AdminConfig>();
 
             services.AddScheduler(builder =>
@@ -86,6 +57,83 @@ namespace YGOProAnalyticsServer
                 //builder.AddJobs(Assembly.GetExecutingAssembly());
                 builder.AddJob<UpdatesJob>();
             });
+        }
+
+        private void _registerScopedServices(IServiceCollection services)
+        {
+            _registerAnalyzers(services);
+            _registerBuilders(services);
+            _registerConverters(services);
+            _registerDownloaders(services);
+            _registerFactories(services);
+            _registerOthers(services);
+            _registerUnzippers(services);
+            _registerUpdaters(services);
+            _registerValidators(services);                                
+        }
+
+        private void _registerValidators(IServiceCollection services)
+        {
+            services.AddScoped<IDateValidator, DateValidator>();
+            services.AddScoped<IDecklistBrowserQueryParametersDtoValidator, DecklistBrowserQueryParametersDtoValidator>();
+            services.AddScoped<IBanlistBrowserQueryParamsValidator, BanlistBrowserQueryParamsValidator>();
+            services.AddScoped<IArchetypeBrowserQueryParamsValidator, ArchetypeBrowserQueryParamsValidator>();
+        }
+
+        private void _registerUpdaters(IServiceCollection services)
+        {
+            services.AddScoped<IBanlistDataToBanlistUpdater, BanlistDataToBanlistUpdater>();
+            services.AddScoped<ICardsDataToCardsAndArchetypesUpdater, CardsDataToCardsAndArchetypesUpdater>();
+            services.AddScoped<IServerActivityUpdater, ServerActivityUpdater>();
+        }
+
+        private void _registerUnzippers(IServiceCollection services)
+        {
+            services.AddScoped<IFileUnzipper, FileUnzipper>();
+        }
+
+        private void _registerOthers(IServiceCollection services)
+        {
+            services.AddScoped<IBanlistService, BanlistService>();
+            services.AddScoped<IYgoProServerStatusService, YgoProServerStatusService>();
+            services.AddScoped<IDecklistService, DecklistService>();
+            services.AddScoped<IServerActivityStatisticsService, ServerActivityStatisticsService>();
+            services.AddScoped<IArchetypeService, ArchetypeService>();
+            services.AddScoped<INumberOfResultsHelper, NumberOfResultsHelper>();
+        }
+
+        private void _registerFactories(IServiceCollection services)
+        {
+            services.AddScoped<ICardDtosFactory, CardDtosFactory>();
+            services.AddScoped<IDecksDtosFactory, DecksDtosFactory>();
+        }
+
+        private void _registerConverters(IServiceCollection services)
+        {
+            services.AddScoped<IBanlistToBanlistDTOConverter, BanlistToBanlistDTOConverter>();
+            services.AddScoped<IDuelLogConverter, DuelLogConverter>();
+            services.AddScoped<IYDKToDecklistConverter, YDKToDecklistConverter>();
+            services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
+            services.AddScoped<IArchetypeToDtoConverter, ArchetypeToDtoConverter>();
+        }
+
+        private void _registerBuilders(IServiceCollection services)
+        {
+            services.AddScoped<ICardBuilder, CardBuilder>();
+        }
+
+        private void _registerAnalyzers(IServiceCollection services)
+        {
+            services.AddScoped<IArchetypeAndDecklistAnalyzer, ArchetypeAndDecklistAnalyzer>();
+            services.AddScoped<IDuelLogNameAnalyzer, DuelLogNameAnalyzer>();
+        }
+
+        private void _registerDownloaders(IServiceCollection services)
+        {
+            services.AddScoped<IBanlistDataDownloader, BanlistDataDownloader>();
+            services.AddScoped<ICardsDataDownloader, CardsDataDownloader>();
+            services.AddScoped<IFTPDownloader, FTPDownloader>();
+            services.AddScoped<IYGOProServerRoomsDownloader, YGOProServerRoomsDownloader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
