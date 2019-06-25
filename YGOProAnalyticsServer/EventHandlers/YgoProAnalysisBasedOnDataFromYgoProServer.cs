@@ -47,7 +47,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
             _banlists = _db.Banlists.ToList();
 
-            await _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
+            _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
             foreach (var duelLogsPack in duelLogsFromAllDates)
             {
                 await _analyze(
@@ -63,7 +63,6 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             var allDecksWhichWonFromThePack = new List<Decklist>();
             var allDecksWhichLostFromThePack = new List<Decklist>();
-            var tasks = new List<Task>();
             foreach (var duelLog in duelLogsFromThePack.Value)
             {
                 if (!isBanlistOk(duelLog))
@@ -71,17 +70,16 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                tasks.Add(_handleDuelLogs(decklistsAsStringsWithFilenames,
+                _handleDuelLogs(decklistsAsStringsWithFilenames,
                                             allDecksWhichWonFromThePack,
                                             allDecksWhichLostFromThePack,
-                                            duelLog));
+                                            duelLog);
             }
-            await Task.WhenAll(tasks);
 
-            var decklistsWhichWonWithoutDuplicatesFromThePack = await _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
+            var decklistsWhichWonWithoutDuplicatesFromThePack = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
                 allDecksWhichWonFromThePack,
                 true);
-            var decklistsWhichLostWithoutDuplicatesFromThePack = await _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
+            var decklistsWhichLostWithoutDuplicatesFromThePack = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
                 allDecksWhichLostFromThePack,
                 false);
             var allDecklistsFromThePack = _removeDuplicatesAndMerge(
@@ -92,7 +90,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             await _db.SaveChangesAsync();
         }
 
-        private async Task _handleDuelLogs(
+        private void _handleDuelLogs(
             KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames,
             List<Decklist> allDecksWhichWonFromThePack,
             List<Decklist> allDecksWhichLostFromThePack,
@@ -163,12 +161,11 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
         }
 
-        private async Task<List<Decklist>> _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
+        private List<Decklist> _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
             List<Decklist> allDecksFromThePack,
             bool decksWon)
         {
             List<Decklist> decklistsWithoutDuplicates = new List<Decklist>();
-            var tasks = new List<Task>();
             foreach (var decklist in allDecksFromThePack)
             {
                 bool decklistAlreadyExisting = false;
@@ -186,17 +183,16 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                tasks.Add(_analyzeNewDeck(allDecksFromThePack,
+                _analyzeNewDeck(allDecksFromThePack,
                                           decksWon,
                                           decklistsWithoutDuplicates,
-                                          decklist));
+                                          decklist);
             }
-            await Task.WhenAll(tasks);
 
             return decklistsWithoutDuplicates;
         }
 
-        private async Task _analyzeNewDeck(List<Decklist> allDecksFromThePack,
+        private void _analyzeNewDeck(List<Decklist> allDecksFromThePack,
                                            bool decksWon,
                                            List<Decklist> decklistsWithoutDuplicates,
                                            Decklist decklist)
@@ -235,7 +231,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                 archetypeStatisticsFromDay.IncrementNumberOfTimesWhenArchetypeWonByAmount(
                     numberOfDuplicatesWithListOfDecklists.DuplicateCount);
             }
-            await _addPlayableBanlistsToDecklist(decklist, _banlists);
+            _addPlayableBanlistsToDecklist(decklist, _banlists);
         }
 
         private List<Decklist> _removeDuplicatesAndMerge(List<Decklist> decklists1, List<Decklist> decklists2)
@@ -331,7 +327,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             banlistStatistics.IncrementHowManyTimesWasUsed();
         }
 
-        private async Task _addPlayableBanlistsToDecklist(Decklist decklist, IEnumerable<Banlist> banlists)
+        private void _addPlayableBanlistsToDecklist(Decklist decklist, IEnumerable<Banlist> banlists)
         {
             foreach (var banlist in banlists)
             {
@@ -342,13 +338,15 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
         }
 
-        private async Task _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
+        private void _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
         {
             if (newBanlists.Count() > 0)
             {
                 var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis().ToList();
-                var tasks = decklistsFromDb.Select(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
-                await Task.WhenAll(tasks);
+                foreach (var decklist in decklistsFromDb)
+                {
+                    _addPlayableBanlistsToDecklist(decklist, newBanlists);
+                }
             }
         }
     }
