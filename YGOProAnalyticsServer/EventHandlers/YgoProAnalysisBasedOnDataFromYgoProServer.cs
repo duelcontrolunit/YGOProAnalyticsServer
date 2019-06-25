@@ -330,7 +330,6 @@ namespace YGOProAnalyticsServer.EventHandlers
 
         private async Task _addPlayableBanlistsToDecklist(Decklist decklist, IEnumerable<Banlist> banlists)
         {
-
             foreach (var banlist in banlists)
             {
                 if (!decklist.PlayableOnBanlists.Contains(banlist) && _banlistService.CanDeckBeUsedOnGivenBanlist(decklist, banlist))
@@ -344,7 +343,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             if (newBanlists.Count() > 0)
             {
-                decklistsFromDb = _db.Decklists.ToList();
+                decklistsFromDb = _db.Decklists.Include(x=>x.PlayableOnBanlists).ToList();
                 var tasks = decklistsFromDb.Select(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
                 await Task.WhenAll(tasks);
             }
