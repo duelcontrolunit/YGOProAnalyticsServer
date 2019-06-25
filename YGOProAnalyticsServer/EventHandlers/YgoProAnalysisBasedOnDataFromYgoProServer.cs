@@ -71,7 +71,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                     continue;
                 }
 
-                tasks.Add(_analyzeOkDuelLog(decklistsAsStringsWithFilenames,
+                tasks.Add(_handleDuelLogs(decklistsAsStringsWithFilenames,
                                             allDecksWhichWonFromThePack,
                                             allDecksWhichLostFromThePack,
                                             duelLog));
@@ -92,7 +92,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             await _db.SaveChangesAsync();
         }
 
-        private async Task _analyzeOkDuelLog(
+        private async Task _handleDuelLogs(
             KeyValuePair<DateTime, List<DecklistWithName>> decklistsAsStringsWithFilenames,
             List<Decklist> allDecksWhichWonFromThePack,
             List<Decklist> allDecksWhichLostFromThePack,
@@ -192,6 +192,7 @@ namespace YGOProAnalyticsServer.EventHandlers
                                           decklist));
             }
             await Task.WhenAll(tasks);
+
             return decklistsWithoutDuplicates;
         }
 

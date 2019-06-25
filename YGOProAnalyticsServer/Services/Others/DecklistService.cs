@@ -394,7 +394,7 @@ namespace YGOProAnalyticsServer.Services.Others
         }
 
         /// <summary>
-        /// Includes the side deck with data about all cards and banlists.
+        /// Includes PlayableOnBanlists.
         /// </summary>
         /// <param name="query">The query.</param>
         protected IQueryable<Decklist> includePlayableOnBanlists(IQueryable<Decklist> query)
