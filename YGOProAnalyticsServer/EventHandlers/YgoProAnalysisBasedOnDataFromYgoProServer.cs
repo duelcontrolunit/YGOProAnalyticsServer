@@ -23,19 +23,22 @@ namespace YGOProAnalyticsServer.EventHandlers
         IYDKToDecklistConverter _yDKToDecklistConverter;
         IBanlistService _banlistService;
         IEnumerable<Banlist> _banlists;
+        IDecklistService _decklistService;
 
         public YgoProAnalysisBasedOnDataFromYgoProServer(
             IDuelLogNameAnalyzer duelLogNameAnalyzer,
             YgoProAnalyticsDatabase db,
             IArchetypeAndDecklistAnalyzer archetypeAndDecklistAnalyzer,
             IYDKToDecklistConverter yDKToDecklistConverter,
-            IBanlistService banlistService)
+            IBanlistService banlistService,
+            IDecklistService decklistService)
         {
             _duelLogNameAnalyzer = duelLogNameAnalyzer;
             _db = db;
             _archetypeAndDecklistAnalyzer = archetypeAndDecklistAnalyzer;
             _yDKToDecklistConverter = yDKToDecklistConverter;
             _banlistService = banlistService;
+            _decklistService = decklistService;
         }
 
         public async Task Handle(DataFromYgoProServerRetrieved notification, CancellationToken cancellationToken)
@@ -342,7 +345,7 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             if (newBanlists.Count() > 0)
             {
-                var decklistsFromDb = _db.Decklists.Include(x=>x.PlayableOnBanlists).ToList();
+                var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis().ToList();
                 var tasks = decklistsFromDb.Select(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
                 await Task.WhenAll(tasks);
             }
