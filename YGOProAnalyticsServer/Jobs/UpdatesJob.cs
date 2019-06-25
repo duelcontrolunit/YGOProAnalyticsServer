@@ -40,8 +40,8 @@ namespace YGOProAnalyticsServer.Jobs
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
                     await cardsAndArchetypesUpdater.UpdateCardsAndArchetypes(adminConfig.CardApiURL);
-                    await banlistUpdater.UpdateBanlists(adminConfig.BanlistApiURL);
-                    await mediator.Publish(new CardsRelatedUpdatesCompleted());
+                    var newBanlists = await banlistUpdater.UpdateBanlists(adminConfig.BanlistApiURL);
+                    await mediator.Publish(new CardsRelatedUpdatesCompleted(newBanlists));
                 }
                 catch (Exception e)
                 {
