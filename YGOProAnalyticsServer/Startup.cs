@@ -27,6 +27,7 @@ using YGOProAnalyticsServer.Services.Factories;
 using AutoMapper;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
 using YGOProAnalyticsServer.Services.Validators;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace YGOProAnalyticsServer
 {
@@ -45,7 +46,7 @@ namespace YGOProAnalyticsServer
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMemoryCache();
             services.AddMediatR();
-            services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
+            services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString).ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning)));
             _addAutomapper(services);
             _addCors(services);
             _registerScopedServices(services);
