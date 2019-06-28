@@ -145,8 +145,8 @@ namespace YGOProAnalyticsServer.Services.Others
             {
                 localDecklistsQuery = localDecklistsQuery
                     .Where(x =>
-                           x.CardsInMainDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() +
-                           x.CardsInExtraDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() +
+                           x.CardsInMainDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() > 0 ||
+                           x.CardsInExtraDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() > 0 ||
                            x.CardsInSideDeckJoin.Where(y => y.Card.PassCode == wantedCardPasscode).Count() > 0);
             }
 
