@@ -43,7 +43,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
             _banlists = _db.Banlists.ToList();
             List<Card> cards = _db.Cards.ToList();
             string banlistDataAsString = await _banlistDataDownloader.DownloadBanlistFromWebsite(url);
-            var banlistDatas = banlistDataAsString.Split("\n");
+            var banlistDatas = banlistDataAsString.Replace("\r",String.Empty).Split("\n");
             List<Banlist> newBanlists = new List<Banlist>();
             Banlist banlist = null;
             for (int i = 1; i < banlistDatas.Length; i++)
