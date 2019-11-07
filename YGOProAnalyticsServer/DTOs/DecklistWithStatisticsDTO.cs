@@ -16,6 +16,6 @@ namespace YGOProAnalyticsServer.DTOs
         public MainDeckDTO MainDeck { get; set; }
         public ExtraDeckDTO ExtraDeck { get; set; }
         public DeckDTO SideDeck { get; set; }
-        public List<DeckStatisticsDTO> Statistics { get; set; }
+        public IEnumerable<DeckStatisticsDTO> Statistics { get; set; }
     }
 }
