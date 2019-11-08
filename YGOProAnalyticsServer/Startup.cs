@@ -53,8 +53,6 @@ namespace YGOProAnalyticsServer
             _addCors(services);
             _registerScopedServices(services);
 
-
-
             services.AddScheduler(builder =>
             {
                 //builder.AddJobs(Assembly.GetExecutingAssembly());
