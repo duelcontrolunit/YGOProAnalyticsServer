@@ -45,12 +45,15 @@ namespace YGOProAnalyticsServer
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMemoryCache();
             services.AddMediatR();
-            services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(YgoProAnalyticsDatabase.connectionString));
+            services.AddSingleton<IAdminConfig, AdminConfig>();
+            var adminConfig = services.BuildServiceProvider().GetService<IAdminConfig>();
+            services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(
+                YgoProAnalyticsDatabase.ConnectionString(adminConfig.DBUser, adminConfig.DBPassword)));
             _addAutomapper(services);
             _addCors(services);
             _registerScopedServices(services);
-            
-            services.AddSingleton<IAdminConfig, AdminConfig>();
+
+
 
             services.AddScheduler(builder =>
             {
@@ -69,7 +72,7 @@ namespace YGOProAnalyticsServer
             _registerOthers(services);
             _registerUnzippers(services);
             _registerUpdaters(services);
-            _registerValidators(services);                                
+            _registerValidators(services);
         }
 
         private void _registerValidators(IServiceCollection services)
@@ -172,7 +175,6 @@ namespace YGOProAnalyticsServer
                {
                    builder
                         .AllowAnyOrigin()
-                        //.WithOrigins("http://localhost:4200")
                         .AllowCredentials()
                         .AllowAnyMethod()
                         .AllowAnyHeader();

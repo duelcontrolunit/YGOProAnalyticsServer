@@ -33,7 +33,7 @@ namespace YGOProAnalyticsServer.Jobs
             {
                 try
                 {
-                    await _adminConfig.LoadConfigFromFile(AdminConfig.Path);
+                    await _adminConfig.LoadConfigFromFile(AdminConfig.path);
                     var banlistUpdater = scope.ServiceProvider.GetRequiredService<IBanlistDataToBanlistUpdater>();
                     var cardsAndArchetypesUpdater = scope.ServiceProvider.GetRequiredService<ICardsDataToCardsAndArchetypesUpdater>();
                     var adminConfig = scope.ServiceProvider.GetRequiredService<IAdminConfig>();
@@ -45,7 +45,7 @@ namespace YGOProAnalyticsServer.Jobs
                 }
                 catch (Exception e)
                 {
-                    //TODO: Log here
+                    Console.WriteLine($"{e.Message}\n{e.StackTrace}");
                 }
             }
         }

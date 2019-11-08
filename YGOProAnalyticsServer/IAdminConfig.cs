@@ -39,13 +39,29 @@ namespace YGOProAnalyticsServer
         string FTPPassword { get; }
 
         /// <summary>
+        /// Gets the DB User credential.
+        /// </summary>
+        /// <value>
+        /// The DB user.
+        /// </value>
+        string DBUser { get; }
+
+        /// <summary>
+        /// Gets the DB password credential.
+        /// </summary>
+        /// <value>
+        /// The DB password.
+        /// </value>
+        string DBPassword { get; }
+
+        /// <summary>
         /// Gets the list of rooms URL (ygopro server).
         /// </summary>
         /// <value>
         /// The of rooms URL (ygopro server).
         /// </value>
         string YgoProListOfRoomsUrl { get; }
-      
+
         /// Gets the ydk folder location.
         /// </summary>
         /// <value>
