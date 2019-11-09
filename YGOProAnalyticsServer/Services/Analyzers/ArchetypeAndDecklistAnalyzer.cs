@@ -23,7 +23,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         public ArchetypeAndDecklistAnalyzer(YgoProAnalyticsDatabase db)
         {
             _db = db;
-            _archetypes = db.Archetypes.ToList();
+            _archetypes = db.Archetypes.Include(x=>x.Statistics).ToList();
         }
 
         /// <<inheritdoc />

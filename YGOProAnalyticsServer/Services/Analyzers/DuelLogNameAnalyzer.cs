@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             IAdminConfig config,
             IDuelLogConverter converter)
         {
-            _banlists = db.Banlists.ToList();
+            _banlists = db.Banlists.Include(x=>x.Statistics).ToList();
             _config = config;
             _converter = converter;
         }
