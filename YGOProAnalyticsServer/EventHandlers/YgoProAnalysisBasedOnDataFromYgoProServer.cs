@@ -47,7 +47,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
             _banlists = _db.Banlists.ToList();
 
-            _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
+            await _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
             foreach (var duelLogsPack in duelLogsFromAllDates)
             {
                 await _analyze(
@@ -286,7 +286,6 @@ namespace YGOProAnalyticsServer.EventHandlers
                 var decklistWithFileName = decklistsAsStringsWithFilenames.Value.FirstOrDefault(x => x.DecklistFileName == deckWhichWonFileName);
                 if (decklistWithFileName == null)
                 {
-                    //TODO log if file is missing
                     continue;
                 }
 
@@ -338,15 +337,11 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
         }
 
-        private void _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
+        private async Task _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
         {
             if (newBanlists.Count() > 0)
             {
-                var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis().ToList();
-                foreach (var decklist in decklistsFromDb)
-                {
-                    _addPlayableBanlistsToDecklist(decklist, newBanlists);
-                }
+               await _decklistService.GetDecklistsQueryForBanlistAnalysis().ForEachAsync(banlist => _addPlayableBanlistsToDecklist(banlist, newBanlists));
             }
         }
     }
