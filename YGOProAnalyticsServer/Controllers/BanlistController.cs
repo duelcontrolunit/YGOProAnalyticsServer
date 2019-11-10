@@ -49,9 +49,8 @@ namespace YGOProAnalyticsServer.Controllers
             {
                 return NotFound("There is no decklist with given id.");
             }
-
             var dto = _banlistToDtoConverter.Convert(banlist);
-
+            dto.Statistics = dto.Statistics.OrderBy(x => x.FromDate);
             return Ok(dto);
         }
 

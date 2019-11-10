@@ -186,8 +186,8 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
                 db.Database.EnsureCreated();
                 var adminConfigMock = new Mock<IAdminConfig>();
                 adminConfigMock
-                    .Setup(x => x.DefaultBanlistName)
-                    .Returns("2019.03 TCG");
+                    .Setup(x => x.DefaultBanlistNumber)
+                    .Returns(1);
                 var duelLogConverter = new Mock<IDuelLogConverter>();
                 db.Banlists.Add(new Banlist("2019.03 TCG", 1));
                 db.SaveChanges();
