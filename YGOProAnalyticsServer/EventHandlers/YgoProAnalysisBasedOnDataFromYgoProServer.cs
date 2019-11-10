@@ -286,7 +286,6 @@ namespace YGOProAnalyticsServer.EventHandlers
                 var decklistWithFileName = decklistsAsStringsWithFilenames.Value.FirstOrDefault(x => x.DecklistFileName == deckWhichWonFileName);
                 if (decklistWithFileName == null)
                 {
-                    //TODO log if file is missing
                     continue;
                 }
 

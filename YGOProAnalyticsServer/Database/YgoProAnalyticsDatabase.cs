@@ -34,11 +34,16 @@ namespace YGOProAnalyticsServer.Database
         //MetaData
         public DbSet<AnalysisMetadata> AnalysisMetadata { get; set; }
 
-        public const string connectionString =
-               @"Server=(localdb)\mssqllocaldb;
-                 Database= YgoProAnalytics;
-                 Trusted_Connection=True;
-                 ConnectRetryCount=0";
+        public static string ConnectionString(string DBUser, string DBPassword)
+        {
+            return string.Format(@"
+            Server=db;
+            Database= YgoProAnalytics;
+            User={0};
+            Password={1};
+            ConnectRetryCount=0", DBUser, DBPassword);
+        }
+
 
         public YgoProAnalyticsDatabase(DbContextOptions<YgoProAnalyticsDatabase> options) : base(options)
         {

@@ -66,11 +66,24 @@ namespace YGOProAnalyticsServer
         ///<inheritdoc />
         public int MaxNumberOfResultsPerBrowserPage { get; protected set; } = 100;
 
+        [JsonProperty(nameof(DBUser))]
+        ///<inheritdoc />
+        public string DBUser { get; protected set; } = "";
+
+        [JsonProperty(nameof(DBPassword))]
+        ///<inheritdoc />
+        public string DBPassword { get; protected set; } = "";
+
         /// <summary>
         /// Path to the config file.
         /// Default: "config.json"
         /// </summary>
-        public static readonly string Path = "config.json";
+        public static readonly string path = "config.json";
+
+        public AdminConfig()
+        {
+            LoadConfigFromFile(AdminConfig.path).Wait();
+        }
 
         ///<inheritdoc />
         public async Task LoadConfigFromFile(string configPath)
@@ -79,7 +92,6 @@ namespace YGOProAnalyticsServer
             {
                 await createConfigFile(configPath);
             }
-
             string contentOfConfig = await File.ReadAllTextAsync(configPath);
             var serializerSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
             JsonConvert.PopulateObject(contentOfConfig, this, serializerSettings);
