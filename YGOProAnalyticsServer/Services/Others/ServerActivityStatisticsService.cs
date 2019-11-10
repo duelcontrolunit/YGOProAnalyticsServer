@@ -23,7 +23,7 @@ namespace YGOProAnalyticsServer.Services.Others
 
         public async Task<IEnumerable<YgoProServerActivityStatisticsDTO>> GetAllAsDtos()
         {
-            var statistics = await _db.ServerActivityStatistics.ToListAsync();
+            var statistics = await _db.ServerActivityStatistics.OrderByDescending(x=>x.FromDate).ToListAsync();
 
             return _mapper.Map<List<YgoProServerActivityStatisticsDTO>>(statistics);
         }
