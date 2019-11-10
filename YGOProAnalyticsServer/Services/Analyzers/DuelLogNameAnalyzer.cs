@@ -79,7 +79,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         {
             if (IsDefaultBanlist(roomName))
             {
-                var defaultBanlist = _banlists.OrderByDescending(x=>x.ReleaseDate)
+                var defaultBanlist = _banlists.OrderByDescending(x => x.ReleaseDate)
                     .Where(x => x.BanlistNumberInLfList == _config.DefaultBanlistNumber)
                     .FirstOrDefault();
                 defaultBanlist = defaultBanlist ?? throw new UnknownBanlistException("Default banlist not found. Check in AdminConfig if it is properly set up.");
