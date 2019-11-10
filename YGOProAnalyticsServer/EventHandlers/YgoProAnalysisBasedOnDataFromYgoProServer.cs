@@ -341,7 +341,14 @@ namespace YGOProAnalyticsServer.EventHandlers
         {
             if (newBanlists.Count() > 0)
             {
-               await _decklistService.GetDecklistsQueryForBanlistAnalysis().ForEachAsync(banlist => _addPlayableBanlistsToDecklist(banlist, newBanlists));
+                const int amountOfDecksToCheckAtOnce = 1000;
+                var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis();
+                for (int i = 0; i <= decklistsFromDb.Count() / amountOfDecksToCheckAtOnce; i++)
+                {
+                    await decklistsFromDb.Skip(i * amountOfDecksToCheckAtOnce).Take(amountOfDecksToCheckAtOnce)
+                        .ForEachAsync(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
+                }
+                await _db.SaveChangesAsync();
             }
         }
     }

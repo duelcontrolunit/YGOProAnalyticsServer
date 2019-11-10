@@ -27,6 +27,7 @@ using YGOProAnalyticsServer.Services.Factories;
 using AutoMapper;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
 using YGOProAnalyticsServer.Services.Validators;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace YGOProAnalyticsServer
 {
