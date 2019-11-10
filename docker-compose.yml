@@ -1,0 +1,46 @@
+version: '3.5'
+
+networks:
+  localdev:
+    name: localdev
+
+services:
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Y0ur_Password_Here
+      - MSSQL_TCP_PORT=1433
+    ports:
+      - "1400:1433"
+    networks:
+      - localdev
+    tty: true
+  main-api:
+    build: YGOProAnalyticsServer/
+    container_name: AnalyticServer
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "53490:53490"
+      - "44326:44326"
+    networks:
+      - localdev
+  # Uncomment lines below for website docker service   
+  # website:
+  #   container_name: AnalyticWebsite
+  #   build: ../YgoProAnalyticsWebsite/
+  #   depends_on:
+  #    - db
+  #    - main-api
+  #   container_name: website
+  #   build:
+  #     context: ../YgoProAnalyticsWebsite/
+  #   ports:
+  #     - '3001:3000'
+  #   environment:
+  #     - NODE_ENV=production
+  #   networks:
+  #     - localdev
