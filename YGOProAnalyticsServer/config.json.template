@@ -1,0 +1,18 @@
+{
+  "CardApiURL": "https://db.ygoprodeck.com/api/v3/cardinfo.php",
+  "DefaultBanlistNumber": 1,
+  "FTPUser": "",
+  "FTPPassword": "",
+  "DBUser": "sa",
+  "DBPassword": "Enter_Passw0rd_here",
+  "YgoProListOfRoomsUrl": "http://localhost/api/getrooms?&pass=",
+  "DataFolderLocation": "DataFromServer",
+  "BanlistApiURL": "/lflist.conf",
+  "ServerDataEndpointURL": "ftp://localhost",
+  "DefaultNumberOfResultsPerBrowserPage": 100,
+  "BanlistSlidingCacheExpirationInHours": 2,
+  "BanlistAbsoluteCacheExpirationInHours": 23,
+  "ArchetypeSlidingCacheExpirationInHours": 2,
+  "ArchetypeAbsoluteCacheExpirationInHours": 23,
+  "MaxNumberOfResultsPerBrowserPage": 100
+}
