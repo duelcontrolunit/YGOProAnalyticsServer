@@ -15,7 +15,7 @@ namespace YGOProAnalyticsServer.DTOs
             DeckDTO bannedCards,
             DeckDTO limitedCards,
             DeckDTO semiLimitedCards,
-            List<BanlistStatisticsDTO> statistics)
+            IEnumerable<BanlistStatisticsDTO> statistics)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Format = format ?? throw new ArgumentNullException(nameof(format));
@@ -32,6 +32,6 @@ namespace YGOProAnalyticsServer.DTOs
         public DeckDTO BannedCards { get; set; }
         public DeckDTO LimitedCards { get; set; }
         public DeckDTO SemiLimitedCards { get; set; }
-        public List<BanlistStatisticsDTO> Statistics { get; set; }
+        public IEnumerable<BanlistStatisticsDTO> Statistics { get; set; }
     }
 }

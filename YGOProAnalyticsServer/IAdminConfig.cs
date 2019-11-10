@@ -21,7 +21,7 @@ namespace YGOProAnalyticsServer
         /// <value>
         /// The name of default banlist.
         /// </value>
-        string DefaultBanlistName { get; }
+        int DefaultBanlistNumber { get; }
 
         /// <summary>
         /// Gets the FTP User credential.

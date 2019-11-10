@@ -122,7 +122,7 @@ namespace YGOProAnalyticsServer.Controllers
             }
 
             var dto = _archetypeToDtoConverter.Convert(archetype);
-
+            dto.Statistics = dto.Statistics.OrderBy(x => x.DateWhenArchetypeWasUsed);
             return Ok(dto);
         }
     }

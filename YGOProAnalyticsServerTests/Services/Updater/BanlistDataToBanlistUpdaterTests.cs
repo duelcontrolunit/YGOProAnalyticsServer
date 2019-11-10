@@ -89,7 +89,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
         {
             var banlistOCG = await db
                 .Banlists
-                .Where(x => x.Name == "2019.01 OCG\r")
+                .Where(x => x.Name == "2019.01 OCG")
                 .Include(Banlist.IncludeWithForbiddenCards)
                 .Include(Banlist.IncludeWithLimitedCards)
                 .Include(Banlist.IncludeWithSemiLimitedCards)
@@ -104,7 +104,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
         {
             var banlistTcg = await db
                                 .Banlists
-                                .Where(x => x.Name == "2019.01 TCG\r")
+                                .Where(x => x.Name == "2019.01 TCG")
                                 .Include(Banlist.IncludeWithForbiddenCards)
                                 .Include(Banlist.IncludeWithLimitedCards)
                                 .Include(Banlist.IncludeWithSemiLimitedCards)

@@ -14,9 +14,9 @@ namespace YGOProAnalyticsServer
         ///<inheritdoc />
         public string CardApiURL { get; protected set; } = "https://db.ygoprodeck.com/api/v3/cardinfo.php";
 
-        [JsonProperty(nameof(DefaultBanlistName))]
+        [JsonProperty(nameof(DefaultBanlistNumber))]
         ///<inheritdoc />
-        public string DefaultBanlistName { get; protected set; } = "2019.04 TCG";
+        public int DefaultBanlistNumber { get; protected set; } = 1;
 
         [JsonProperty(nameof(FTPUser))]
         ///<inheritdoc />

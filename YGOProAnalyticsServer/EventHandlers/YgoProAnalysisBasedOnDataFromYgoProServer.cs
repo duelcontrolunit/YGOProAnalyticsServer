@@ -47,7 +47,7 @@ namespace YGOProAnalyticsServer.EventHandlers
             var decklistsAsStringsWithFilenames = notification.UnzippedDecklistsWithDecklistFileName;
             _banlists = _db.Banlists.ToList();
 
-            _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
+            await _analyzeCurrentDecklistsForNewBanlists(notification.NewBanlists);
             foreach (var duelLogsPack in duelLogsFromAllDates)
             {
                 await _analyze(
@@ -338,15 +338,18 @@ namespace YGOProAnalyticsServer.EventHandlers
             }
         }
 
-        private void _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
+        private async Task _analyzeCurrentDecklistsForNewBanlists(IEnumerable<Banlist> newBanlists)
         {
             if (newBanlists.Count() > 0)
             {
-                var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis().ToList();
-                foreach (var decklist in decklistsFromDb)
+                const int amountOfDecksToCheckAtOnce = 1000;
+                var decklistsFromDb = _decklistService.GetDecklistsQueryForBanlistAnalysis();
+                for (int i = 0; i <= decklistsFromDb.Count() / amountOfDecksToCheckAtOnce; i++)
                 {
-                    _addPlayableBanlistsToDecklist(decklist, newBanlists);
+                    await decklistsFromDb.Skip(i * amountOfDecksToCheckAtOnce).Take(amountOfDecksToCheckAtOnce)
+                        .ForEachAsync(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
                 }
+                await _db.SaveChangesAsync();
             }
         }
     }
