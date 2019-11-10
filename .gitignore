@@ -263,3 +263,6 @@ __pycache__/
 # Config file
 config.json
 configTest.json
+
+#backup db
+backup/
