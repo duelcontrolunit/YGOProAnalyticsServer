@@ -14,6 +14,10 @@ namespace YGOProAnalyticsServer
         ///<inheritdoc />
         public string CardApiURL { get; protected set; } = "https://db.ygoprodeck.com/api/v3/cardinfo.php";
 
+        [JsonProperty(nameof(BetaToOfficialCardApiURL))]
+        ///<inheritdoc />
+        public string BetaToOfficialCardApiURL { get; protected set; } = "http://eeriecode.altervista.org/tools/get_beta_cards.php";
+
         [JsonProperty(nameof(DefaultBanlistNumber))]
         ///<inheritdoc />
         public int DefaultBanlistNumber { get; protected set; } = 1;

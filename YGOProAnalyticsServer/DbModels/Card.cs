@@ -74,7 +74,21 @@ namespace YGOProAnalyticsServer.DbModels
                 Archetype = archetype
             };
         }
-   
+
+        /// <summary>
+        /// Changes the pass code.
+        /// </summary>
+        /// <param name="newPassCode">The new pass code.</param>
+        /// <returns>Returns true if operation was successful.</returns>
+        public Card ChangePassCode(int newPassCode)
+        {
+            if (PassCode.ToString().Length > 8)
+            {
+                PassCode = newPassCode;
+                return this;
+            }
+            return this;
+        }
 
         /// <summary>
         /// Adds Basic Card Elements. Remember to add archetype after creation.

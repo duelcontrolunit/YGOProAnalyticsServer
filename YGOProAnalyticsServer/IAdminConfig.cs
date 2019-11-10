@@ -78,6 +78,14 @@ namespace YGOProAnalyticsServer
         string CardApiURL { get; }
 
         /// <summary>
+        /// Gets the Beta To Official Card API URL.
+        /// </summary>
+        /// <value>
+        /// The Beta To Official Card API URL.
+        /// </value>
+        string BetaToOfficialCardApiURL { get; }
+
+        /// <summary>
         /// Gets the banlist API URL.
         /// </summary>
         /// <value>
