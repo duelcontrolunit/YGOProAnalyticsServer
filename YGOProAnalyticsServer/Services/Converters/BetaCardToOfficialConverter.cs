@@ -90,6 +90,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                                 if (officialCard.DecksWhereThisCardIsInExtraDeck.Contains(decklist)) continue;
                                 officialCard.DecksWhereThisCardIsInExtraDeck.Add(decklist);
                             }
+                            _cards.Remove(betaCard);
                         }
                     }
                     else
@@ -99,9 +100,9 @@ namespace YGOProAnalyticsServer.Services.Converters
                             _cards.Find(card => card.PassCode == betaPassCode).ChangePassCode(officialPassCode);
                         }
                     }
-                    await _db.SaveChangesAsync();
                 }
             }
+            await _db.SaveChangesAsync();
         }
         private bool _cardAlreadyExistInOurDatabase(int id)
         {
