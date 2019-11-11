@@ -82,11 +82,10 @@ namespace YGOProAnalyticsServer.DbModels
         /// <returns>Returns true if operation was successful.</returns>
         public Card ChangePassCode(int newPassCode)
         {
-            if (PassCode.ToString().Length > 8)
-            {
-                PassCode = newPassCode;
-                return this;
-            }
+            ImageUrl.Replace(PassCode.ToString(), newPassCode.ToString());
+            SmallImageUrl.Replace(PassCode.ToString(), newPassCode.ToString());
+            PassCode = newPassCode;
+
             return this;
         }
 
@@ -207,7 +206,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// Join property for semi-limited <see cref="Card"/>s
         /// </summary>
         public ICollection<SemiLimitedCardBanlistJoin> SemiLimitedCardsJoin { get; protected set; } = new List<SemiLimitedCardBanlistJoin>();
-        
+
         /// <summary>
         /// Banlists where this card is forbidden
         /// </summary>
