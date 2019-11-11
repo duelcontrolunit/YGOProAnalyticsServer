@@ -25,12 +25,14 @@ namespace YGOProAnalyticsServer.Services.Converters
         public BetaCardToOfficialConverter(YgoProAnalyticsDatabase db, IAdminConfig adminConfig, ICardsDataDownloader cardsDataDownloader)
         {
             _db = db;
-            _cards = db.Cards.Include(x => x.BanlistsWhereThisCardIsForbidden)
-                .Include(x => x.BanlistsWhereThisCardIsLimited)
-                .Include(x => x.BanlistsWhereThisCardIsSemiLimited)
-                .Include(x => x.DecksWhereThisCardIsInExtraDeck)
-                .Include(x => x.DecksWhereThisCardIsInMainDeck)
-                .Include(x => x.DecksWhereThisCardIsInSideDeck).ToList();
+            _cards = db.Cards
+                .Include(x => x.ExtraDeckJoin)
+                .Include(x => x.MainDeckJoin)
+                .Include(x => x.SideDeckJoin)
+                .Include(x=>x.ForbiddenCardsJoin)
+                .Include(x => x.SemiLimitedCardsJoin)
+                .Include(x => x.LimitedCardsJoin)
+                .ToList();
 
             _adminConfig = adminConfig;
             _cardsDataDownloader = cardsDataDownloader;
@@ -91,6 +93,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                                 officialCard.DecksWhereThisCardIsInExtraDeck.Add(decklist);
                             }
                             _cards.Remove(betaCard);
+                            _db.Cards.Remove(betaCard);
                         }
                     }
                     else
