@@ -4,13 +4,13 @@ if [ $# -eq 0 ]
    echo Restoring backup.
    echo No password given as argument.
    echo Please enter database password:
-   read password
+   read -s password
    else 
       password=$1
  fi
 
-#echo Copying backup file from current directory to container.
-docker cp backup/ygoproa.bak db:/var/opt/mssql/backup
+echo Copying ygoproa.bak file from backup directory to container.
+docker cp backup/ygoproa.bak db:/var/opt/mssql/backup/
 
 docker exec -it db /opt/mssql-tools/bin/sqlcmd -S localhost \
    -U SA -P $password \
