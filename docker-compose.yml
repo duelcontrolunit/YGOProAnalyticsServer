@@ -10,10 +10,11 @@ services:
     container_name: db
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Y0ur_Password_Here
+      - MSSQL_SA_PASSWORD=Your_Passw0rd_Here
       - MSSQL_TCP_PORT=1433
     ports:
       - "1400:1433"
+    restart: always
     networks:
       - localdev
     tty: true
@@ -39,8 +40,9 @@ services:
   #   build:
   #     context: ../YgoProAnalyticsWebsite/
   #   ports:
-  #     - '3001:3000'
+  #     - '3001:80'
   #   environment:
   #     - NODE_ENV=production
   #   networks:
   #     - localdev
+  #   restart: always
