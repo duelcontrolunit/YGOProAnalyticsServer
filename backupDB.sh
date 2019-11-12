@@ -16,6 +16,7 @@ docker exec -it db /opt/mssql-tools/bin/sqlcmd \
 
 #Copy backup file to current directory.
 docker cp db:/var/opt/mssql/backup ./
+#remove backup file from docker.
+docker exec -it db rm -rf /var/opt/mssql/backup
 #change backup permissions
-chmod +rw backup
-chmod +rw backup/*
+chmod 777 backup/*
