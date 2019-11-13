@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.DTOs;
 using YGOProAnalyticsServer.Services.Validators;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
@@ -26,13 +27,13 @@ namespace YGOProAnalyticsServerTests.Services.Validators
             _validator = new ArchetypeBrowserQueryParamsValidator(_dateValidatorMock.Object);
         }
 
-        [TestCase(1, "Neutral", 1, 1, "", "")]
-        [TestCase(1, "Neutral", 1, 1, "2019-04-29", "2019-6-3")]
-        [TestCase(100, "Neutral", 1, 1, "2019-04-29", "2019-6-3")]
-        [TestCase(1, "Neutral", 100, 1, "2019-04-29", "2019-6-3")]
-        [TestCase(1, "Neutral", 100, -1, "2019-04-29", "2019-6-3")]
-        [TestCase(1, "Neutral", 100, -1, "2019-04-29", "")]
-        [TestCase(1, "Neutral", 100, -1, "", "2019-6-3")]
+        [TestCase(1, Archetype.Default, 1, 1, "", "")]
+        [TestCase(1, Archetype.Default, 1, 1, "2019-04-29", "2019-6-3")]
+        [TestCase(100, Archetype.Default, 1, 1, "2019-04-29", "2019-6-3")]
+        [TestCase(1, Archetype.Default, 100, 1, "2019-04-29", "2019-6-3")]
+        [TestCase(1, Archetype.Default, 100, -1, "2019-04-29", "2019-6-3")]
+        [TestCase(1, Archetype.Default, 100, -1, "2019-04-29", "")]
+        [TestCase(1, Archetype.Default, 100, -1, "", "2019-6-3")]
         public void IsValid_IsValid_ReturnsTrue(
                 int pageNumber,
                 string archetypeName,
@@ -54,10 +55,10 @@ namespace YGOProAnalyticsServerTests.Services.Validators
             Assert.IsTrue(_validator.IsValid(dto));
         }
 
-        [TestCase(1, "Neutral", 1, -2, "", "")]
-        [TestCase(1, "Neutral", 1, 0, "", "")]
-        [TestCase(0, "Neutral", 1, 1, "", "")]
-        [TestCase(-1, "Neutral", 1, 1, "", "")]
+        [TestCase(1, Archetype.Default, 1, -2, "", "")]
+        [TestCase(1, Archetype.Default, 1, 0, "", "")]
+        [TestCase(0, Archetype.Default, 1, 1, "", "")]
+        [TestCase(-1, Archetype.Default, 1, 1, "", "")]
         public void IsInvalid_IsInvalid_ReturnsFalse(
                int pageNumber,
                string archetypeName,

@@ -21,7 +21,7 @@ namespace YGOProAnalyticsServerTests.Services.Converters
             using (var dbInMemory = new YgoProAnalyticsDatabase(_getOptionsForSqlInMemoryTesting<YgoProAnalyticsDatabase>()))
             {
                 dbInMemory.Database.EnsureCreated();
-                var archetype = new Archetype("Neutral", true);
+                var archetype = new Archetype(Archetype.Default, true);
                 _addPSYFrameDriver(dbInMemory, archetype);
                 _addMokeyMokeyKing(dbInMemory, archetype);
                 _addPankratops(dbInMemory, archetype);

@@ -23,7 +23,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         public ArchetypeAndDecklistAnalyzer(YgoProAnalyticsDatabase db)
         {
             _db = db;
-            _archetypes = db.Archetypes.Include(x=>x.Statistics).ToList();
+            _archetypes = db.Archetypes.Include(x => x.Statistics).ToList();
         }
 
         /// <<inheritdoc />
@@ -67,44 +67,134 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 throw new EmptyDecklistException("The decklist given in the parameter contains no cards in Main, Extra and Side Deck.");
             }
 
-            List<Archetype> archetypes = fullDeck.ConvertAll<Archetype>(x => x.Archetype);
-            if (archetypes.Where(x => x.Name == Archetype.Default).Count() / fullDeck.Count() >= 0.8)
-            {
-                return _archetypes
-                    .FirstOrDefault(x => x.Name == Archetype.Default)
-                    ?? new Archetype(Archetype.Default, true);
-            }
-
-            archetypes.RemoveAll(x => x.Name == Archetype.Default);
-            List<Archetype> uniqueArchetypesInDeck = archetypes.GroupBy(x => x.Name).Select(x => x.First()).ToList();
+            List<Archetype> archetypes = fullDeck.ConvertAll(x => x.Archetype);
+            IEnumerable<Archetype> uniqueArchetypesInDeck = archetypes.GroupBy(x => x.Name).Select(x => x.First());
             Dictionary<Archetype, int> archetypesDictionary = uniqueArchetypesInDeck.ToDictionary(
-                p => p, p => archetypes.Where(x => x.Name == p.Name)
+                p => p, p => archetypes.Where(x => x.Id == p.Id)
                    .Count()).OrderByDescending(x => x.Value)
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
+            if (archetypesDictionary.ElementAt(0).Key.Name == Archetype.Default)
+            {
+                if (archetypesDictionary.ElementAt(0).Value > (int)(archetypes.Count * 0.8))
+                {
+                    return _checkForPossibleTypeArchetype(fullDeck);
+                }
+            }
+            if (uniqueArchetypesInDeck.Any(x => x.Name != Archetype.Default))
+            {
+                archetypes.RemoveAll(x => x.Name == Archetype.Default);
+                var defArchetype = archetypesDictionary.FirstOrDefault(x => x.Key.Name == Archetype.Default).Key;
+                if (defArchetype != null)
+                {
+                    archetypesDictionary.Remove(defArchetype);
+                }
+            }
+            //remove archetypes that are lowly represented.
+            foreach (var item in archetypesDictionary.Where(x => x.Value <= 5).ToArray())
+            {
+                archetypesDictionary.Remove(item.Key);
+            }
 
+            if (archetypesDictionary.Count == 0)
+            {
+                return _checkForPossibleTypeArchetype(fullDeck);
+            }
             if (archetypesDictionary.ElementAt(0).Value > (int)(archetypes.Count * 0.5))
             {
                 return archetypesDictionary.ElementAt(0).Key;
             }
-            else if (archetypesDictionary.Count >= 2)
+            else
             {
-                string newArchetypeName = new StringBuilder(archetypesDictionary.ElementAt(0).Key.Name).Append(' ')
-                    .Append(archetypesDictionary.ElementAt(1).Key.Name).ToString();
-                var archetype = _archetypes.Where(x => x.Name == newArchetypeName).FirstOrDefault();
-                archetype = archetype ?? new Archetype(newArchetypeName, false);
-
-                if (!_archetypes.Contains(archetype))
+                if (archetypesDictionary.Count >= 2)
                 {
-                    _archetypes.Add(archetype);
-                }
+                    int amountOfCardsWith2MainArchetypes = archetypesDictionary.ElementAt(0).Value +
+                        archetypesDictionary.ElementAt(1).Value;
 
-                return archetype;
+                    if (amountOfCardsWith2MainArchetypes >= (int)(archetypes.Count * 0.4))
+                    {
+                        string newArchetypeName = new StringBuilder(archetypesDictionary
+                            .ElementAt(0).Key.Name).Append(' ')
+                            .Append(archetypesDictionary.ElementAt(1).Key.Name).ToString();
+                        var archetype = _archetypes.Where(x => x.Name == newArchetypeName)
+                            .FirstOrDefault();
+                        archetype = archetype ?? new Archetype(newArchetypeName, false);
+
+                        if (!_archetypes.Contains(archetype))
+                        {
+                            _archetypes.Add(archetype);
+                        }
+
+                        return archetype;
+                    }
+                }
+                else
+                {
+                    if (archetypesDictionary.ElementAt(0).Value > 9)
+                    {
+                        return archetypesDictionary.ElementAt(0).Key;
+                    }
+                }
             }
 
-            return _archetypes
-                .FirstOrDefault(x => x.Name == Archetype.Default)
-                ?? new Archetype(Archetype.Default, true);
+            return _checkForPossibleTypeArchetype(fullDeck);
+        }
+
+        private Archetype _checkForPossibleTypeArchetype(List<Card> fullDeck)
+        {
+            var potentialArchetype = _checkForMostUsedType(fullDeck);
+            potentialArchetype = potentialArchetype ?? _archetypes
+                    .FirstOrDefault(x => x.Name == Archetype.Default)
+                    ?? new Archetype(Archetype.Default, true);
+            if (!_archetypes.Contains(potentialArchetype))
+            {
+                _archetypes.Add(potentialArchetype);
+            }
+
+            return potentialArchetype;
+        }
+
+        private Archetype _checkForMostUsedType(List<Card> fullDeck)
+        {
+            List<string> races = fullDeck.Where(x => _checkIfRaceIsMonster(x.Race))
+            .ToList().ConvertAll<string>(x => x.Race);
+            IEnumerable<string> uniqueRaces = races.GroupBy(x => x).Select(x => x.First());
+            Dictionary<string, int> racesDictionary = uniqueRaces.ToDictionary(
+                p => p, p => races.Where(x => x == p)
+                .Count()).OrderByDescending(x => x.Value)
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            foreach (var item in racesDictionary.Where(x => x.Value <= 5).ToArray())
+            {
+                racesDictionary.Remove(item.Key);
+            }
+
+            if (racesDictionary.Count == 0) return null;
+            if (racesDictionary.Count >= 2 &&
+                racesDictionary.ElementAt(0).Value == racesDictionary.ElementAt(1).Value)
+            {
+                return null;
+            }
+            if (racesDictionary.ElementAt(0).Value > 15)
+            {
+                var archetype = _archetypes.Where(x => x.Name == racesDictionary.ElementAt(0).Key).FirstOrDefault();
+                return archetype ?? new Archetype(String.Format("{0}-Type", racesDictionary.ElementAt(0).Key), false);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Method used to detect if a card is a monster based on it's race. (Checks if it's not any spell or trap race.)
+        /// other solution would be checking if Card.MonsterCard != null, but this would require including Cards and thenIncluding MonsterCards.
+        /// </summary>
+        /// <param name="race">The race.</param>
+        /// <returns>True if it's a monster race. Otherwise false</returns>
+        private bool _checkIfRaceIsMonster(string race)
+        {
+            return race != "Normal" && race != "Field" && race != "Equip" && race != "Continuous" && race != "Quick-Play" && race != "Ritual" && race != "Counter";
         }
 
         /// <summary>Removes the duplicate decklists from list of decklists.</summary>
