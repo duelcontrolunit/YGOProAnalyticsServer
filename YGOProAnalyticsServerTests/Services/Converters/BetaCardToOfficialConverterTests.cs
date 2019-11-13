@@ -176,8 +176,8 @@ namespace YGOProAnalyticsServerTests.Services.Converters
                                 "Description: Checksum Dragon",
                                 "Monster Card",
                                 "normal",
-                                null,
-                                null,
+                                "someUrl.com/100336006",
+                                "someOtherUrl.com/100336006",
                                 archetype
                             );
         }

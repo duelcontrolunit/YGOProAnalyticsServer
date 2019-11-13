@@ -17,23 +17,13 @@ namespace YGOProAnalyticsServer.Services.Converters
     /// </summary>
     public class BetaCardToOfficialConverter : IBetaCardToOfficialConverter
     {
-        private readonly List<Card> _cards;
-        YgoProAnalyticsDatabase _db;
+        private readonly YgoProAnalyticsDatabase _db;
         private readonly IAdminConfig _adminConfig;
         private readonly ICardsDataDownloader _cardsDataDownloader;
         private static List<BetaCardData> betaCardsList;
         public BetaCardToOfficialConverter(YgoProAnalyticsDatabase db, IAdminConfig adminConfig, ICardsDataDownloader cardsDataDownloader)
         {
             _db = db;
-            _cards = db.Cards
-                .Include(x => x.ExtraDeckJoin)
-                .Include(x => x.MainDeckJoin)
-                .Include(x => x.SideDeckJoin)
-                .Include(x=>x.ForbiddenCardsJoin)
-                .Include(x => x.SemiLimitedCardsJoin)
-                .Include(x => x.LimitedCardsJoin)
-                .ToList();
-
             _adminConfig = adminConfig;
             _cardsDataDownloader = cardsDataDownloader;
         }
@@ -50,13 +40,12 @@ namespace YGOProAnalyticsServer.Services.Converters
                 int betaPassCode = cardData.BetaPassCode;
                 if (betaPassCode != 0 || officialPassCode != 0)
                 {
-                    if (_cardAlreadyExistInOurDatabase(officialPassCode))
+                    Card officialCard = await _GetCardWithSpecificPasscodeWithJoinsIfItExistsInDatabase(officialPassCode);
+                    if (officialCard != null)
                     {
-                        if (_cardAlreadyExistInOurDatabase(betaPassCode))
+                        Card betaCard = await _GetCardWithSpecificPasscodeWithJoinsIfItExistsInDatabase(betaPassCode);
+                        if (betaCard != null)
                         {
-                            var betaCard = _cards.Find(card => card.PassCode == betaPassCode);
-                            var officialCard = _cards.Find(card => card.PassCode == officialPassCode);
-
                             foreach (var banlist in betaCard.BanlistsWhereThisCardIsForbidden)
                             {
                                 if (officialCard.BanlistsWhereThisCardIsForbidden.Contains(banlist)) continue;
@@ -92,24 +81,36 @@ namespace YGOProAnalyticsServer.Services.Converters
                                 if (officialCard.DecksWhereThisCardIsInExtraDeck.Contains(decklist)) continue;
                                 officialCard.DecksWhereThisCardIsInExtraDeck.Add(decklist);
                             }
-                            _cards.Remove(betaCard);
                             _db.Cards.Remove(betaCard);
                         }
                     }
                     else
                     {
-                        if (_cardAlreadyExistInOurDatabase(betaPassCode))
+                        Card betaCard = await _GetCardWithSpecificPasscodeWithJoinsIfItExistsInDatabase(betaPassCode);
+                        if (betaCard != null)
                         {
-                            _cards.Find(card => card.PassCode == betaPassCode).ChangePassCode(officialPassCode);
+                            betaCard.ChangePassCode(officialPassCode);
                         }
                     }
                 }
             }
+
             await _db.SaveChangesAsync();
         }
-        private bool _cardAlreadyExistInOurDatabase(int id)
+
+        private async Task<Card> _GetCardWithSpecificPasscodeWithJoinsIfItExistsInDatabase(int passCode)
         {
-            return _cards.Find(x => x.PassCode == id) != null;
+            Card card = await _db.Cards.FirstOrDefaultAsync(x => x.PassCode == passCode);
+            if(card != null)
+            {
+                await _db.Entry<Card>(card).Collection(x => x.MainDeckJoin)
+                    .EntityEntry.Collection(x => x.ExtraDeckJoin)
+                    .EntityEntry.Collection(x => x.SideDeckJoin)
+                    .EntityEntry.Collection(x => x.ForbiddenCardsJoin)
+                    .EntityEntry.Collection(x => x.LimitedCardsJoin)
+                    .EntityEntry.Collection(x => x.SemiLimitedCardsJoin).LoadAsync();
+            }
+            return card;
         }
 
         public static async Task<List<BetaCardData>> LoadBetaCardsList(ICardsDataDownloader cardsDataDownloader, IAdminConfig adminConfig)
@@ -134,6 +135,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                 }
 
             }
+
             return betaCardsList;
         }
     }
