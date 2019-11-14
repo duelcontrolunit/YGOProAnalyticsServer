@@ -74,7 +74,20 @@ namespace YGOProAnalyticsServer.DbModels
                 Archetype = archetype
             };
         }
-   
+
+        /// <summary>
+        /// Changes the pass code.
+        /// </summary>
+        /// <param name="newPassCode">The new pass code.</param>
+        /// <returns>Returns true if operation was successful.</returns>
+        public Card ChangePassCode(int newPassCode)
+        {
+            ImageUrl.Replace(PassCode.ToString(), newPassCode.ToString());
+            SmallImageUrl.Replace(PassCode.ToString(), newPassCode.ToString());
+            PassCode = newPassCode;
+
+            return this;
+        }
 
         /// <summary>
         /// Adds Basic Card Elements. Remember to add archetype after creation.
@@ -193,7 +206,7 @@ namespace YGOProAnalyticsServer.DbModels
         /// Join property for semi-limited <see cref="Card"/>s
         /// </summary>
         public ICollection<SemiLimitedCardBanlistJoin> SemiLimitedCardsJoin { get; protected set; } = new List<SemiLimitedCardBanlistJoin>();
-        
+
         /// <summary>
         /// Banlists where this card is forbidden
         /// </summary>

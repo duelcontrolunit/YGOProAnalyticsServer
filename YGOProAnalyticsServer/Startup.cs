@@ -117,6 +117,7 @@ namespace YGOProAnalyticsServer
             services.AddScoped<IYDKToDecklistConverter, YDKToDecklistConverter>();
             services.AddScoped<IDecklistToDecklistDtoConverter, DecklistToDecklistDtoConverter>();
             services.AddScoped<IArchetypeToDtoConverter, ArchetypeToDtoConverter>();
+            services.AddScoped<IBetaCardToOfficialConverter, BetaCardToOfficialConverter>();
         }
 
         private void _registerBuilders(IServiceCollection services)
