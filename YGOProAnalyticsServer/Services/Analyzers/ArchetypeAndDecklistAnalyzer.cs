@@ -15,6 +15,9 @@ namespace YGOProAnalyticsServer.Services.Analyzers
     /// <<inheritdoc />
     public class ArchetypeAndDecklistAnalyzer : IArchetypeAndDecklistAnalyzer
     {
+        private const int _minimumNumberOfArchetypeCardsForTypeArchetype = 15;
+        private const int _minimumNumberOfArchetypeCardsForArchetype = 9;
+        private const int _minimumNumberOfCardsToCheckForArchetype = 5;
         private readonly YgoProAnalyticsDatabase _db;
         private readonly List<Archetype> _archetypes;
 
@@ -81,6 +84,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                     return _checkForPossibleTypeArchetype(fullDeck);
                 }
             }
+
             if (uniqueArchetypesInDeck.Any(x => x.Name != Archetype.Default))
             {
                 archetypes.RemoveAll(x => x.Name == Archetype.Default);
@@ -91,7 +95,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 }
             }
             //remove archetypes that are lowly represented.
-            foreach (var item in archetypesDictionary.Where(x => x.Value <= 5).ToArray())
+            foreach (var item in archetypesDictionary.Where(x => x.Value <= _minimumNumberOfCardsToCheckForArchetype).ToArray())
             {
                 archetypesDictionary.Remove(item.Key);
             }
@@ -100,6 +104,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             {
                 return _checkForPossibleTypeArchetype(fullDeck);
             }
+
             if (archetypesDictionary.ElementAt(0).Value > (int)(archetypes.Count * 0.5))
             {
                 return archetypesDictionary.ElementAt(0).Key;
@@ -130,7 +135,7 @@ namespace YGOProAnalyticsServer.Services.Analyzers
                 }
                 else
                 {
-                    if (archetypesDictionary.ElementAt(0).Value > 9)
+                    if (archetypesDictionary.ElementAt(0).Value > _minimumNumberOfArchetypeCardsForArchetype)
                     {
                         return archetypesDictionary.ElementAt(0).Key;
                     }
@@ -143,9 +148,10 @@ namespace YGOProAnalyticsServer.Services.Analyzers
         private Archetype _checkForPossibleTypeArchetype(List<Card> fullDeck)
         {
             var potentialArchetype = _checkForMostUsedType(fullDeck);
-            potentialArchetype = potentialArchetype ?? _archetypes
-                    .FirstOrDefault(x => x.Name == Archetype.Default)
-                    ?? new Archetype(Archetype.Default, true);
+            potentialArchetype = potentialArchetype
+                ?? _archetypes
+                .FirstOrDefault(x => x.Name == Archetype.Default)
+                ?? new Archetype(Archetype.Default, true);
             if (!_archetypes.Contains(potentialArchetype))
             {
                 _archetypes.Add(potentialArchetype);
@@ -159,23 +165,25 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             List<string> races = fullDeck.Where(x => _checkIfRaceIsMonster(x.Race))
             .ToList().ConvertAll<string>(x => x.Race);
             IEnumerable<string> uniqueRaces = races.GroupBy(x => x).Select(x => x.First());
-            Dictionary<string, int> racesDictionary = uniqueRaces.ToDictionary(
-                p => p, p => races.Where(x => x == p)
+            Dictionary<string, int> racesDictionary = uniqueRaces
+                .ToDictionary(p => p, p => races.Where(x => x == p)
                 .Count()).OrderByDescending(x => x.Value)
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            foreach (var item in racesDictionary.Where(x => x.Value <= 5).ToArray())
+            foreach (var item in racesDictionary.Where(x => x.Value <= _minimumNumberOfCardsToCheckForArchetype).ToArray())
             {
                 racesDictionary.Remove(item.Key);
             }
 
             if (racesDictionary.Count == 0) return null;
+
             if (racesDictionary.Count >= 2 &&
                 racesDictionary.ElementAt(0).Value == racesDictionary.ElementAt(1).Value)
             {
                 return null;
             }
-            if (racesDictionary.ElementAt(0).Value > 15)
+
+            if (racesDictionary.ElementAt(0).Value > _minimumNumberOfArchetypeCardsForTypeArchetype)
             {
                 var archetype = _archetypes.Where(x => x.Name == racesDictionary.ElementAt(0).Key).FirstOrDefault();
                 return archetype ?? new Archetype(String.Format("{0}-Type", racesDictionary.ElementAt(0).Key), false);
