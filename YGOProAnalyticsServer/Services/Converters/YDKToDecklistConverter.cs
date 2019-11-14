@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
+using YGOProAnalyticsServer.Models;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
+using YGOProAnalyticsServer.Services.Downloaders.Interfaces;
 
 namespace YGOProAnalyticsServer.Services.Converters
 {
@@ -11,12 +15,13 @@ namespace YGOProAnalyticsServer.Services.Converters
     public class YDKToDecklistConverter : IYDKToDecklistConverter
     {
         private readonly IEnumerable<Card> cards;
-
+        private readonly List<BetaCardData> _betaCardDatas;
         /// <summary>Initializes a new instance of the <see cref="YDKToDecklistConverter"/> class.</summary>
         /// <param name="db">The database.</param>
-        public YDKToDecklistConverter(YgoProAnalyticsDatabase db)
+        public YDKToDecklistConverter(YgoProAnalyticsDatabase db, ICardsDataDownloader cardsDataDownloader, IAdminConfig adminConfig)
         {
             cards = db.Cards.ToList();
+            _betaCardDatas = BetaCardToOfficialConverter.LoadBetaCardsList(cardsDataDownloader, adminConfig).Result;
         }
 
         /// <inheritdoc />
@@ -54,6 +59,13 @@ namespace YGOProAnalyticsServer.Services.Converters
                     {
                         if (_isCorrectPassCode(passCode))
                         {
+                            if (_isBetaPassCode(passCode))
+                            {
+                                if (_betaCardDatas.Exists(x => x.BetaPassCode == passCode))
+                                {
+                                    passCode = _betaCardDatas.First(x => x.BetaPassCode == passCode).OfficialPassCode;
+                                }
+                            }
                             var card = cards.FirstOrDefault(x => x.PassCode == passCode);
                             if (card == null)
                             {
@@ -94,6 +106,10 @@ namespace YGOProAnalyticsServer.Services.Converters
         private static bool _isCorrectPassCode(int passCode)
         {
             return passCode > 100;
+        }
+        private static bool _isBetaPassCode(int passCode)
+        {
+            return passCode.ToString().Length>8;
         }
     }
 }
