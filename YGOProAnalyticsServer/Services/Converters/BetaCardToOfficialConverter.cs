@@ -110,6 +110,7 @@ namespace YGOProAnalyticsServer.Services.Converters
                     .EntityEntry.Collection(x => x.LimitedCardsJoin)
                     .EntityEntry.Collection(x => x.SemiLimitedCardsJoin).LoadAsync();
             }
+
             return card;
         }
 
