@@ -88,10 +88,10 @@ namespace YGOProAnalyticsServer.Services.Analyzers
             if (uniqueArchetypesInDeck.Any(x => x.Name != Archetype.Default))
             {
                 archetypes.RemoveAll(x => x.Name == Archetype.Default);
-                var defArchetype = archetypesDictionary.FirstOrDefault(x => x.Key.Name == Archetype.Default).Key;
-                if (defArchetype != null)
+                var defaultArchetype = archetypesDictionary.FirstOrDefault(x => x.Key.Name == Archetype.Default).Key;
+                if (defaultArchetype != null)
                 {
-                    archetypesDictionary.Remove(defArchetype);
+                    archetypesDictionary.Remove(defaultArchetype);
                 }
             }
             //remove archetypes that are lowly represented.
