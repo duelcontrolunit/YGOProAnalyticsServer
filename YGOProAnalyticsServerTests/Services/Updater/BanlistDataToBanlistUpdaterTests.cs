@@ -71,7 +71,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
             using (var db = new YgoProAnalyticsDatabase(dbContextSqliteOptions))
             {
                 db.Database.EnsureCreated();
-                var archetype = new Archetype("Neutral", true);
+                var archetype = new Archetype(Archetype.Default, true);
                 _addChangeOfHeart(db, archetype);
                 _addChickenGame(db, archetype);
                 _addTerraforming(db, archetype);
