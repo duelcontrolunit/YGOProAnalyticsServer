@@ -243,7 +243,8 @@ namespace YGOProAnalyticsServer.Services.Factories
         {
             if ((!lowerCardType.Contains("normal"))
                 && isNotAnyExtraMonsterType(lowerCardType)
-                && !lowerCardType.Contains("pendulum"))
+                && !lowerCardType.Contains("pendulum")
+                && !lowerCardType.Contains("ritual"))
             {
                 container.EffectMonsters.Add(
                     _cardDtosFactory.CreateMonsterCardDto(card)
