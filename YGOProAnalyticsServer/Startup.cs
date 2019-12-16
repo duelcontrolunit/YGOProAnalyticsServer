@@ -28,6 +28,8 @@ using AutoMapper;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
 using YGOProAnalyticsServer.Services.Validators;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
+using YGOProAnalyticsServer.Middlewares;
 
 namespace YGOProAnalyticsServer
 {
@@ -153,6 +155,7 @@ namespace YGOProAnalyticsServer
             }
 
             app.UseCors("CorsPolicy");
+            app.ConfigureExceptionHandler();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
