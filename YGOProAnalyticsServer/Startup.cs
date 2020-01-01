@@ -50,7 +50,7 @@ namespace YGOProAnalyticsServer
             var adminConfig = services.BuildServiceProvider().GetService<IAdminConfig>();
             services.AddDbContext<YgoProAnalyticsDatabase>(
                 options => options
-                            .UseSqlServer(@"Data Source=LAPTOP-BL03JMFH\SQLEXPRESS;Initial Catalog=YgoProAnalytics;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
+                            .UseSqlServer(YgoProAnalyticsDatabase.ConnectionString(adminConfig.DBUser, adminConfig.DBPassword))
                             .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning))
              );
             _addAutomapper(services);
