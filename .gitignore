@@ -266,3 +266,6 @@ configTest.json
 
 #backup db
 backup/
+
+#Logs
+Logs/
