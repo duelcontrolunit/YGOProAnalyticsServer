@@ -245,7 +245,7 @@ namespace YGOProAnalyticsServer.Services.Others
             if (banlistId > 0)
             {
                 var banlistExist = _db.Banlists.Any(x => x.Id == banlistId);
-                if (banlistExist == true)
+                if (banlistExist)
                 {
                     localDecklistsQuery = localDecklistsQuery
                         .Where(x => x.DecklistPlayableOnBanlistsJoin.Any(y=>y.BanlistId == banlistId && x.Id == y.DecklistId));
