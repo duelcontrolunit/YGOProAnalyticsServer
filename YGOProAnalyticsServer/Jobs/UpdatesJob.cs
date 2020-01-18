@@ -50,7 +50,6 @@ namespace YGOProAnalyticsServer.Jobs
 
                     transaction.Commit();
                 }
-                   
             }
         }
     }
