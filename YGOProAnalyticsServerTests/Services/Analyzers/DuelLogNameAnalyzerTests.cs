@@ -67,11 +67,18 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
 
         [TestCase("AI#62257")]
         [TestCase("AI#Salaman,20088")]
+        [TestCase("AINCRAD#23144")]
+        [TestCase("AIncrad#23145")]
+        [TestCase("AI,T#854")]
+        [TestCase("AI,NF,NS,NC,T#855")]
         public void IsDuelVersusAI_IsDuelVsAI_ReturnsTrue(string duelLogName)
         {
             Assert.IsTrue(_analyzer.IsDuelVersusAI(duelLogName));
         }
 
+        [TestCase("AI,NF,NS,NC,T#Salaman,855")]
+        [TestCase("AINCRAD#Salaman,20088")]
+        [TestCase("AIncrad#Salaman,20088")]
         [TestCase("S,RANDOM#39848 (Duel:1)")]
         [TestCase("S,RANDOM#97062 (Duel:1)")]
         [TestCase("LF2#2222 (Duel:1)")]
@@ -82,6 +89,12 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         [TestCase("NF,TM999#kirby (Duel:1)")]
         [TestCase("NF#あ (Duel:1)")]
         [TestCase("NF,M#CANELO (Duel:3)")]
+        [TestCase("TO,M,R (Duel:1)")]
+        [TestCase("M#dragon (Duel:1)")]
+        [TestCase("TO,OT,M#Alex (Duel:2)")]
+        [TestCase("T#cudomarcus (Duel:1)")]
+        [TestCase("5 (Duel:1)")]
+        [TestCase("M#01 (Duel:1)")]
         public void IsDuelVersusAI_IsNotDuelVsAI_ReturnsFalse(string duelLogName)
         {
             Assert.IsFalse(_analyzer.IsDuelVersusAI(duelLogName));
