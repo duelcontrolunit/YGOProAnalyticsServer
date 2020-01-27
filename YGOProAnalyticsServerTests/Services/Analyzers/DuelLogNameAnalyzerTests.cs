@@ -60,6 +60,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         [TestCase("NF,M#CANELO (Duel:3)")]
         [TestCase("AI#62257")]
         [TestCase("AI#Salaman,20088")]
+        [TestCase("LF2,NC#2222 (Duel:1)")]
         public void IsAnyBanlist_NoInformationOrInformationAboutNoBanlist_ReturnsFalse(string duelLogName)
         {
             Assert.IsFalse(_analyzer.IsAnyBanlist(duelLogName));
@@ -101,6 +102,8 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         }
 
         [TestCase("NC# (Duel:1)")]
+        [TestCase("T,NC# (Duel:1)")]
+        [TestCase("T,NC,NS# (Duel:1)")]
         public void IsNoDeckCheckEnabled_IsEnabled_ReturnTrue(string duelLogName)
         {
             Assert.IsTrue(_analyzer.IsNoDeckCheckEnabled(duelLogName));
@@ -123,7 +126,14 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         [TestCase("S,RANDOM#39848 (Duel:1)")]
         [TestCase("S,RANDOM#97062 (Duel:1)")]
         [TestCase("Kuriboh (Duel:1)")]
-        public void IsDefaultBanlist_IsInformationAboutDefaultBanlist_ReturnTrue(string duelLogName)
+        [TestCase("OT,TO,S#LosMorros (Duel:1)")]
+        [TestCase("OT,TO,M#Piolo (Duel:1)")]
+        [TestCase("T,RANDOM#36472 (Duel:1)")]
+        [TestCase("M#dragon (Duel:2)")]
+        [TestCase("2222 (Duel:1)")]
+        [TestCase("LP2222 (Duel:1)")]
+        [TestCase("LP2222,PR,TM999,ST44# (Duel:1)")]
+        public void IsDefaultanlist_IsInformationAboutDefaultBanlist_ReturnTrue(string duelLogName)
         {
             Assert.IsTrue(_analyzer.IsDefaultBanlist(duelLogName));
         }
@@ -135,6 +145,7 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
         [TestCase("NF#あ (Duel:1)")]
         [TestCase("NF,M#CANELO (Duel:3)")]
         [TestCase("NC# (Duel:1)")]
+        [TestCase("T,NC# (Duel:1)")]
         [TestCase("AI#62257")]
         [TestCase("AI#Salaman,20088")]
         public void IsDefaultBanlist_IsNoInformationAboutDefaultBanlist_ReturnFalse(string duelLogName)
@@ -142,12 +153,23 @@ namespace YGOProAnalyticsServerTests.Services.Analyzers
             Assert.IsFalse(_analyzer.IsDefaultBanlist(duelLogName));
         }
 
+        [TestCase("M,LF2,NS,LP8000,TM999# (Duel:2)")]
+        [TestCase("NS,M,LF2,NS,LP8000,TM999# (Duel:2)")]
+        [TestCase("NS,M,LF2,NS,LP8000,TM999,NS# (Duel:2)")]
+        [TestCase("AI,NS#62257")]
+        [TestCase("T,NC,NS# (Duel:1)")]
         [TestCase("LF2,NS#,1534 (Duel:1)")]
+        [TestCase("OT,TO,S,NS#LosMorros (Duel:1)")]
+        [TestCase("M,NS#dragon (Duel:2)")]
         public void IsNoDeckShuffleEnabled_IsEnabled_ReturnsTrue(string duelLogName)
         {
             Assert.IsTrue(_analyzer.IsNoDeckShuffleEnabled(duelLogName));
         }
 
+        [TestCase("M,LF2,LP8000,TM999# (Duel:2)")]
+        [TestCase("M#dragon (Duel:2)")]
+        [TestCase("OT,TO,S#LosMorros (Duel:1)")]
+        [TestCase("LF2#,1534 (Duel:1)")]
         [TestCase("LF2#2222 (Duel:1)")]
         [TestCase("M,LF2,LP8000,TM999# (Duel:2)")]
         [TestCase("NF,TM999#kirby (Duel:1)")]
