@@ -28,6 +28,8 @@ using AutoMapper;
 using YGOProAnalyticsServer.Services.Validators.Interfaces;
 using YGOProAnalyticsServer.Services.Validators;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
+using YGOProAnalyticsServer.Middlewares;
 
 namespace YGOProAnalyticsServer
 {
@@ -48,8 +50,11 @@ namespace YGOProAnalyticsServer
             services.AddMediatR();
             services.AddSingleton<IAdminConfig, AdminConfig>();
             var adminConfig = services.BuildServiceProvider().GetService<IAdminConfig>();
-            services.AddDbContext<YgoProAnalyticsDatabase>(options => options.UseSqlServer(
-                YgoProAnalyticsDatabase.ConnectionString(adminConfig.DBUser, adminConfig.DBPassword)));
+            services.AddDbContext<YgoProAnalyticsDatabase>(
+                options => options
+                            .UseSqlServer(YgoProAnalyticsDatabase.ConnectionString(adminConfig.DBUser, adminConfig.DBPassword))
+                            .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning))
+             );
             _addAutomapper(services);
             _addCors(services);
             _registerScopedServices(services);
@@ -153,6 +158,7 @@ namespace YGOProAnalyticsServer
             }
 
             app.UseCors("CorsPolicy");
+            app.ConfigureExceptionHandler();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.DbModels;
 using YGOProAnalyticsServer.Events;
+using YGOProAnalyticsServer.Exceptions;
 using YGOProAnalyticsServer.Models;
 using YGOProAnalyticsServer.Services.Analyzers.Interfaces;
 using YGOProAnalyticsServer.Services.Converters.Interfaces;
@@ -69,11 +70,18 @@ namespace YGOProAnalyticsServer.EventHandlers
                 {
                     continue;
                 }
-
-                _handleDuelLogs(decklistsAsStringsWithFilenames,
-                                            allDecksWhichWonFromThePack,
-                                            allDecksWhichLostFromThePack,
-                                            duelLog);
+                
+                try
+                {
+                    _handleDuelLogs(decklistsAsStringsWithFilenames,
+                                                allDecksWhichWonFromThePack,
+                                                allDecksWhichLostFromThePack,
+                                                duelLog);
+                }
+                catch (UnknownBanlistException)
+                {
+                    continue;
+                }
             }
 
             var decklistsWhichWonWithoutDuplicatesFromThePack = _analyzeDecklistsAndArchetypesAndRemoveDuplicates(
@@ -347,8 +355,8 @@ namespace YGOProAnalyticsServer.EventHandlers
                 {
                     await decklistsFromDb.Skip(i * amountOfDecksToCheckAtOnce).Take(amountOfDecksToCheckAtOnce)
                         .ForEachAsync(decklist => _addPlayableBanlistsToDecklist(decklist, newBanlists));
+                    await _db.SaveChangesAsync();
                 }
-                await _db.SaveChangesAsync();
             }
         }
     }

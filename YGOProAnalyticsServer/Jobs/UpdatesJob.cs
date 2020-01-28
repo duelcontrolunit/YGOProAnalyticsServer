@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using YGOProAnalyticsServer.Database;
 using YGOProAnalyticsServer.Events;
 using YGOProAnalyticsServer.Services.Converters;
 using YGOProAnalyticsServer.Services.Updaters.Interfaces;
@@ -32,23 +33,22 @@ namespace YGOProAnalyticsServer.Jobs
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                try
-                {
-                    await _adminConfig.LoadConfigFromFile(AdminConfig.path);
-                    var banlistUpdater = scope.ServiceProvider.GetRequiredService<IBanlistDataToBanlistUpdater>();
-                    var cardsAndArchetypesUpdater = scope.ServiceProvider.GetRequiredService<ICardsDataToCardsAndArchetypesUpdater>();
-                    var betaToOfficialConverter = scope.ServiceProvider.GetRequiredService<IBetaCardToOfficialConverter>();
-                    var adminConfig = scope.ServiceProvider.GetRequiredService<IAdminConfig>();
-                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                await _adminConfig.LoadConfigFromFile(AdminConfig.path);
+                var banlistUpdater = scope.ServiceProvider.GetRequiredService<IBanlistDataToBanlistUpdater>();
+                var cardsAndArchetypesUpdater = scope.ServiceProvider.GetRequiredService<ICardsDataToCardsAndArchetypesUpdater>();
+                var betaToOfficialConverter = scope.ServiceProvider.GetRequiredService<IBetaCardToOfficialConverter>();
+                var adminConfig = scope.ServiceProvider.GetRequiredService<IAdminConfig>();
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                var db = scope.ServiceProvider.GetRequiredService<YgoProAnalyticsDatabase>();
 
+                using (var transaction = db.Database.BeginTransaction())
+                {
                     await betaToOfficialConverter.UpdateCardsFromBetaToOfficial();
                     await cardsAndArchetypesUpdater.UpdateCardsAndArchetypes(adminConfig.CardApiURL);
                     var newBanlists = await banlistUpdater.UpdateBanlists(adminConfig.BanlistApiURL);
                     await mediator.Publish(new CardsRelatedUpdatesCompleted(newBanlists));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"{e.Message}\n{e.StackTrace}");
+
+                    transaction.Commit();
                 }
             }
         }
