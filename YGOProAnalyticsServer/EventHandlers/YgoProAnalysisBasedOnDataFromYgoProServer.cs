@@ -73,10 +73,10 @@ namespace YGOProAnalyticsServer.EventHandlers
                 
                 try
                 {
-                _handleDuelLogs(decklistsAsStringsWithFilenames,
-                                            allDecksWhichWonFromThePack,
-                                            allDecksWhichLostFromThePack,
-                                            duelLog);
+                    _handleDuelLogs(decklistsAsStringsWithFilenames,
+                                                allDecksWhichWonFromThePack,
+                                                allDecksWhichLostFromThePack,
+                                                duelLog);
                 }
                 catch (UnknownBanlistException)
                 {
