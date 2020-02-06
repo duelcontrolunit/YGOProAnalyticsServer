@@ -185,8 +185,9 @@ namespace YGOProAnalyticsServer.Services.Analyzers
 
             if (racesDictionary.ElementAt(0).Value > _minimumNumberOfArchetypeCardsForTypeArchetype)
             {
-                var archetype = _archetypes.Where(x => x.Name == racesDictionary.ElementAt(0).Key).FirstOrDefault();
-                return archetype ?? new Archetype(String.Format("{0}-Type", racesDictionary.ElementAt(0).Key), false);
+                var archetypeName = String.Format("{0}-Type", racesDictionary.ElementAt(0).Key);
+                var archetype = _archetypes.Where(x => x.Name == archetypeName).FirstOrDefault();
+                return archetype ?? new Archetype(archetypeName, false);
             }
             else
             {
