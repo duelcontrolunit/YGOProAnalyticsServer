@@ -1,5 +1,5 @@
 {
-  "CardApiURL": "https://db.ygoprodeck.com/api/v3/cardinfo.php",
+  "CardApiURL": "https://db.ygoprodeck.com/api/v6/cardinfo.php",
   "BetaToOfficialCardApiURL": "http://eeriecode.altervista.org/tools/get_beta_cards.php",
   "DefaultBanlistNumber": 1,
   "FTPUser": "",
