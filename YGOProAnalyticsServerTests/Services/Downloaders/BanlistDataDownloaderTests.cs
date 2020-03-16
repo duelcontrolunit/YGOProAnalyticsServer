@@ -28,7 +28,7 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         {
             _downloader = new BanlistDataDownloader();
 
-            Assert.ThrowsAsync<System.Net.WebException>(async () => await _downloader.DownloadBanlistFromWebsite("Wronghttps://db.ygoprodeck.com/api/v3/cardinfo.php"));
+            Assert.ThrowsAsync<System.Net.WebException>(async () => await _downloader.DownloadBanlistFromWebsite("Wronghttps://db.ygoprodeck.com/api/v6/cardinfo.php"));
         }
     }
 }

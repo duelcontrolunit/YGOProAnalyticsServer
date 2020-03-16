@@ -31,7 +31,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         /// <param name="cardBuilder">The card builder.</param>
         /// <param name="db">The database.</param>
         public CardsDataToCardsAndArchetypesUpdater(
-            ICardsDataDownloader cardsDataDownloader, 
+            ICardsDataDownloader cardsDataDownloader,
             ICardBuilder cardBuilder,
             YgoProAnalyticsDatabase db)
         {
@@ -51,14 +51,14 @@ namespace YGOProAnalyticsServer.Services.Updaters
             _archetypes = _db.Archetypes.ToList();
             _cards = _db.Cards.ToList();
             string cardsData = await _cardsDataDownloader.DownloadCardsFromWebsite(URL);
-            JToken cardsDataList = (JsonConvert.DeserializeObject<JArray>(cardsData)).First;
+            JToken cardsDataList = (JsonConvert.DeserializeObject<JArray>(cardsData));
             foreach (JObject item in cardsDataList.Children<JObject>())
             {
                 if (_cardAlreadyExistInOurDatabase(item)) continue;
 
                 string type = item.Value<string>("type").ToUpper();
                 Archetype archetype;
-                if (item.GetValue("archetype").ToString() == string.Empty)
+                if (item.GetValue("archetype") == null)
                 {
                     archetype = _getArchetype(Archetype.Default);
                 }
@@ -76,7 +76,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
                 _db.Cards.Add(_cardBuilder.Build());
             }
 
-            await _db.SaveChangesAsync();          
+            await _db.SaveChangesAsync();
         }
 
         private void _addBasicCardProperties(JObject item, Archetype archetype)
@@ -87,8 +87,8 @@ namespace YGOProAnalyticsServer.Services.Updaters
                                 item.Value<string>("desc"),
                                 item.Value<string>("type"),
                                 item.Value<string>("race"),
-                                item.Value<string>("image_url"),
-                                item.Value<string>("image_url_small"),
+                                item["card_images"].First.Value<string>("image_url"),
+                                item["card_images"].First.Value<string>("image_url_small"),
                                 archetype
                             );
         }
@@ -99,7 +99,7 @@ namespace YGOProAnalyticsServer.Services.Updaters
         }
 
         private void _addMonsterProperties(string type, Archetype archetype, JObject item)
-        {           
+        {
             _addBasicMonsterAttributesToCard(item);
 
             if (type.Contains("PENDULUM"))
@@ -128,16 +128,16 @@ namespace YGOProAnalyticsServer.Services.Updaters
 
         private void _addBasicMonsterAttributesToCard(JObject item)
         {
-            var level = item.GetValue("level").ToString();
+            var level = 0.ToString();
 
-            if (level == "")
+            if (item.GetValue("level") != null)
             {
-                level = 0.ToString();
+                level = item.GetValue("level").ToString();
             }
 
             _cardBuilder.AddMonsterCardElements(
                     item.GetValue("atk").ToString(),
-                    item.GetValue("def").ToString(),
+                    item.GetValue("def")?.ToString(),
                     int.Parse(level),
                     item.Value<string>("attribute"));
         }

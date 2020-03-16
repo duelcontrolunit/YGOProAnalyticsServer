@@ -30,7 +30,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
         {
             _downloaderMock = new Mock<ICardsDataDownloader>();
             _downloaderMock
-                .Setup(x => x.DownloadCardsFromWebsite("https://db.ygoprodeck.com/api/v3/cardinfo.php"))
+                .Setup(x => x.DownloadCardsFromWebsite("https://db.ygoprodeck.com/api/v6/cardinfo.php"))
                 .ReturnsAsync(_getValidCardsDataFromApi());
             _downloaderMock
     .Setup(x => x.DownloadCardsFromWebsite("http://eeriecode.altervista.org/tools/get_beta_cards.php"))
@@ -64,7 +64,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
                 db.Database.EnsureCreated();
 
                 _updater = new CardsDataToCardsAndArchetypesUpdater(_downloaderMock.Object, _cardBuilderMock.Object, db);
-                await _updater.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v3/cardinfo.php");
+                await _updater.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v6/cardinfo.php");
 
                 Assert.NotZero(db.Cards.Count(), "Cards table should not be empty.");
                 Assert.NotZero(db.Archetypes.Count(), "Archetypes table should not be empty.");
@@ -81,7 +81,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
             {
                 db.Database.EnsureCreated();
                 _updater = new CardsDataToCardsAndArchetypesUpdater(new CardsDataDownloader(), new CardBuilder(), db);
-                await _updater.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v3/cardinfo.php");
+                await _updater.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v6/cardinfo.php");
 
                 Assert.NotZero(db.Cards.Count());
             }  
@@ -89,7 +89,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
 
         private string _getValidCardsDataFromApi()
         {
-            return "[[{\"id\":\"27551\",\"name\":\"Limit Reverse\",\"desc\":\"Target 1 monster with 1000 or less ATK in your Graveyard; Special Summon it in Attack Position. If the target is changed to Defense Position, destroy it and this card. When this card leaves the field, destroy the target. When the target is destroyed, destroy this card.\",\"atk\":null,\"def\":null,\"type\":\"Trap Card\",\"level\":\"0\",\"race\":\"Continuous\",\"attribute\":\"0\",\"scale\":null,\"linkval\":null,\"linkmarkers\":null,\"archetype\":null,\"set_tag\":\"YS12-EN037,YS11-EN039,LODT-EN063,5DS2-EN037,\",\"setcode\":\"Starter Deck: Xyz Symphony,Starter Deck: Dawn of the Xyz,Light of Destruction,Starter Deck: Yu-Gi-Oh! 5D's 2009,\",\"ban_tcg\":null,\"ban_ocg\":null,\"ban_goat\":null,\"image_url\":null,\"image_url_small\":null}]]";
+            return "[{\"id\":49140998,\"name\":\"A Feather of the Phoenix\",\"type\":\"Spell Card\",\"desc\":\"Discard 1 card, then target 1 card in your Graveyard; return that target to the top of your Deck.\",\"race\":\"Normal\",\"card_sets\":[{\"set_name\":\"Champion Pack: Game Three\",\"set_code\":\"CP03-EN018\",\"set_rarity\":\"Common\",\"set_price\":\"$1.79\"},{\"set_name\":\"Dark Revelation Volume 3\",\"set_code\":\"DR3-EN157\",\"set_rarity\":\"Super Rare\",\"set_price\":\"$3.39\"},{\"set_name\":\"Flaming Eternity\",\"set_code\":\"FET-EN037\",\"set_rarity\":\"Super Rare\",\"set_price\":\"$1.35\"},{\"set_name\":\"Flaming Eternity\",\"set_code\":\"FET-EN037\",\"set_rarity\":\"Ultimate Rare\",\"set_price\":\"$1.34\"},{\"set_name\":\"Legendary Collection 3: Yugi's World Mega Pack\",\"set_code\":\"LCYW-EN280\",\"set_rarity\":\"Secret Rare\",\"set_price\":\"$1.67\"},{\"set_name\":\"Legendary Hero Decks\",\"set_code\":\"LEHD-ENA26\",\"set_rarity\":\"Common\",\"set_price\":\"$1.03\"},{\"set_name\":\"Starter Deck: Syrus Truesdale\",\"set_code\":\"YSDS-EN029\",\"set_rarity\":\"Common\",\"set_price\":\"$1.55\"}],\"card_images\":[{\"id\":49140998,\"image_url\":\"https://storage.googleapis.com/ygoprodeck.com/pics/49140998.jpg\",\"image_url_small\":\"https://storage.googleapis.com/ygoprodeck.com/pics_small/49140998.jpg\"}],\"card_prices\":[{\"cardmarket_price\":\"0.09\",\"tcgplayer_price\":\"0.13\",\"coolstuffinc_price\":\"0.49\",\"ebay_price\":\"1.49\",\"amazon_price\":\"0.45\"}]}]";
         }
         private string _getValidCardsDataFromBetaApi()
         {
