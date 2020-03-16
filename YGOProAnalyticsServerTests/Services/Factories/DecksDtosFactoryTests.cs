@@ -28,7 +28,7 @@ namespace YGOProAnalyticsServerTests.Services.Factories
             var dto = _deckDtosFactory.CreateMainDeckDto(decklist);
 
             Assert.Multiple(()=> {
-                Assert.AreEqual(11, dto.EffectMonsters.Count);
+                Assert.AreEqual(9, dto.EffectMonsters.Count);
                 Assert.AreEqual(2, dto.NormalMonsters.Count);
                 Assert.AreEqual(3, dto.PendulumEffectMonsters.Count);
                 Assert.AreEqual(1, dto.PendulumNormalMonsters.Count);

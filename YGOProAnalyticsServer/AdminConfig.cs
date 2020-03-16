@@ -12,7 +12,7 @@ namespace YGOProAnalyticsServer
     {
         [JsonProperty(nameof(CardApiURL))]
         ///<inheritdoc />
-        public string CardApiURL { get; protected set; } = "https://db.ygoprodeck.com/api/v3/cardinfo.php";
+        public string CardApiURL { get; protected set; } = "https://db.ygoprodeck.com/api/v6/cardinfo.php";
 
         [JsonProperty(nameof(BetaToOfficialCardApiURL))]
         ///<inheritdoc />

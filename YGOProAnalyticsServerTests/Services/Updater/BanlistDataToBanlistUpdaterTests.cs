@@ -37,7 +37,7 @@ namespace YGOProAnalyticsServerTests.Services.Updater
                 db.Database.EnsureCreated();
 
                 var _updater = new CardsDataToCardsAndArchetypesUpdater(new CardsDataDownloader(), new CardBuilder(), db);
-                await _updater.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v3/cardinfo.php");
+                await _updater.UpdateCardsAndArchetypes("https://db.ygoprodeck.com/api/v6/cardinfo.php");
 
 
                 var updater = new BanlistDataToBanlistUpdater(db, new BanlistDataDownloader());

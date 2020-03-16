@@ -18,7 +18,7 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         public async Task DownloadCardsFromWebsite_SourceShouldBeAvailable_WeGetDataAsStringLongerThen0()
         {
             _downloader = new CardsDataDownloader();
-            string result = await _downloader.DownloadCardsFromWebsite("https://db.ygoprodeck.com/api/v3/cardinfo.php");
+            string result = await _downloader.DownloadCardsFromWebsite("https://db.ygoprodeck.com/api/v6/cardinfo.php");
 
             Assert.NotZero(result.Count());
         }
@@ -28,7 +28,7 @@ namespace YGOProAnalyticsServerTests.Services.Downloaders
         {
             _downloader = new CardsDataDownloader();
 
-            Assert.ThrowsAsync<System.Net.WebException>(async() => await _downloader.DownloadCardsFromWebsite("Wronghttps://db.ygoprodeck.com/api/v3/cardinfo.php"));
+            Assert.ThrowsAsync<System.Net.WebException>(async() => await _downloader.DownloadCardsFromWebsite("Wronghttps://db.ygoprodeck.com/api/v6/cardinfo.php"));
         }
     }
 }
